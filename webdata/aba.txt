@@ -1,14 +1,18 @@
 
 #
-# upon runtime set missing values to random!
+# initialization
 #
-
+# uninitialized nodes may (and need to) be set to random 
+#
 Closure = False
 ABA = ABH1 = ERA1 = AGB1 = True
 
 #
+# below are the updating rules
+#
 # the first number is the rank order
 # lower ranks get executed before higher ranks
+# update order may be randomized within a rank
 #
 
 1: SphK* = ABA
