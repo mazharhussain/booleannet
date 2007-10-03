@@ -53,9 +53,23 @@ The initialization conditions can be `True/False` or `Random`,
 this latter being a random choice between `True/False`. Multiple assignments
 of the form `A = B = Random` are allowed  (but note that this example sets `A` and `B` 
 to the same random value). It is also possible to set all uninitialized values to
-`Random` or any other desired value. This can simplify the files, see later sections (Advanced Usage) for how to accomplish this.
+`Random` or any other desired value. This can simplify the files, see later sections (Advanced Usage) 
+for how to accomplish this. When run in LPDE mode (Linear Piecewise Differential Equations) we have
+the option of specifying other parameters during initialization. Every node of the network
+may be characterized by an a triplet of values that correspoind to the 
+_inital concentration_, a _decay_ and a _threshold_ (see TutorialLPDE for what these parameters mean).
+Thus we could write the inital conditions as:
 
-As you can see above the updating rules must be specified in the following form::
+{{{
+ABA = ABH1 = ERA1 = AGB1 = (1, 2, 0.7)
+}}}
+meaning that the `concentration=1`, `decay=2` and the `threshold=0.7`. 
+Both kinds of initializations are accepted for every operating mode. Depending on
+the mode the value will be converted the the appropriate one, with the following conversions rules:
+`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)` whereas 
+value triplets will be converted to truth value of _concentration >threshold/decay_.
+
+The updating rules must be specified in the following form::
 
 {{{
 rank: target* = rule
