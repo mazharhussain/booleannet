@@ -2,6 +2,9 @@ from itertools import *
 import sys, os, logging, random, re, string
 import tokenizer
 
+class SyntaxException(Exception):
+    pass
+
 class State(object):
     """
     Maintains the node state as attributes.
@@ -173,7 +176,7 @@ def join( alist, sep='\t', patt='%s\n'):
     """
     return patt % sep.join( map(str, alist) ) 
 
-def log(msg, level='Info'):
+def log( msg ):
     """
     Logs messages from a source
     
@@ -181,12 +184,12 @@ def log(msg, level='Info'):
     """
     sys.stderr.write( '%s' % msg ) 
 
-def error(msg, level='Error'):
+def error( msg ):
     """
     Logs errors
     """
     # bail out for now
-    raise Exception( msg )
+    raise SyntaxException( msg )
 
 def default_get_value(state, name, p):
     "Default get value function"

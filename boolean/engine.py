@@ -4,7 +4,7 @@ Grammar file for a boolean parser based on PLY
 import re, random, string, time, sys
 import tokenizer, util
 from ply import yacc
-from util import State
+from util import State, SyntaxException
 from itertools import chain
 
 log, error = util.log, util.error
@@ -18,6 +18,14 @@ precedence = (
     ('left', 'AND'),
     ('right', 'NOT'),
 )
+
+def tuple_to_truth( value ):
+    "Converts lpde triplets to truth values"
+    return value[0] > value[1] / value[2]
+
+def truth_to_tuple( value ):
+    "Converts truth value to lpde triplets"
+    return value and (1.0, 1.0, 0.5) or (0.0, 1.0, 0.5)
 
 def p_stmt_init(p):
     'stmt : ID "=" stmt '    
@@ -50,17 +58,14 @@ def p_expression_id(p):
 def p_expression_state(p):
     "expression : STATE"
     try:
+        
         if p[1] == 'Random':
             value = bool( random.randint(0,1) )
         else:
-            value = p[1] == 'True'
+            value = ( p[1] == 'True' )
         
-        # LPDE mode will generate states
-        if p.parser.lpde_mode:
-            if value:
-                value = (1.0, 1.0, 0.5)
-            else:
-                value = (0.0, 1.0, 0.5)
+        # LPDE mode will need triplets
+        value = p.parser.lpde_mode and truth_to_tuple(value) or value
 
         p[0] = value
     except LookupError:
@@ -99,14 +104,13 @@ def p_error(p):
     except:
         msg = "Syntax error at '%s'" % p
     text = '%s\n%s' % (hdr, msg)
-    util.log( text )
-    sys.exit()
+    util.error( text )
     
 class Engine:
     "Represents a boolean parser"
     def __init__(self, mode, text ):
        
-        self.parser = yacc.yacc( tabmodule='zparsetab1' )
+        self.parser = yacc.yacc( tabmodule='zparsetab' )
 
         assert mode in ('sync', 'async', 'lpde'), "Incorrect mode %s" % mode    
         self.mode = mode
@@ -123,7 +127,7 @@ class Engine:
         
         # other tokens may not be present        
         for tokens in self.other_tokens:
-            raise Exception( 'Syntax error, invalid lines %s' % tok2line( tokens ) )
+            raise SyntaxException( "Invalid line '%s'" % tok2line( tokens ) )
 
         # extracts the node ids from the tokens
         init_ids, rank_ids = map( tokenizer.get_all_nodes, [ self.init_tokens, self.rank_tokens] )
@@ -163,8 +167,8 @@ class Engine:
         self.lexer = tok.lexer
         
         # build the parser
-        self.parser.sync_mode = self.mode == 'sync'
-        self.parser.lpde_mode = self.mode == 'lpde'
+        self.parser.sync_mode = ( self.mode == 'sync' )
+        self.parser.lpde_mode = ( self.mode == 'lpde' )
         
         # this will store the parser states
         self.start  = self.parser.before = State()
@@ -222,13 +226,17 @@ class Engine:
         if miss_func:
             for node in self.missing_nodes:
                 value = miss_func( node )
-                if self.parser.lpde_mode:
-                    if value:
-                        value = (1, 1, 0.5)
-                    else:
-                        value = (0, 1, 0.5)
+
+                # this allow one to use other randomizers
+                if self.parser.lpde_mode and ( type(value) != tuple ):
+                    value = truth_to_tuple(value)
+                
+                if not self.parser.lpde_mode and ( type(value) == tuple ):
+                    value = tuple_to_truth(value)
+
                 self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
                 self.parser.RULE_SETVALUE( self.parser.after, node, value, None)
+
         else:
             if self.missing_nodes:
                 util.error('Not initialized nodes %s' % ', '.join(self.missing_nodes) )
@@ -273,7 +281,7 @@ if __name__ == '__main__':
 
     1: A* = not A
     1: B* = A and not B
-    1: C* = A and B or 
+    1: C* = A and B
     """
 
     be = Engine( mode='sync', text=text )
