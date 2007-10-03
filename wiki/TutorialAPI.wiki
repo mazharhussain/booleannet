@@ -91,3 +91,18 @@ or empirical evidence, decisions that do not have a proper boolean representatio
 
 It is also possible to change how the operators themselves work, or make operators 
 work differently for different nodes. 
+
+===Missing Initialization===
+
+Often is inconvenient or impractical to explicitly initialize all nodes in the input file. There is the option of passing a custom function to the engine initializer that will be called for all nodes that are left uninitalized. This function needs to take one parameter and return a `True/False` value.
+
+{{{
+def randomizer( node_name ):
+    return random.choice( [True, False] )
+ 
+import boolean
+engine = boolean.Engine( mode='async', text=text )
+engine.initialize( miss_func=randomizer )
+}}}
+
+The example above sets uninitialized nodes to a random state. We are ignoring the node name but it would be possible to make use of it i.e. if some genes were more likely to start out in a given state.
