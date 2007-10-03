@@ -18,6 +18,10 @@ engine.initialize( miss_func=util.randomize )
 
 engine.iterate( fullt=FULLT, steps=STEPS )
 
+print engine.init_text
+print '-'*10
+print engine.func_text
+
 #
 # now plot with matplotlib
 #
