@@ -1,18 +1,5 @@
 """
-Lexer splits text into tokens.
-
-
-Typical usage:
-
->>> lexer = Lexer()
->>>
->>> # initialize the lexer
->>> lexer.build()
->>> 
->>> text = "A = B"
->>> lexer.tokenize( text )
-[LexToken(ID,'A',1,0), LexToken(=,'=',1,2), LexToken(ID,'B',1,4)]
-
+Main lexer.
 """
 from itertools import *
 import sys, random
@@ -41,8 +28,7 @@ class Lexer:
 
     def __init__(self):
         # nothing here yet
-        self.case_regular = {}
-        self.case_upper = {}
+        pass
 
     def t_ID( self, t):
         r'[a-zA-Z_\+\-][a-zA-Z_0-9\+\-]*'
@@ -53,7 +39,6 @@ class Lexer:
     def t_RANK (self, t):
         r'[0-9][0-9]*:'
         return t
-
    
     def t_NUMBER(self, t):
         r'[\+-]*\d+\.?\d*'
@@ -85,7 +70,7 @@ class Lexer:
         error( err ) 
 
     def build(self, **kwargs):
-        "Builds the lexer, must be called after instantiation"
+        "Builds the lexer, must ALWAYS be called after instantiation"
         self.lexer = lex.lex(object=self, **kwargs)
 
     def tokenize(self, text ):
@@ -103,8 +88,9 @@ class Lexer:
 
 def token_filter( tokenlist, tokentype, func ):
     """
-    Filters token lists tokens by the type of the first element
+    Filters lists tokenlists by the type of the first element
     """
+    # unwinds the generator because it typically needs to be reused.
     def condition( token ):
         return token[0].type == tokentype 
     return list( func( condition, tokenlist ) )
@@ -113,6 +99,7 @@ def init_tokens( tokenlist, func=ifilter ):
     """
     Keeps list elements where the first token is ID
     """
+    # itching to use partial but that is python2.5 only
     return token_filter( tokenlist, tokentype='ID', func=func)
 
 def rank_tokens( tokenlist, func=ifilter ):
@@ -131,7 +118,7 @@ def other_tokens( tokenlist ):
 
 def get_all_nodes( tokenlist ):
     """
-    Flattens a list of tokens and returns all IDS
+    Flattens the list of tokenlist and returns the value of all ID tokens
     """
     
     def type_test ( token ):     
@@ -141,7 +128,6 @@ def get_all_nodes( tokenlist ):
         return token.value
 
     return map(get_value, filter( type_test, chain( *tokenlist )))
-
 
 def tok2line( tokens ):
     """

@@ -3,7 +3,9 @@ from itertools import *
 import engine, util
 
 class Solver( engine.Engine ):
-     
+    """
+    This class generates python code that will be executed inside the Runge-Kutta integrator.
+    """
     def __init__(self, text, mode):
         
         # run the regular boolen engine one step to detect syntax errors

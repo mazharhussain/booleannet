@@ -29,7 +29,7 @@ def run( text, node, repeat, steps ):
 if __name__ == '__main__':
     
     node   = 'Closure'
-    repeat = 2000 # raise this for better curves
+    repeat = 20 # raise this for better curves
     steps  = 15
 
     text = util.read( 'aba.txt')

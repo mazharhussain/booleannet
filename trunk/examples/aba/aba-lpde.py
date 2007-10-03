@@ -14,7 +14,7 @@ engine = Engine( mode='lpde', text=text )
 engine.initialize( miss_func=util.randomize )
 
 # this is the intial state
-print engine.start
+#print engine.start
 
 engine.iterate( fullt=FULLT, steps=STEPS )
 
