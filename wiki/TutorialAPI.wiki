@@ -1,5 +1,5 @@
 #summary How to use the API
-= How to use the library for Synchronous and Asynchronous Modes =
+= How to use the library in Synchronous and Asynchronous Modes =
 
 A Boolean Network is a set of boolean variables (nodes) that are updated 
 via rules (edges) connecting them. The system evolves by performing updates, 
