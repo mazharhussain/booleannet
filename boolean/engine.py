@@ -9,6 +9,8 @@ from itertools import chain
 
 log, error = util.log, util.error
 
+LAST_LINE = ''
+
 tokens = tokenizer.Lexer.tokens
 
 precedence = (
@@ -204,7 +206,6 @@ class Engine:
         """
         # could not find a better way...
         global LAST_LINE
-        global LAST_LINE
         LAST_LINE = line
         return self.parser.parse( line )
 
@@ -272,7 +273,7 @@ if __name__ == '__main__':
 
     1: A* = not A
     1: B* = A and not B
-    1: C* = A and B 
+    1: C* = A and B or 
     """
 
     be = Engine( mode='sync', text=text )
