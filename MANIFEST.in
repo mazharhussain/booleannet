@@ -1,0 +1,15 @@
+include COPYRIGHT.txt
+include readme.html
+include examples/aba/aba.txt
+include examples/aba/aba-simple.py
+include examples/aba/aba-full.py
+include examples/aba/aba-lpde.py
+include examples/aba/aba-full.png
+
+include examples/LGL/LGL.txt
+include examples/LGL/LGL.py
+include examples/LGL/LGL-lpde.py
+
+recursive-include examples/demos *.txt *.py
+recursive-include test test*.txt test*.py
+recursive-include html *.html *.css *.js *.png
