@@ -70,10 +70,10 @@ for state in engine.states:
     print state
 }}}
 
-Each 'state' is an object that provides access to the values of each node
+Each `state` is an object that provides access to the values of each node
 either as a dictionary or as attribute. Note that while more convenient the attribute 
-access works only for node names that are valid python  identifiers i.e. 'state.A' will 
-work but 'state.Ca+2' will not. Here is an example:
+access works only for node names that are valid python  identifiers i.e. `state.A` will 
+work but `state.Ca+2` will not. Here is an example:
 
 {{{
 for state in enigne.states:
