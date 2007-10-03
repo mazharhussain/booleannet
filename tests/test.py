@@ -208,12 +208,11 @@ class EngineTest( unittest.TestCase ):
             #print attr, oldval, newval
             EQ( oldval, newval )
 
-def _test():
-    
+def get_suite():
     suite = unittest.TestLoader().loadTestsFromTestCase( EngineTest )
-    unittest.TextTestRunner( verbosity=2 ).run(suite)
+    return suite
 
 if __name__ == '__main__':
-    _test()  
+    unittest.TextTestRunner( verbosity=2 ).run( get_suite() )  
     
 
