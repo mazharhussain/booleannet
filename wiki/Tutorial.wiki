@@ -4,82 +4,88 @@
 A Boolean Network is a set of boolean variables (nodes) that are updated 
 via rules (edges) connecting them. The system evolves by performing updates, 
 one iteration has elapsed when all updating rules have been performed once. 
-During these updates the system visits different states (C{N} nodes 
-have C{2^N} different states).
+During these updates the system visits different states (_N_ nodes 
+have _2^N_ different states).
 
-Different updating methodologies may be used. In I{synchronous} updating one 
+Different updating methodologies may be used. In _synchronous_ updating one 
 only commits the new values for the nodes at the end of
-each iteration. In I{asynchronous} updating the new values of the nodes became
-active at the moment they are assigned. The update order of the nodes may also be important.
-This order may be I{fixed}, meaning that the order is always the same. It can be I{random} where
-the nodes are assigned new values in random order in each iteration, and finally it can be
-C{rank-random} where each node has a rank and within ranks the node order is randomized.
+each iteration. In _asynchronous_ updating the new values of the nodes became
+active at the moment they are assigned. The update order of the nodes may also be important. This order may be _fixed_, meaning that the order is always the same. It can be _random_ where the nodes are assigned new values in random order in each iteration, and finally it can be _rank-random_ where each node has a rank and within ranks the node order is randomized.
 
-B{BooleanNet} is a python library for performing boolean network simulations. 
+*BooleanNet* is a python library for performing boolean network simulations. 
 It provides an easy to use application programming interface (API) for
 various simulation related tasks. It can execute instructions written out
 in a simple text format and maintains a list of all visited states.
 
-Typical usage that runs 5 iterations:
-
->>> import boolean
->>> engine = boolean.Engine( mode='async', text=text )
->>> engine.initialize()
->>> engine.iterate( steps=5 )
+Here is a typical usage that runs 5 iterations:
+{{{
+import boolean
+engine = boolean.Engine( mode='async', text=text )
+engine.initialize()
+engine.iterate( steps=5 )
+}}}
 
 The input data is a text (that can be read from a file) that lists the 
 inital conditions for the nodes and the updating rules that affect these nodes. 
 Here is an example for what a file might look like::
 
-    # initialization of the nodes
-    ABA = ABH1 = ERA1 = AGB1 = True
-    ERA1 = AGB1 = Random
-    GRC3 = Random
+{{{
+#
+# initialization of the nodes
+#
+ABA = ABH1 = ERA1 = AGB1 = True
+ERA1 = AGB1 = Random
+GRC3 = Random
 
-    # updating rules
-    1: GPA1* = (S1P or not GCR1) and AGB1
-    1: Atrboh* = pHc and OST1 and ROP2 and not ABI1
-    1: H+ATPase* = not ROS and not pHc and not Ca2+c
-    2: AnionEM* = ((Ca2+c or pHc) and not ABI1 ) or (Ca2+c and pHc)
-    2: Depolar* = KEV or AnionEM  or (not H+ATPase) or (not KOUT) or Ca2+c
-    2: CaIM* = (ROS or not ERA1 or not ABH1) and (not Depolar)
-    ... etc ...
+#
+# updating rules
+#
+1: GPA1* = (S1P or not GCR1) and AGB1
+1: Atrboh* = pHc and OST1 and ROP2 and not ABI1
+1: H+ATPase* = not ROS and not pHc and not Ca2+c
+2: AnionEM* = ((Ca2+c or pHc) and not ABI1 ) or (Ca2+c and pHc)
+2: Depolar* = KEV or AnionEM  or (not H+ATPase) or (not KOUT) or Ca2+c
+2: CaIM* = (ROS or not ERA1 or not ABH1) and (not Depolar)
+... 
+}}}
 
-The initialization conditions can be C{True/False} or C{Random}, 
-this latter being a random choice between C{True/False}. Multiple assignments
-of the form C{A = B = Random} are allowed  (but note that this example sets C{A} and C{B} 
+The initialization conditions can be `True/False` or `Random`, 
+this latter being a random choice between `True/False`. Multiple assignments
+of the form `A = B = Random` are allowed  (but note that this example sets `A` and `B` 
 to the same random value). It is also possible to set all uninitialized values to
-C{Random} or any other desired value. This can simplify the files, see I{Advanced Usage} 
-for how to accomplish this.
+C{Random} or any other desired value. This can simplify the files, see later sections (Advanced Usage} for how to accomplish this.
 
 As you can see above the updating rules must be specified in the following form::
 
-    rank: target* = rule
+{{{
+rank: target* = rule
+}}}
     
-The rank is an integer value that represents the order of update (used in asynchronous mode). 
-Lower ranks will get updated before higher ranks, but within ranks the update order is 
-randomized. The star C{*} indicates that this is an update rule rather than
+The rank is an integer value that represents the order of update (used in asynchronous mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star _*_ indicates that this is an update rule rather than
 an initialization rule. For synchronous updates the order of updates will follow the order 
 in which the rules are listed.
 
-During the simulation the engine collects all the states that the system has visited. To print all
-states:
+During the simulation the engine collects all the states that the system has visited. To print all states:
 
->>> for state in engine.states:
-...     print state
+{{{
+for state in engine.states:
+    print state
+}}}
 
-Each C{state} is an object that provides access to the values of each node
+Each 'state' is an object that provides access to the values of each node
 either as a dictionary or as attribute. Note that while more convenient the attribute 
-access works only for node names that are valid python  identifiers i.e.  C{state.A} will 
-work but C{state.Ca+2} will not. Here is an example:
+access works only for node names that are valid python  identifiers i.e. 'state.A' will 
+work but 'state.Ca+2' will not. Here is an example:
 
->>> for state in enigne.states:
-...     print state.A, state['A'], state['Ca+2']
+{{{
+for state in enigne.states:
+    print state.A, state['A'], state['Ca+2']
+}}}
 
-Please see the C{examples} directory for other use cases.
+Please see the `examples` directory for other many other use cases.
 
-Advanced Usage
-==============
+==Advanced Usage==
+
 
 The library allows the user to override multiple aspects of its operation. For example
 one may inspect and alter the values right before setting or using them. This allows for 
