@@ -58,16 +58,17 @@ for how to accomplish this. When run in LPDE mode (Linear Piecewise Differential
 the option of specifying other parameters during initialization. Every node of the network
 may be characterized by an a triplet of values that correspoind to the 
 _inital concentration_, a _decay_ and a _threshold_ (see [TutorialLPDE] for what these parameters mean).
-Thus we could write the inital conditions as:
+Thus we could also write the inital conditions as:
 
 {{{
 ABA = ABH1 = ERA1 = AGB1 = (1, 2, 0.7)
 }}}
+
 meaning that the `concentration=1`, `decay=2` and the `threshold=0.7`. 
 Both kinds of initializations are accepted for every operating mode. Depending on
-the mode the value will be converted the the appropriate one, with the following conversions rules:
+the mode (pure boolean or hybrid) the value will be converted the appropriate one, with the following conversions rules:
 `True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)` whereas 
-value triplets will be converted to truth value of _concentration >threshold/decay_.
+value triplets will be converted to the truth value of _concentration >threshold/decay_.
 
 The updating rules must be specified in the following form::
 
@@ -75,9 +76,10 @@ The updating rules must be specified in the following form::
 rank: target* = rule
 }}}
     
-The rank is an integer value that represents the order of update (used in asynchronous mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star indicates that this is an update rule rather than
+The rank is an integer value that represents the order of update (only used in _asynchronous_ mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star indicates that this is an update rule rather than
 an initialization rule. For synchronous updates the order of updates will follow the order 
-in which the rules are listed. During the simulation the engine collects all the states that the system has visited. To print all states:
+in which the rules are listed. During the simulation the engine collects all the states 
+that the system has visited. To view the states use:
 
 {{{
 for state in engine.states:
