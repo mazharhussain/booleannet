@@ -89,7 +89,7 @@ class EngineTest( unittest.TestCase ):
         #  
         # places operators and parentheses randomly
         # then executes the rules in python and with the engine in synchronous 
-        # mode
+        # mode and compares the outputs
         # 
         for node in nodes:
             
@@ -111,7 +111,7 @@ class EngineTest( unittest.TestCase ):
                     index = randint(0, len(targets)-1 )
                     targets[index] = 'not ' + targets[index]
             
-            # insert 'and/or' operators
+            # insert 'and/or' operators in between the nodes
             opers   = [ choice( operators ) for t in targets ][:-1]
             for index, oper in enumerate ( opers ):
                 targets.insert(2*index+1, oper)
@@ -119,23 +119,25 @@ class EngineTest( unittest.TestCase ):
             line = join( targets, sep= ' ')
             body.append( line )
 
-        # now we have the expressions
+        #
+        # now that we have the expressions
         # generate python and engine representations
+        #
         py_text, bool_text = [], []
         newts = [ 'n%s' % node for node in nodes ]
         for line, newt, node in zip(body, newts, nodes):
             py_text.append( '%s = %s' % (newt, line) )    
             bool_text.append( '1: %s* = %s' % (node, line) )    
-        
+
+        # needs this to emulate synchronous updating
         py_text.append( join(nodes, sep=', ') + ' = ' + join( newts, sep=', ') )
 
-        py_text = join( py_text )
+        py_text   = join( py_text )
         bool_text = join( bool_text )
-        
         full_text = init_text + py_text
         
         # execute the code in python
-        steps = 10
+        steps = 4
         exec init_text
         for i in range( steps ):
             exec py_text in locals()
