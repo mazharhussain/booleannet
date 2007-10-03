@@ -1,5 +1,5 @@
-#summary How to use the library
-= How to use the library =
+#summary How to use the API library
+= How to use the library for Synchronous and Asynchronous Modes =
 
 A Boolean Network is a set of boolean variables (nodes) that are updated 
 via rules (edges) connecting them. The system evolves by performing updates, 
@@ -53,7 +53,7 @@ The initialization conditions can be `True/False` or `Random`,
 this latter being a random choice between `True/False`. Multiple assignments
 of the form `A = B = Random` are allowed  (but note that this example sets `A` and `B` 
 to the same random value). It is also possible to set all uninitialized values to
-C{Random} or any other desired value. This can simplify the files, see later sections (Advanced Usage} for how to accomplish this.
+`Random` or any other desired value. This can simplify the files, see later sections (Advanced Usage) for how to accomplish this.
 
 As you can see above the updating rules must be specified in the following form::
 
@@ -61,11 +61,9 @@ As you can see above the updating rules must be specified in the following form:
 rank: target* = rule
 }}}
     
-The rank is an integer value that represents the order of update (used in asynchronous mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star _*_ indicates that this is an update rule rather than
+The rank is an integer value that represents the order of update (used in asynchronous mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star indicates that this is an update rule rather than
 an initialization rule. For synchronous updates the order of updates will follow the order 
-in which the rules are listed.
-
-During the simulation the engine collects all the states that the system has visited. To print all states:
+in which the rules are listed. During the simulation the engine collects all the states that the system has visited. To print all states:
 
 {{{
 for state in engine.states:
@@ -85,7 +83,6 @@ for state in enigne.states:
 Please see the `examples` directory for other many other use cases.
 
 ==Advanced Usage==
-
 
 The library allows the user to override multiple aspects of its operation. For example
 one may inspect and alter the values right before setting or using them. This allows for 
