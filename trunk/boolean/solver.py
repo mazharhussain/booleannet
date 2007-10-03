@@ -14,7 +14,8 @@ class Solver( engine.Engine ):
         bool.iterate( steps=1 )
         
         # setting up this engine
-        engine.Engine.__init__(self, text=text, mode=mode)    
+        engine.Engine.__init__(self, text=text, mode=mode)
+        self.dynamic_code = '*** not yet generated ***'
     
     def get_mapper( self):
         """
@@ -90,15 +91,21 @@ class Solver( engine.Engine ):
         dt = fullt/float(steps)
         t  = [ dt * i for i in range(steps) ]
 
-        # initialization
+        # generates the initializator
         self.init_text = self.generate_init()
         #print init_text
-        exec ( self.init_text )
-
-        # defines the function
+        
+        # generates the derivatives
         self.func_text = self.generate_function()
         #print func_text
-        exec self.func_text in locals()
+       
+        self.dynamic_code = self.init_text + '\n' + self.func_text             
+        try:
+            exec self.init_text 
+            exec self.func_text in locals()
+        except Exception, exc:
+            msg = "dynamic code error -> '%s' in:\n%s" % ( exc, self.dynamic_code )
+            util.error(msg)
 
         # x0 has been auto generated in the initialization
         self.alldata = rk4(derivs, x0, t) 
