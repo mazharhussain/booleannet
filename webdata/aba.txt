@@ -2,7 +2,7 @@
 #
 # initialization
 #
-# uninitialized nodes may (and need to) be set to random 
+# uninitialized nodes can be set programmatically
 #
 Closure = False
 ABA = ABH1 = ERA1 = AGB1 = True
@@ -10,8 +10,7 @@ ABA = ABH1 = ERA1 = AGB1 = True
 #
 # below are the updating rules
 #
-# the first number is the rank order
-# (in this case ranks are all the same)
+# the first number is the rank order (in this case is the same rank 1 for every line)
 # lower ranks get executed before higher ranks 
 #
 # update order may be randomized within a rank
