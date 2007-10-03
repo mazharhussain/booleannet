@@ -1,6 +1,0 @@
-A = True
-B = False
-
-1: A* = A or B
-1: B* = A and B
-
