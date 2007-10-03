@@ -1,18 +1,20 @@
 import unittest, string
 from random import randint, choice
-
 from itertools import *
+
 import boolean
 from boolean.functional import *
 
+#
+# helper functions
+#
 def join( data, sep='\n', patt='%s'):
     return patt % sep.join( map(str, data) )
 
-def get( elem, attr):
-    return getattr(elem, attr)
-        
-def istrue( elem ):
-    return elem
+get     = lambda elem, attr: getattr(elem, attr)        
+istrue  = lambda x: x 
+isfalse = lambda x: not x 
+
 
 def get_states( mode, text, steps, miss_func=None):
     """
@@ -107,7 +109,7 @@ class EngineTest( unittest.TestCase ):
             EQ( len(C), 3)
         
     def test_rules( self ):
-        """Testing rules (stress test )
+        """Testing rules (stress test)
         
         Generates lots of random rules and then it compares them in 
         python and with the engine ... this is probably a lot more complicated 
