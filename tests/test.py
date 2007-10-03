@@ -1,6 +1,9 @@
-import unittest, string
+import sys, unittest, string
 from random import randint, choice
 from itertools import *
+
+# import path fixup
+sys.path.append( '..' )
 
 import boolean
 from boolean.functional import *
