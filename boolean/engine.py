@@ -213,6 +213,11 @@ class Engine:
         LAST_LINE = line
         return self.parser.parse( line )
 
+    @property
+    def last(self):
+        assert self.states, 'States are empty'
+        return self.states[-1]
+
     def initialize( self, miss_func=None ):
         """
         Initializes the parser
@@ -281,7 +286,7 @@ if __name__ == '__main__':
 
     1: A* = not A
     1: B* = A and not B
-    1: C* = A and B X
+    1: C* = A and B
     """
 
     be = Engine( mode='sync', text=text )

@@ -25,8 +25,51 @@ def get_states( mode, text, steps, miss_func=None):
             
 class EngineTest( unittest.TestCase ):
     
-    def test_eninge_loading( self ):
+    def test_lpde_engine( self ):
+        "Testing LPDE"
+        
+        EQ = self.assertEqual
+
+        text = """
+        A = B = True
+        C = False
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
+        """
+        eng  = boolean.Engine( mode='lpde', text=text )
+        eng.initialize()
+        eng.iterate( fullt=1, steps=10 )
+        EQ( len(eng.data), 3)
+        EQ( len(eng.data['A']), 10)
+
+
+    def test_engine( self ):
         "Basic operation"
+        
+        EQ = self.assertEqual
+
+        text = """
+        A = B = True
+        C = False
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
+        """
+        eng  = boolean.Engine( mode='sync', text=text )
+        eng.initialize()
+        eng.iterate( steps=5 )
+        
+        EQ( eng.start.A, True )
+        EQ( eng.start.B, True )
+        EQ( eng.start.C, False )
+
+        EQ( eng.last.A, True )
+        EQ( eng.last.B, True )
+        EQ( eng.last.C, True )
+
+    def test_eninge_modes( self ):
+        "Testing engine modes"
 
         EQ = self.assertEqual
 
@@ -42,6 +85,9 @@ class EngineTest( unittest.TestCase ):
             
             states = get_states(mode=mode, text=text, steps=5)
             
+            for state in states:
+                EQ( state.A, True )
+
             # create extractor functions
             funcs  = [ partial( get, attr=attr ) for attr in 'ABC' ]
 
@@ -61,7 +107,7 @@ class EngineTest( unittest.TestCase ):
             EQ( len(C), 3)
         
     def test_rules( self ):
-        """Rule stress test. 
+        """Testing rules (stress test )
         
         Generates lots of random rules and then it compares them in 
         python and with the engine ... this is probably a lot more complicated 
@@ -156,7 +202,6 @@ class EngineTest( unittest.TestCase ):
             newval = getattr(last, attr )
             #print attr, oldval, newval
             EQ( oldval, newval )
-
 
 def _test():
     
