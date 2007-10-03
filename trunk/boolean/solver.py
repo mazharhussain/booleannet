@@ -127,7 +127,6 @@ if __name__ == '__main__':
 
     states = engine.states
     
-    data = states['A']
 
     from pylab import *
     plot( engine.alldata ,'o-' )

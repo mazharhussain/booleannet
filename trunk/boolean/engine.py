@@ -281,7 +281,7 @@ if __name__ == '__main__':
 
     1: A* = not A
     1: B* = A and not B
-    1: C* = A and B
+    1: C* = A and B X
     """
 
     be = Engine( mode='sync', text=text )
