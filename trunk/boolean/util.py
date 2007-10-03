@@ -2,8 +2,6 @@ from itertools import *
 import sys, os, logging, random, re, string
 import tokenizer
 
-EVERYTHING = "EVERYTHING_ELSE"
-
 class State(object):
     """
     Maintains the node state as attributes.
