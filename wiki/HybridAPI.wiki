@@ -2,18 +2,24 @@
 
 = Introduction =
 
-The hybrid model models the booelan rules via _linear piecewise differential equations_. Practically
-this means that a rule written as:
+The hybrid model models the booelan rules via _linear piecewise differential equations_. 
+Every node in the system will have three continous variables associated with it a _concentration_, 
+a _threshold_ and a _decay_. Each node is considered ON when its concentration is greater than 
+the threshold. Practically this means that a rule written as:
 
 {{{ A = B and C }}}
 
-will be intepreted as a differential equation of the form:
+will be solved as a differential equation of the form:
 
 {{{ dA/dt = (( conc(B) > threshold(B)) and (conc(C) > threshold(C)) - decay(A) * conc(A) }}}
 
-where every node in the system will be characterize by three parameters, the _concentration_, 
-the _threshold_ and the _decay_. 
+This leads to the following dynamics for each node:
+  
+  * when the boolean term is `True` the equation is of the form `dA/dt = 1 - decay * A
+  * when the boolean term is `False` the equation is of the form `dA/dt = -decay * A
 
+Thus, in time we may have either an exponential type increase or an exponential type decrease 
+of the concentrations.
 
 
 
