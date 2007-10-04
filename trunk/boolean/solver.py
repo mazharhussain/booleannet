@@ -6,44 +6,57 @@ from engine import Engine
 
 def override( base, indexer ):
     """
-    Gets called at the beginnig of the line
-    If this function returns anything it will override the entire equation
+    Gets called at the before the transformation.
+    If this function returns anything other than false it will override the entire equation
     """
-    return ''
+    return False
 
 def init_line( store ):
     """
     Store is an incoming dictionary prefilled with parameters
     """
-    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f' 
+    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f # %(node)s' 
     return patt % store
 
 def line_start( node, indexer ):
     """
-    Triggers at the beginning fo the line
+    Triggers at the beginning fo the line, writes fragments of the type:
+
+        n10 = float (
+
     """
     index = indexer[node]
     return '\tn%d = float( ' % index
 
 def line_middle( node, indexer ):
     """
-    Triggers before the decay function
+    Triggers before the decay function writes a fragment of the type:
+        
+        )
+
     """
     return ' ) '
 
 def decay_func( node, indexer ):
     """
-    Triggers at the end of the line
+    Triggers at the end of the line and creates the
+    decay function of the form: 
+        
+        - decay * concentration
+    
     """
     index = indexer[node]
-    patt = "- d%d * c%d"
-    return patt % (index, index )
+    patt = "- d%d * c%d # %s"
+    return patt % (index, index, node )
 
 def node_func( node, base, indexer ):
     """
     Gets triggered for each node, base is the node that
 
-    Replaces nodes that are in the mapper with a function"
+    Replaces nodes that are in the indexer with:
+
+        ( concentration > threshold )
+
     """
     if node in indexer:
         index = indexer[node]
@@ -102,7 +115,7 @@ class Solver( Engine ):
         for index, node, triplet in self.mapper.values():
             conc, decay, tresh = triplet
             assert decay > 0, 'Decay must be larger than 0 -> %s' % str(triplet)  
-            store = dict( index=index, conc=conc, decay=decay, tresh=tresh)
+            store = dict( index=index, conc=conc, decay=decay, tresh=tresh, node=node)
             line = self.INIT_LINE( store )
             init.append( line )
         if self.extra_init:
@@ -177,7 +190,7 @@ class Solver( Engine ):
                 exec self.init_text in globals()
                 exec self.func_text in globals()
             except Exception, exc:
-                msg = "dynamic code error -> '%s' in:\n%s\n*** dynamic code error ***" % ( exc, self.dynamic_code )
+                msg = "'%s' in:\n%s\n*** dynamic code error ***" % ( exc, self.dynamic_code )
                 util.error(msg)
 
             # x0 has been auto generated in the initialization

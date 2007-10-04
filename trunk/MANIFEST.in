@@ -10,6 +10,9 @@ include examples/LGL/LGL.txt
 include examples/LGL/LGL.py
 include examples/LGL/LGL-lpde.py
 
+include examples/immune/*.py
+include examples/immune/*.txt
+
 recursive-include examples/demos *.txt *.py
 recursive-include test test*.txt test*.py
 recursive-include html *.html *.css *.js *.png
