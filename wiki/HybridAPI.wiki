@@ -3,9 +3,7 @@
 = Introduction =
 
 The hybrid model solves the boolean rules via _linear piecewise differential equations_. 
-In this mode every node in the system will have three continuous variables associated with it a _concentration_, 
-a _threshold_ and a _decay_. Each node is considered `ON` when its concentration is greater than 
-the threshold. Practically this means that a rule written as:
+In this mode every node in the system will have three continuous variables associated with it a _concentration_, a _decay_, and a _threshold_ . Each node is considered `ON` when its concentration is greater than the threshold. Practically this means that a rule written as:
 
 {{{ 
 A = B and C 
@@ -16,7 +14,8 @@ will be solved as a differential equation of the form:
 {{{ 
 dA/dt = (( conc(B) > threshold(B)) and (conc(C) > threshold(C)) - decay(A) * conc(A) 
 }}}
-The boolean (first) term corresponds to the _regulated synthesis_ while the decay (second) term corresponds to _free (unregulated) dissociation_. The equation leads to the following dynamics for each node:
+
+Here the boolean (first) term corresponds to the _regulated synthesis_ while the decay (second) term corresponds to _free (unregulated) dissociation_. The equation leads to the following dynamics for each node:
   
   * when the boolean term is `True` the equation is of the form `dA/dt = 1 - decay * A`
   * when the boolean term is `False` the equation is of the form `dA/dt = - decay * A`
