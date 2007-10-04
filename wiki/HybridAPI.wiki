@@ -24,10 +24,7 @@ This means that in time we may have either an exponential type increase (to a ma
 
 = Usage =
 
-The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. An automatic conversion will take place if the initialization values correspond to the boolean mode:`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)`. 
- 
-
-Internally the software will dynamically generate Python code to describe the differential equations, then it numerically integrates this generated function through a fourth order [http://en.wikipedia.org/wiki/Runge-Kutta_methods Runge-Kutta method]. Here is a typical use case:
+The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. An automatic conversion will take place if the initialization values correspond to the boolean mode:`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)`.Here is a typical use case:
 
 {{{
 import boolean
@@ -47,4 +44,34 @@ engine.iterate( fullt=1, steps=10 )
 import pylab
 pylab.plot( engine.data['A'] , 'o-' )
 pylab.show()
+}}}
+
+= Advanced Usage =
+
+There are common circumstances where the default behaviors needs to be augmented to account for certain biological knowledge. The software provides great flexibility allowing one to alter all aspects of the process.
+
+First some background on how the process takes place. Internally the software will dynamically generate Python code to describe the differential equations, then it numerically integrates this generated function through a fourth order [http://en.wikipedia.org/wiki/Runge-Kutta_methods Runge-Kutta method]. There is an easy way to display the code that was generated, simply passing the `debug=1` parameter to the iterator call like so: `engine.iterate( fullt=1, steps=10, debug=1 )`. This will print the following:
+
+{{{
+# dynamically generated code
+# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue
+# [(0, 'A', (1.0, 1.0, 0.5)), (1, 'B', (1.0, 1.0, 0.5)), (2, 'C', (1.0, 1.0, 0.5))]
+c0, d0, t0 = 1.000000, 1.000000, 0.500000/1.000000 # A
+c1, d1, t1 = 1.000000, 1.000000, 0.500000/1.000000 # B
+c2, d2, t2 = 1.000000, 1.000000, 0.500000/1.000000 # C
+x0 = c0, c1, c2
+def derivs( x, t):
+	c0, c1, c2 = x
+	n0, n1, n2 = c0, c1, c2
+
+	#1: A * = not A
+	n0 = float(  not  ( c0 > t0 )  ) - d0 * c0
+
+	#2: B * = A and B
+	n1 = float(  ( c0 > t0 )  and  ( c1 > t1 )  ) - d1 * c1
+
+	#3: C * = C
+	n2 = float(  ( c2 > t2 )  ) - d2 * c2
+
+	return ( n0, n1, n2 ) 
 }}}
