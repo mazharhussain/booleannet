@@ -1,4 +1,4 @@
-#summary How to use the programming interface (API)
+#summary How to use the programming interface in boolean mode (API)
 =Programming Interface in Synchronous and Asynchronous Modes =
 
 A Boolean Network is a set of boolean variables (nodes) that are updated 
