@@ -76,7 +76,7 @@ def p_expression_tuple(p):
     if p.parser.lpde_mode:
         p[0] = (p[2], p[4], p[6])
     else:
-        p[0] = p[2] > p[4]/p[6]
+        p[0] = p[2] > p[6]
 
 def p_expression_paren(p):
     "expression : LPAREN expression RPAREN"
@@ -246,7 +246,7 @@ class Engine:
             if self.missing_nodes:
                 util.error('Not initialized nodes %s' % ', '.join(self.missing_nodes) )
 
-    def iterate( self, steps, fname='', text=''):
+    def iterate( self, steps, debug=False):
         """
         Iterates over the instruction 'count' times
         """
