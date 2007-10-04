@@ -68,7 +68,7 @@ meaning that the `concentration=1`, `decay=2` and the `threshold=0.7`.
 Both kinds of initializations are accepted for every operating mode. Depending on
 the mode (pure boolean or hybrid) the value will be converted the appropriate one, with the following conversions rules:
 `True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)` whereas 
-value triplets will be converted to the truth value of _concentration >threshold/decay_.
+value triplets will be converted to the truth value of _concentration > threshold_.
 
 The updating rules must be specified in the following form::
 
