@@ -103,18 +103,12 @@ Please see the `examples` directory for other many other use cases.
 The library allows the user to override multiple aspects of its operation. For example
 one may inspect and alter the values right before setting or using them. This allows for 
 additional computations to take place or to make some decisions based on other biological 
-or empirical evidence, decisions that do not have a proper boolean representation.
-
-It is also possible to change how the operators themselves work, or make operators 
+or empirical evidence, decisions that do not have a proper boolean representation. It is also possible to change how the operators themselves work, or make operators 
 work differently for different nodes. 
 
 ===Advanced Initialization===
 
-Often it is inconvenient or impractical to explicitly initialize all nodes in the input file. 
-The library offers the option of passing a custom function to the engine initializer that 
-will be called for all nodes that are left uninitalized. This function needs to take one 
-parameter and must return a `True/False` value in _sync_ and _async_ modes and a value triplet 
-in _lpde_ modes.
+Often it is inconvenient or impractical to explicitly initialize all nodes in the input file. The library offers the option of passing a custom function to the engine initializer that will be called for all nodes that are left uninitalized. This function needs to take one parameter and must return a `True/False` value in _sync_ and _async_ modes and a value triplet in _lpde_ modes.
 
 {{{
 def randomizer( node_name ):
@@ -126,17 +120,26 @@ engine.initialize( miss_func=randomizer )
 }}}
 
 The example above sets uninitialized nodes to a random state. We are ignoring the 
-node name but it would be possible to make use of it i.e. if some genes were more likely 
-to start out in a given state. 
+node name but it would be possible to make use of it i.e. in a gene regulatory network some genes might be more likely to start being set to a given state. 
 
 ===Action Overriding===
 
 The software is designed with extensibility and adaptability in mind, and to that end it allows the user to override its behavior at different points of the execution. The following functions may be altered (we also list the function signatures for reference):
 
 {{{
+engine.RULE_SETVALUE ( state, name, value, parser)
+engine.RULE_GETVALUE ( state, name, parser)
+
 engine.RULE_AND (node1, node2, parser)
 engine.RULE_OR  (node1, node2, parser)
 engine.RULE_NOT (node, parser)
-engine.RULE_SETVALUE ( state, name, value, parser)
-engine.RULE_GETVALUE ( state, name, parser)
 }}}
+
+Each of these rules have proper default action and only need be assigned new functions  if a special operation is desired. Typically the `RULE_SETVALUE` and `RULE_GETVALUE` functions more naturally lend themselves to interpretation. There is an important distinction between the two:
+  * `RULE_SETVALUE` will be called while assigning a value to a node and it will overwrite the value. 
+  * `RULE_GETVALUE` will be called while querying the state of a node and will not overwrite the actual value of the node
+
+
+
+The last of the parameters `parser` almost always can be ignored (that is you won't need it make any use of it). It is there to allow for situations where one would need to inspect the state of parser up to the point when the rule is triggered (rarely needed if ever).
+ 
