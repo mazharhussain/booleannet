@@ -156,10 +156,11 @@ def local_setvalue( state, name, value, parser ):
     return util.default_set_value( state, name, value, parser )
 
 def local_getvalue( state, name, parser ):
+    value = util.default_get_value( state, name, parser )
     if name == 'BLK2':            
         return random.choice( [False, value] )
     else:
-        return util.default_get_value( state, name, parser )
+        return value
 
 engine = boolean.Engine( mode='async', text=text )
 engine.RULE_SETVALUE = local_setvalue
