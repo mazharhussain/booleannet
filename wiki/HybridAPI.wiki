@@ -15,8 +15,8 @@ will be solved as a differential equation of the form:
 
 This leads to the following dynamics for each node:
   
-  * when the boolean term is `True` the equation is of the form `dA/dt = 1 - decay \* A
-  * when the boolean term is `False` the equation is of the form `dA/dt = -decay \* A
+  * when the boolean term is `True` the equation is of the form `dA/dt = 1 - decay '*' A`
+  * when the boolean term is `False` the equation is of the form `dA/dt = -decay '*' A`
 
 Thus, in time we may have either an exponential type increase or an exponential type decrease 
 of the concentrations.
