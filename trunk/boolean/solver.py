@@ -1,7 +1,7 @@
 from pylab import arange, rk4
 import sys
 from itertools import *
-import util, odict
+import util, odict, tokenizer
 from engine import Engine
 
 def override( base, indexer ):
@@ -46,8 +46,8 @@ def decay_func( node, indexer ):
     
     """
     index = indexer[node]
-    patt = "- d%d * c%d # %s"
-    return patt % (index, index, node )
+    patt = "- d%d * c%d"
+    return patt % (index, index)
 
 def node_func( node, base, indexer ):
     """
@@ -127,21 +127,26 @@ class Solver( Engine ):
         """
         Creates a python equation from a list of tokens.
         """
+        original = '\n\t#' + tokenizer.tok2line(tokens)
+
         base = tokens[1].value
-        line = self.OVERRIDE(base, indexer=self.indexer)
-        if line:
-            return line
+        newline = self.OVERRIDE(base, indexer=self.indexer)
+        if newline:
+            return '\n'.join( [original, newline] ) 
         
         line = []
         line.append ( self.LINE_START( base, indexer=self.indexer) )
+        
         nodes = [ t.value for t in tokens[4:] ]
         for node in nodes:
             value = self.NODE_FUNC( node=node, base=base, indexer=self.indexer )
             line.append ( value )
         line.append ( self.LINE_MIDDLE(base, indexer=self.indexer) )
-        line.append ( self.DECAY_FUNC( node= base, indexer=self.indexer ) )
+        line.append ( self.DECAY_FUNC( node=base, indexer=self.indexer ) )
         
-        return ''.join( line )
+        newline  = ''.join( line )
+
+        return '\n'.join( [original, newline] ) 
 
     def generate_function(self ):
         """
@@ -159,6 +164,7 @@ class Solver( Engine ):
         body.append( '\t%s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
             body.append( self.create_equation( tokens ) )
+        body.append( '' )
         body.append( "\treturn ( %s ) " % retvals )
         text = '\n'.join( body )
         

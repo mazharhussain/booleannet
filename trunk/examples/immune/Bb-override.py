@@ -16,7 +16,7 @@ A = B = C = (1, 1, 0.5)
 def hill_func( conc ):
     return 1
 
-def override( node, indexer):
+def override( node, indexer ):
     "Overrides a node"
     if node == 'B':
         bi, ai = indexer['B'], indexer['A']
@@ -30,6 +30,7 @@ def override( node, indexer):
 
 engine = Engine( text=text, mode='lpde' )
 engine.initialize()
+
 engine.OVERRIDE = override
 
 params = dict( PROP=1, hill_func=hill_func )
