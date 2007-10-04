@@ -2,9 +2,9 @@
 
 = Introduction =
 
-The hybrid model models the booelan rules via _linear piecewise differential equations_. 
-Every node in the system will have three continous variables associated with it a _concentration_, 
-a _threshold_ and a _decay_. Each node is considered ON when its concentration is greater than 
+The hybrid model solves the booelan rules via _linear piecewise differential equations_. 
+In this mode every node in the system will have three continous variables associated with it a _concentration_, 
+a _threshold_ and a _decay_. Each node is considered `ON` when its concentration is greater than 
 the threshold. Practically this means that a rule written as:
 
 {{{ A = B and C }}}
