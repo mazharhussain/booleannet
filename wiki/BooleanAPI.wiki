@@ -111,8 +111,7 @@ work differently for different nodes.
 Often it is inconvenient or impractical to explicitly initialize all nodes in the input file. The library offers the option of passing a custom function to the engine initializer that will be called for all nodes that are left uninitalized. This function needs to take one parameter and must return a `True/False` value in _sync_ and _async_ modes and a value triplet in _lpde_ modes.
 
 {{{
-import random
-import boolean
+import random, boolean
 
 def randomizer( node_name ):
     return random.choice( [True, False] )
