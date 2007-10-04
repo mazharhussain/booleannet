@@ -55,7 +55,7 @@ def node_func( node, base, indexer ):
 
     Replaces nodes that are in the indexer with:
 
-        ( concentration > threshold )
+        ( concentration >= threshold )
 
     """
     if node in indexer:

@@ -1,7 +1,8 @@
 #
 # upon runtime set missing values to false!
 #
-Bb = True
+MP = ( 1, 1, 0.19 )
+
 
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
 1: TTSS* = Bb and not (CA or OAb) 

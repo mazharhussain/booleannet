@@ -1,6 +1,6 @@
-A = True
-B = False
+SAM1 = True
+BLK2 = False
 
-1: A* = A or B
-1: B* = A and B
+1: SAM1* = SAM1 or BLK2
+1: BLK2* = SAM1 and BLK2
 

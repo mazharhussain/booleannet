@@ -30,9 +30,7 @@ def override( node, indexer ):
 
 engine = Engine( text=text, mode='lpde' )
 engine.initialize()
-
 engine.OVERRIDE = override
-
 params = dict( PROP=1, hill_func=hill_func )
 
 engine.iterate( fullt=1, steps=10, debug=0, params=params )
