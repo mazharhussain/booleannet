@@ -135,7 +135,8 @@ class Engine:
         # find the uninitialized nodes
         self.init_nodes, self.rank_nodes = map(set, ( init_ids, rank_ids) )
         self.missing_nodes = self.rank_nodes - self.init_nodes
-
+        self.all_nodes = self.rank_nodes | self.init_nodes
+        
         # separate the body by rank
         store = {}
         for toks in self.rank_tokens:
@@ -246,7 +247,7 @@ class Engine:
             if self.missing_nodes:
                 util.error('Not initialized nodes %s' % ', '.join(self.missing_nodes) )
 
-    def iterate( self, steps, debug=False):
+    def iterate( self, steps, debug=False, params={}):
         """
         Iterates over the instruction 'count' times
         """
