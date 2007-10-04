@@ -48,7 +48,7 @@ pylab.show()
 
 = Advanced Usage =
 
-There are common circumstances where the default behaviors needs to be augmented to account for certain biological knowledge. The software provides great flexibility allowing one to alter all aspects of the process.
+There are common circumstances where the default behaviors need to be augmented to account for certain biological knowledge. The software provides great flexibility allowing one to alter all aspects of the process.
 
 First some background on how the process takes place. Internally the software will dynamically generate Python code to describe the differential equations, then it numerically integrates this generated function through a fourth order [http://en.wikipedia.org/wiki/Runge-Kutta_methods Runge-Kutta method]. The way to display the code that was generated pass the `debug=1` parameter to the `iterate` method call like so: `engine.iterate( fullt=1, steps=10, debug=1 )`. This will print the following:
 
