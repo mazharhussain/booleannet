@@ -18,7 +18,6 @@ get     = lambda elem, attr: getattr(elem, attr)
 istrue  = lambda x: x 
 isfalse = lambda x: not x 
 
-
 def get_states( mode, text, steps, miss_func=None):
     """
     Helper function to generate the states
@@ -114,9 +113,8 @@ class EngineTest( unittest.TestCase ):
     def test_rules( self ):
         """Testing rules (stress test)
         
-        Generates lots of random rules and then it compares them in 
-        python and with the engine ... this is probably a lot more complicated 
-        than it needs be
+        Generates lots of random rules and then compares the results when executed 
+        in python and with the engine ... might be more complicated than it needs be
         """
         EQ = self.assertEqual
 
@@ -138,7 +136,7 @@ class EngineTest( unittest.TestCase ):
         #
         # (N or (J and B and M or not Z)) and not G
         #  
-        # places operators and parentheses randomly
+        # places nodes, operators and parentheses randomly (but syntactically correct)
         # then executes the rules in python and with the engine in synchronous 
         # mode and compares the outputs
         # 
@@ -146,11 +144,11 @@ class EngineTest( unittest.TestCase ):
             
             # how many nodes per rule
             targets = [ choice( nodes ) for step in range( randint(2, 8) ) ]
-            
+            size = len( targets ) - 1
+
             # insert some parentheses
             if randint(1, 100) > 30:
                 for i in range(2):
-                    size = len( targets ) - 1
                     half = size/2
                     left, right = randint(0, half), randint(half, size)
                     targets[left]  = '(' + targets[left]
@@ -159,13 +157,13 @@ class EngineTest( unittest.TestCase ):
             # add 'not' operators every once in a while
             if randint(1, 100) > 30:
                 for steps in range( 2 ):
-                    index = randint(0, len(targets)-1 )
+                    index = randint(0, size )
                     targets[index] = 'not ' + targets[index]
             
             # insert 'and/or' operators in between the nodes
             opers   = [ choice( operators ) for t in targets ][:-1]
             for index, oper in enumerate ( opers ):
-                targets.insert(2*index+1, oper)
+                targets.insert( 2*index+1, oper)
 
             line = join( targets, sep= ' ')
             body.append( line )

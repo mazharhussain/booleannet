@@ -141,9 +141,11 @@ Each of these rules have proper default action and only need be assigned behavio
 
 We'll demonstrate the use of these by implementing a hypothetical scenario in a gene regulatory network where:
 
-  _The expression level of gene `SAM1` is affected by unknown factors and it has been  observed that its mRNA level occasionally and spontaneously resets to a low value (OFF). Also it has been empirically observed that the levels of protein `BLK2` can vary more than its mRNA levels thus indicating a post-translational supression_
+  _The expression level of gene `SAM1` is affected by unknown factors and it has been observed that its mRNA level occasionally and spontaneously resets to a low value (OFF). Also it has been empirically observed that the levels of protein `BLK2` can vary more than its mRNA levels thus indicating a post-translational supression_
 
-Here is the model that captures these behaviors (we will omit listing the rules as those are not relevant for the point we are making):
+Here is the model that captures these behaviors (we will omit listing the rules as 
+those are not relevant for the point we are making):
+
 {{{
 import random
 from boolean import engine, util
@@ -164,8 +166,10 @@ engine.RULE_SETVALUE = local_setvalue
 engine.RULE_GETVALUE = local_getvalue 
 engine.initialize()
 engine.iterate( steps=5 )
-
 }}}
   
-The last of the parameters `parser` almost always can be ignored (that is you won't need it make any use of it). It is there to allow for situations where one would need to inspect the state of parser up to the point when the rule is triggered (rarely needed if ever).
+The last of the parameters `parser` almost always can be ignored 
+(that is you won't need it make any use of it). It is there to allow for situations 
+where one would need to inspect the state of parser up to the point when the rule is 
+triggered (rarely needed if ever).
  
