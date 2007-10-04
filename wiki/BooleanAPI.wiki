@@ -1,5 +1,5 @@
 #summary How to use the programming interface in boolean mode (API)
-=Programming Interface in Synchronous and Asynchronous Modes =
+=Introduction=
 
 A Boolean Network is a set of boolean variables (nodes) that are updated 
 via rules (edges) connecting them. The system evolves by performing updates, 
@@ -11,6 +11,8 @@ Different updating methodologies may be used. In _synchronous_ updating one
 only commits the new values for the nodes at the end of
 each iteration. In _asynchronous_ updating the new values of the nodes became
 active at the moment they are assigned. The update order of the nodes may also be important. This order may be _fixed_, meaning that the order is always the same. It can be _random_ where the nodes are assigned new values in random order in each iteration, and finally it can be _rank-random_ where each node has a rank and within ranks the node order is randomized.
+
+=Usage=
 
 *BooleanNet* is a python library for performing boolean network simulations. 
 It provides an easy to use application programming interface (API) for
@@ -98,7 +100,7 @@ for state in enigne.states:
 
 Please see the `examples` directory for other many other use cases.
 
-==Advanced Usage==
+=Advanced Use=
 
 The library allows the user to override multiple aspects of its operation. For example
 one may inspect and alter the values right before setting or using them. This allows for 
@@ -106,7 +108,7 @@ additional computations to take place or to make some decisions based on other b
 or empirical evidence, decisions that do not have a proper boolean representation. It is also possible to change how the operators themselves work, or make operators 
 work differently for different nodes. 
 
-===Advanced Initialization===
+==Advanced Initialization==
 
 Often it is inconvenient or impractical to explicitly initialize all nodes in the input file. The library offers the option of passing a custom function to the engine initializer that will be called for all nodes that are left uninitalized. This function needs to take one parameter and must return a `True/False` value in _sync_ and _async_ modes and a value triplet in _lpde_ modes.
 
@@ -123,7 +125,7 @@ engine.initialize( miss_func=randomizer )
 The example above sets uninitialized nodes to a random state. In the example we are ignoring the 
 node name but it would be possible to make use of it i.e. in a gene regulatory network some genes might be more likely to start being set to a given state. 
 
-===Action Overriding===
+==Action Overriding==
 
 The software is designed with extensibility and adaptability in mind, and to that end it allows the user to override its behavior at different points of the execution. The following functions may be altered (we also list the function signatures for reference):
 
