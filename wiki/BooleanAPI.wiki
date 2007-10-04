@@ -141,7 +141,7 @@ Each of these rules have proper default action and only need be assigned behavio
 
 We'll demonstrate the use of these by implementing a hypothetical scenario in a gene regulatory network where:
 
-  _The expression level of gene `SAM1` is affected by unknown factors and it has been  observed that its mRNA level occasionally and spontaneously resets to a low value (OFF). Also it has been empirically observed that the levels of protein `BLK2` can vary more than its mRNA levels thus indicating a post-translational regulation_
+  _The expression level of gene `SAM1` is affected by unknown factors and it has been  observed that its mRNA level occasionally and spontaneously resets to a low value (OFF). Also it has been empirically observed that the levels of protein `BLK2` can vary more than its mRNA levels thus indicating a post-translational supression_
 
 Here is the model that captures these behaviors (we will omit listing the rules as those are not relevant for the point we are making):
 {{{
@@ -150,7 +150,7 @@ from boolean import engine, util
 
 def local_setvalue( state, name, value, parser )
     if name == 'SAM1':
-        value = random.choice( [False, value] )
+        value = random.choice( [False, value] ) 
     return util.default_setvalue( state, name, value, parser )
 
 def local_getvalue( state, name, parser )
@@ -161,7 +161,7 @@ def local_getvalue( state, name, parser )
 
 engine = boolean.Engine( mode='async', text=text )
 engine.RULE_SETVALUE = local_setvalue
-engine.RULE_SETVALUE = local_getvalue 
+engine.RULE_GETVALUE = local_getvalue 
 engine.initialize()
 engine.iterate( steps=5 )
 
