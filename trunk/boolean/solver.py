@@ -18,52 +18,28 @@ def init_line( store ):
     patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f # %(node)s' 
     return patt % store
 
-def line_start( node, indexer ):
-    """
-    Triggers at the beginning fo the line, writes fragments of the type:
 
-        n10 = float (
-
-    """
-    index = indexer[node]
-    return '\tn%d = float( ' % index
-
-def line_middle( node, indexer ):
-    """
-    Triggers before the decay function writes a fragment of the type:
-        
-        )
-
-    """
-    return ' ) '
-
-def decay_func( node, indexer ):
-    """
-    Triggers at the end of the line and creates the
-    decay function of the form: 
-        
-        - decay * concentration
+def piecewise( tokens, indexer ):
     
-    """
-    index = indexer[node]
-    patt = "- d%d * c%d"
-    return patt % (index, index)
+    base_node  = tokens[1].value
+    base_index = indexer[base_node]
+    line = []
+    line.append ( 'n%d = float(' % base_index )
+    nodes = [ t.value for t in tokens[4:] ]
+    for node in nodes:
+        if node in indexer:
+            index = indexer[node]
+            value = " ( c%d > t%d ) " % ( index, index )
+        else:
+            value = node
+        line.append ( value )
+    line.append ( ')' )
+    line.append ( "- d%d * c%d" % ( base_index, base_index ) )
+    
+    return ' '.join( line )
 
-def node_func( node, base, indexer ):
-    """
-    Gets triggered for each node, base is the node that
-
-    Replaces nodes that are in the indexer with:
-
-        ( concentration >= threshold )
-
-    """
-    if node in indexer:
-        index = indexer[node]
-        patt = " ( c%d > t%d ) "
-        return patt % (index, index )
-    else:
-        return ' %s ' % node
+def default_override(*args, **kwds):
+    return False
 
 class Solver( Engine ):
     """
@@ -75,13 +51,10 @@ class Solver( Engine ):
         bool = Engine(text=text, mode='sync')
         bool.initialize( miss_func=util.randomize )
         bool.iterate( steps=1 )
-        self.INIT_LINE   = init_line
-        self.DECAY_FUNC  = decay_func
-        self.NODE_FUNC   = node_func
-        self.LINE_START  = line_start
-        self.LINE_MIDDLE = line_middle
-        self.OVERRIDE = override
-
+        self.INIT_LINE = init_line
+        self.OVERRIDE  = default_override
+        self.DEFAULT_FUNC = piecewise
+        self.CREATE_EQUATION = self.create_equation
         self.extra_init = ''
 
         # setting up this engine
@@ -118,8 +91,10 @@ class Solver( Engine ):
             store = dict( index=index, conc=conc, decay=decay, tresh=tresh, node=node)
             line = self.INIT_LINE( store )
             init.append( line )
+        
         if self.extra_init:
             init.append( self.extra_init )            
+        
         init_text = '\n'.join( init )
         return init_text
     
@@ -127,45 +102,35 @@ class Solver( Engine ):
         """
         Creates a python equation from a list of tokens.
         """
-        original = '\n\t#' + tokenizer.tok2line(tokens)
-
-        base = tokens[1].value
-        newline = self.OVERRIDE(base, indexer=self.indexer)
-        if newline:
-            return '\n'.join( [original, newline] ) 
-        
-        line = []
-        line.append ( self.LINE_START( base, indexer=self.indexer) )
-        
-        nodes = [ t.value for t in tokens[4:] ]
-        for node in nodes:
-            value = self.NODE_FUNC( node=node, base=base, indexer=self.indexer )
-            line.append ( value )
-        line.append ( self.LINE_MIDDLE(base, indexer=self.indexer) )
-        line.append ( self.DECAY_FUNC( node=base, indexer=self.indexer ) )
-        
-        newline  = ''.join( line )
-
-        return '\n'.join( [original, newline] ) 
+        original = '#' + tokenizer.tok2line(tokens)
+        node  = tokens[1].value
+        lines = [ '', original ]
+        line  = self.OVERRIDE(node, indexer=self.indexer, tokens=tokens) or self.DEFAULT_FUNC( tokens=tokens, indexer=self.indexer )
+        lines.append( line )
+        return lines  
 
     def generate_function(self ):
         """
         Generates the function that will be used to integrate
         """
+        sep = '    '
         indices = [ x[0] for x in self.mapper.values() ]
         assign  = [ 'c%d' % i for i in indices ]
         retvals = [ 'n%d' % i for i in indices ]
         assign  = ', '.join(assign)
         retvals = ', '.join(retvals)
+        
         body = []
         body.append( 'x0 = %s' % assign )
         body.append( 'def derivs( x, t):' )
-        body.append( '\t%s = x' % assign )
-        body.append( '\t%s = %s' % (retvals, assign) )
+        body.append( '    %s = x' % assign )
+        body.append( '    %s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
-            body.append( self.create_equation( tokens ) )
+            equation = self.CREATE_EQUATION( tokens )
+            equation = [ '    ' + e for e in equation ]
+            body.append( '\n'.join( equation)  )
         body.append( '' )
-        body.append( "\treturn ( %s ) " % retvals )
+        body.append( "    return ( %s ) " % retvals )
         text = '\n'.join( body )
         
         return text
