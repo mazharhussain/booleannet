@@ -1,23 +1,85 @@
 from pylab import arange, rk4
+import sys
 from itertools import *
-import engine, util
+import util, odict
+from engine import Engine
 
-class Solver( engine.Engine ):
+def init_line( store ):
+    """
+    Store is an incoming dictionary prefilled with parameters
+    """
+    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f' 
+    return patt % store
+
+def line_start( node, mapper ):
+    """
+    Triggers at the beginning fo the line
+    """
+    index, node, value = mapper[node]
+    return '\tn%d = float( ' % index
+
+def line_middle( node, mapper ):
+    """
+    Triggers before the decay function
+    """
+    return ' ) '
+
+def decay_func( node, mapper ):
+    """
+    Triggers at the end of the line
+    """
+    index, node, value = mapper[node]
+    patt = "- d%d * c%d"
+    return patt % (index, index )
+
+def node_func( node, base, mapper ):
+    """
+    Gets triggered for each node, base is the node that
+
+    Replaces nodes that are in the mapper with a function"
+    """
+    if node in mapper:
+        index, node, value = mapper[node]
+        patt = " ( c%d > t%d ) "
+        return patt % (index, index )
+    else:
+        return node
+
+class Solver( Engine ):
     """
     This class generates python code that will be executed inside the Runge-Kutta integrator.
     """
     def __init__(self, text, mode):
         
         # run the regular boolen engine one step to detect syntax errors
-        bool = engine.Engine(text=text, mode='sync')
+        bool = Engine(text=text, mode='sync')
         bool.initialize( miss_func=util.randomize )
         bool.iterate( steps=1 )
-        
+        self.INIT_LINE   = init_line
+        self.DECAY_FUNC  = decay_func
+        self.NODE_FUNC   = node_func
+        self.LINE_START  = line_start
+        self.LINE_MIDDLE = line_middle
+
         # setting up this engine
-        engine.Engine.__init__(self, text=text, mode=mode)
+        Engine.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
+        self.data = {}
     
-    def get_mapper( self):
+    def initialize(self, miss_func=None):
+        "Custom initializer"
+        Engine.initialize( self, miss_func=miss_func )
+        
+        # will also maintain the order of insertion
+        self.mapper = odict.odict()
+        
+        # this will maintain the order of nodes
+        self.nodes = self.start.keys()
+        for index, node in enumerate(self.nodes):
+            triplet = self.start[node]
+            self.mapper[node] = ( index, node, triplet )
+        
+    def get_mapper( self ):
         """
         Maps variable names to column names
         """
@@ -29,46 +91,44 @@ class Solver( engine.Engine ):
 
     def generate_init( self ):
         """
-        Generates the initialization section that will be executed
+        Generates the initialization lines
         """
-        init   = []
-        items, mapper  = self.get_mapper()
-
-        for node, value in items:
-            index = mapper[node]
-            conc, decay, tresh = value
-            tresh = tresh/decay
-            line = 'c%d, d%d, t%d = %f, %f, %f' % ( index, index, index, conc, decay, tresh)
+        init = [ '# dynamically generated code' ]
+        init.append( '# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue' )
+        init.append( '# %s' % self.mapper.values() )
+       
+        for index, node, triplet in self.mapper.values():
+            conc, decay, tresh = triplet
+            assert decay > 0, 'Decay must be larger than 0 -> %s' % str(triplet)  
+            store = dict( index=index, conc=conc, decay=decay, tresh=tresh)
+            line = self.INIT_LINE( store )
             init.append( line )            
-        
-        text = '\n'.join( init )
-        return text
+        init_text = '\n'.join( init )
+        return init_text
     
-    def create_line( self, tokens, mapper ):
+    def create_equation( self, tokens, mapper ):
         """
-        Creates a python equation from a set of tokens.
+        Creates a python equation from a list of tokens.
         """
-        base_name  = tokens[1].value
-        base_index = mapper[ base_name ]
-        line   = [ '\tn%d = float( ' % base_index ]
-        values = [ t.value for t in tokens[4:] ]
-        for value in values:
-            if value in mapper:
-                elem_index = mapper[ value ]    
-                value = ' ( c%d > t%d ) ' % ( elem_index, elem_index)
-            line.append( ' %s ' % value )
-        line.append( ' ) - d%d * c%d' % (base_index, base_index) )                     
-        return ''.join(line)
+        base = tokens[1].value
+        line = []
+        line.append ( self.LINE_START( base, mapper=self.mapper) )
+        nodes = [ t.value for t in tokens[4:] ]
+        for node in nodes:
+            value = self.NODE_FUNC( node=node, base=base, mapper=self.mapper )
+            line.append ( value )
+        line.append ( self.LINE_MIDDLE(base, mapper=self.mapper) )
+        line.append ( self.DECAY_FUNC( node= base, mapper=self.mapper ) )
+        
+        return ''.join( line )
 
     def generate_function(self ):
         """
         Generates the function that will be used to integrate
         """
-        items, mapper  = self.get_mapper()
-
-        assign  = [ 'c%d' % index for index, node in enumerate(items) ]
-        retvals = [ 'n%d' % index for index, node in enumerate(items) ]
-
+        indices = [ x[0] for x in self.mapper.values() ]
+        assign  = [ 'c%d' % i for i in indices ]
+        retvals = [ 'n%d' % i for i in indices ]
         assign  = ', '.join(assign)
         retvals = ', '.join(retvals)
 
@@ -77,7 +137,7 @@ class Solver( engine.Engine ):
         body.append( '\t%s = x' % assign )
         body.append( '\t%s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
-            body.append( self.create_line(tokens, mapper=mapper) )
+            body.append( self.create_equation(tokens, mapper=self.mapper) )
         
         body.append( "\treturn ( %s ) " % retvals )
 
@@ -85,7 +145,7 @@ class Solver( engine.Engine ):
         
         return text
 
-    def iterate( self, fullt, steps):
+    def iterate( self, fullt, steps, debug=False):
         
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
@@ -100,19 +160,23 @@ class Solver( engine.Engine ):
         #print func_text
        
         self.dynamic_code = self.init_text + '\n' + self.func_text             
-        try:
-            exec self.init_text 
-            exec self.func_text in locals()
-        except Exception, exc:
-            msg = "dynamic code error -> '%s' in:\n%s" % ( exc, self.dynamic_code )
-            util.error(msg)
+       
+        if debug:
+            print self.dynamic_code
+            sys.exit()
+        else:
+            try:
+                exec self.init_text 
+                exec self.func_text in locals()
+            except Exception, exc:
+                msg = "dynamic code error -> '%s' in:\n%s" % ( exc, self.dynamic_code )
+                util.error(msg)
 
-        # x0 has been auto generated in the initialization
-        self.alldata = rk4(derivs, x0, t) 
-        self.nodes = self.parser.before.keys()
-        self.data = {}
-        for index, node in enumerate( self.nodes ):
-            self.data[node] = [ row[index] for row in self.alldata ]
+            # x0 has been auto generated in the initialization
+            self.alldata = rk4(derivs, x0, t) 
+            self.nodes = self.parser.before.keys()
+            for index, node in enumerate( self.nodes ):
+                self.data[node] = [ row[index] for row in self.alldata ]
     
 if __name__ == '__main__':
     text = """
@@ -121,8 +185,9 @@ if __name__ == '__main__':
     #
     # conc, decay, treshold
     # 100%
-    A  = C = B = (1, 1, 0.5)
-
+    A = (1, 1, 0.5)
+    B = (1, 1, 0.5)
+    C = (1, 1, 0.5 )
     1: A* = not A 
     2: B* = A and B
     3: C* = C
@@ -130,13 +195,11 @@ if __name__ == '__main__':
 
     engine = Solver( text=text, mode='lpde' )
     engine.initialize()
-    engine.iterate( fullt=1, steps=10 )
-
-    states = engine.states
+    engine.iterate( fullt=1, steps=10, debug=1 )
     
+    #print engine.dynamic_code
 
     from pylab import *
     plot( engine.alldata ,'o-' )
-
     show()
 
