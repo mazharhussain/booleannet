@@ -1,0 +1,38 @@
+#
+# upon runtime set missing values to false!
+#
+Bb = True
+
+1: Bb* = Bb and not PH #MyFunc(PH, Bb)
+1: TTSS* = Bb and not (CA or OAb) 
+1: OAg* = Bb
+1: EC* = Bb
+1: CAb* = BC or CAb
+1: C* = (Bb and not OAg) or (AgAb and CAb) 
+1: AgAb* = Bb and (OAb or CAb)
+1: OAb* = BC or OAb
+1: BC* = Th2L
+1: PIC* = (EC or DP or AP) and not IL10
+1: TIL12* = (DCL and T0) and not (IL4L or IFNgL)
+1: IL12L* = TIL12 #prop*TIL12
+1: IL12* = TIL12 #(1-prop)*TIL12
+## IFNg, IL4 and IL10 nodes are modeled similar to IL12. TIL12 is a psuedo node. We can discuss how I calculate proportions if we want to include this part.
+1: IFNg* = (Th1 or MP) and not IL10
+1: IFNgL* = IFNg
+1: IL4L* = (DCL and T0) and not IL12L
+1: IL4* = IL4L
+1: IL10* = (Tr or Th2 or (MP and TTSS)) and not IFNg
+1: IL10L* = IL10
+1: RP* = PIC
+1: DP* = RP and TTSS
+1: MP* = (PIC or IFNg) and not IL10 #lpde(MP)-Hill(MP, H, n)
+1: MPL* = MP # Hill(MP, H, n)- gamma* MPL
+#Similar to MP I simulate Th1, Th2, DCL nodes.
+1: AP* = Bb and (RP or MP) and ((C and CAb) or AgAb)
+1: T0* = DCL
+1: Tr* = (DCL and T0 and TTSS) # or too_much_Th1 #too_much_Th1 is used to assess the conc. of Th1 by using second threshold value for node Th1
+1: Th1L* = DCL and T0 and IL12L
+1: Th2L* = DCL and T0 and not IL12L
+1: DC* = IFNg or PIC or Bb
+1: DCL* = DC
+1: PH* = AP and Bb
