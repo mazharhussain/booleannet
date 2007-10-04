@@ -29,4 +29,24 @@ of the concentrations.
 
 The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. There is an automatic conversion taking place between the operating modes (see the [BooleanAPI boolean tutorial] for the actual rules.
 
-Internally the software will generate Python code to describe the differential equations, then numerically integrates this generated function through a fourth order [http://en.wikipedia.org/wiki/Runge-Kutta_methods Runge-Kutta method]. 
+Internally the software will generate Python code to describe the differential equations, then numerically integrates this generated function through a fourth order [http://en.wikipedia.org/wiki/Runge-Kutta_methods Runge-Kutta method]. Here is a typical run scenario:
+
+{{{
+import boolean
+
+text = """
+A = B = (1, 1, 0.5)
+C = (0, 1, 0.5)
+1: A* = not A 
+2: B* = A and B
+3: C* = not C
+"""
+
+engine = boolean.Engine( text=text, mode='lpde' )
+engine.initialize()
+engine.iterate( fullt=1, steps=10 )
+
+import pylab
+pylab.plot( engine.data['A'] , 'o-' )
+pylab.show()
+}}}
