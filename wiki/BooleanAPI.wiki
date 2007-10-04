@@ -127,4 +127,16 @@ engine.initialize( miss_func=randomizer )
 
 The example above sets uninitialized nodes to a random state. We are ignoring the 
 node name but it would be possible to make use of it i.e. if some genes were more likely 
-to start out in a given state.
+to start out in a given state. 
+
+===Action Overriding===
+
+The software is designed with extensibility and adaptability in mind, and to that end it allows the user to override its behavior at different points of the execution. The following functions may be altered (we also list the function signatures for reference):
+
+{{{
+engine.RULE_AND (node1, node2, parser)
+engine.RULE_OR  (node1, node2, parser)
+engine.RULE_NOT (node, parser)
+engine.RULE_SETVALUE ( state, name, value, parser)
+engine.RULE_GETVALUE ( state, name, parser)
+}}}
