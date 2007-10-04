@@ -4,6 +4,13 @@ from itertools import *
 import util, odict
 from engine import Engine
 
+def override( base, indexer ):
+    """
+    Gets called at the beginnig of the line
+    If this function returns anything it will override the entire equation
+    """
+    return ''
+
 def init_line( store ):
     """
     Store is an incoming dictionary prefilled with parameters
@@ -11,39 +18,39 @@ def init_line( store ):
     patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f' 
     return patt % store
 
-def line_start( node, mapper ):
+def line_start( node, indexer ):
     """
     Triggers at the beginning fo the line
     """
-    index, node, value = mapper[node]
+    index = indexer[node]
     return '\tn%d = float( ' % index
 
-def line_middle( node, mapper ):
+def line_middle( node, indexer ):
     """
     Triggers before the decay function
     """
     return ' ) '
 
-def decay_func( node, mapper ):
+def decay_func( node, indexer ):
     """
     Triggers at the end of the line
     """
-    index, node, value = mapper[node]
+    index = indexer[node]
     patt = "- d%d * c%d"
     return patt % (index, index )
 
-def node_func( node, base, mapper ):
+def node_func( node, base, indexer ):
     """
     Gets triggered for each node, base is the node that
 
     Replaces nodes that are in the mapper with a function"
     """
-    if node in mapper:
-        index, node, value = mapper[node]
+    if node in indexer:
+        index = indexer[node]
         patt = " ( c%d > t%d ) "
         return patt % (index, index )
     else:
-        return node
+        return ' %s ' % node
 
 class Solver( Engine ):
     """
@@ -60,6 +67,9 @@ class Solver( Engine ):
         self.NODE_FUNC   = node_func
         self.LINE_START  = line_start
         self.LINE_MIDDLE = line_middle
+        self.OVERRIDE = override
+
+        self.extra_init = ''
 
         # setting up this engine
         Engine.__init__(self, text=text, mode=mode)
@@ -71,23 +81,16 @@ class Solver( Engine ):
         Engine.initialize( self, miss_func=miss_func )
         
         # will also maintain the order of insertion
-        self.mapper = odict.odict()
+        self.mapper  = odict.odict() 
+        self.indexer = {}
         
         # this will maintain the order of nodes
-        self.nodes = self.start.keys()
+        self.nodes = list(self.all_nodes)
+        self.nodes.sort()
         for index, node in enumerate(self.nodes):
             triplet = self.start[node]
-            self.mapper[node] = ( index, node, triplet )
-        
-    def get_mapper( self ):
-        """
-        Maps variable names to column names
-        """
-        state  = self.parser.before
-        all = [ (index, node, value) for index, node, value in zip(count(), state.keys(), state.values() ) ]
-        mapper = dict( [ (node, index) for (index, node, value) in all ] )
-        items  = [ (node, value) for (index, node, value) in all ]
-        return items, mapper
+            self.mapper [node] = ( index, node, triplet )
+            self.indexer[node] = index
 
     def generate_init( self ):
         """
@@ -96,29 +99,34 @@ class Solver( Engine ):
         init = [ '# dynamically generated code' ]
         init.append( '# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue' )
         init.append( '# %s' % self.mapper.values() )
-       
         for index, node, triplet in self.mapper.values():
             conc, decay, tresh = triplet
             assert decay > 0, 'Decay must be larger than 0 -> %s' % str(triplet)  
             store = dict( index=index, conc=conc, decay=decay, tresh=tresh)
             line = self.INIT_LINE( store )
-            init.append( line )            
+            init.append( line )
+        if self.extra_init:
+            init.append( self.extra_init )            
         init_text = '\n'.join( init )
         return init_text
     
-    def create_equation( self, tokens, mapper ):
+    def create_equation( self, tokens ):
         """
         Creates a python equation from a list of tokens.
         """
         base = tokens[1].value
+        line = self.OVERRIDE(base, indexer=self.indexer)
+        if line:
+            return line
+        
         line = []
-        line.append ( self.LINE_START( base, mapper=self.mapper) )
+        line.append ( self.LINE_START( base, indexer=self.indexer) )
         nodes = [ t.value for t in tokens[4:] ]
         for node in nodes:
-            value = self.NODE_FUNC( node=node, base=base, mapper=self.mapper )
+            value = self.NODE_FUNC( node=node, base=base, indexer=self.indexer )
             line.append ( value )
-        line.append ( self.LINE_MIDDLE(base, mapper=self.mapper) )
-        line.append ( self.DECAY_FUNC( node= base, mapper=self.mapper ) )
+        line.append ( self.LINE_MIDDLE(base, indexer=self.indexer) )
+        line.append ( self.DECAY_FUNC( node= base, indexer=self.indexer ) )
         
         return ''.join( line )
 
@@ -131,22 +139,22 @@ class Solver( Engine ):
         retvals = [ 'n%d' % i for i in indices ]
         assign  = ', '.join(assign)
         retvals = ', '.join(retvals)
-
-        body = [ 'x0 = %s ' % assign ]
+        body = []
+        body.append( 'x0 = %s' % assign )
         body.append( 'def derivs( x, t):' )
         body.append( '\t%s = x' % assign )
         body.append( '\t%s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
-            body.append( self.create_equation(tokens, mapper=self.mapper) )
-        
+            body.append( self.create_equation( tokens ) )
         body.append( "\treturn ( %s ) " % retvals )
-
         text = '\n'.join( body )
         
         return text
 
-    def iterate( self, fullt, steps, debug=False):
+    def iterate( self, fullt, steps, debug=False, params={} ):
         
+        globals().update( params )
+
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
         t  = [ dt * i for i in range(steps) ]
@@ -166,10 +174,10 @@ class Solver( Engine ):
             sys.exit()
         else:
             try:
-                exec self.init_text 
-                exec self.func_text in locals()
+                exec self.init_text in globals()
+                exec self.func_text in globals()
             except Exception, exc:
-                msg = "dynamic code error -> '%s' in:\n%s" % ( exc, self.dynamic_code )
+                msg = "dynamic code error -> '%s' in:\n%s\n*** dynamic code error ***" % ( exc, self.dynamic_code )
                 util.error(msg)
 
             # x0 has been auto generated in the initialization
