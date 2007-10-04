@@ -78,6 +78,6 @@ def derivs( x, t):
 	return ( n0, n1, n2 ) 
 }}}
 
-Compare this file to the original text input. The code above can be understood in the following manner. Each node is associated an index, for example the `C` node has the index of `2`. The `c`, `d`, and `t` variables stand for the _concentration_, _decay_ and _threshold_ for the node index that follows the variable, this makes say `t2` is the threshold for node `C`. The `n` variable stand for the new value of the node. 
+Compare this file to the original text input. The code above can be understood in the following manner. Each node is associated an index, for example the `C` node has the index of `2`. The `c`, `d`, and `t` variables stand for the _concentration_, _decay_ and _threshold_ for the node index that follows the variable, this makes say `t2` is the threshold for node `C`. The `n` variable stands for the new value of the node. 
 
 To make it easier to keep track of what is going on  each line is also displayed in a commented out form (with the `#` sign, these lines are not executed, are there only to allow one to keep track of what was the original line was).
