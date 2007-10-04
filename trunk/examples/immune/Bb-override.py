@@ -19,11 +19,13 @@ def hill_func( conc ):
 def override( node, indexer):
     "Overrides a node"
     if node == 'B':
-        aindex, bindex = indexer['A'], indexer['B']
-        return '\tn%d = (1 - PROP ) * c%d' % ( bindex, aindex )
+        bi, ai = indexer['B'], indexer['A']
+        # bi, ai = map( indexer.get, 'BA' )
+        return '\tn%d = (1 - PROP ) * c%d' % ( bi, ai )
     elif node == 'C':
-        aindex, bindex, cindex = map( indexer.get, 'ABC' )
-        return '\tn%d = hill_func( 1 )' % cindex
+        ai, bi, ci = map( indexer.get, 'ABC' )
+        return '\tn%d = hill_func( c%d )' % ( ci, ai)
+    
     return ''
 
 engine = Engine( text=text, mode='lpde' )
@@ -32,7 +34,7 @@ engine.OVERRIDE = override
 
 params = dict( PROP=1, hill_func=hill_func )
 
-engine.iterate( fullt=1, steps=10, debug=0, params=params )
+engine.iterate( fullt=1, steps=10, debug=1, params=params )
 
 print engine.dynamic_code
 
