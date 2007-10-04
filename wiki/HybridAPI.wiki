@@ -7,11 +7,15 @@ In this mode every node in the system will have three continous variables associ
 a _threshold_ and a _decay_. Each node is considered `ON` when its concentration is greater than 
 the threshold. Practically this means that a rule written as:
 
-{{{ A = B and C }}}
+{{{ 
+A = B and C 
+}}}
 
 will be solved as a differential equation of the form:
 
-{{{ dA/dt = (( conc(B) > threshold(B)) and (conc(C) > threshold(C)) - decay(A) * conc(A) }}}
+{{{ 
+dA/dt = (( conc(B) > threshold(B)) and (conc(C) > threshold(C)) - decay(A) * conc(A) 
+}}}
 
 This leads to the following dynamics for each node:
   
