@@ -2,12 +2,12 @@
 
 = Introduction =
 
-Add your content here.
+The hybrid model models the booelan rules via _linear piecewise differential equations_. Practically
+this means that a rule written as:
+
+{{{ A = B and C }}}
+
+will be intepreted as a differential equation of the form:
 
 
-= Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
