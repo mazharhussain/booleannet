@@ -150,16 +150,16 @@ those are not relevant for the point we are making):
 import random
 from boolean import engine, util
 
-def local_setvalue( state, name, value, parser )
+def local_setvalue( state, name, value, parser ):
     if name == 'SAM1':
         value = random.choice( [False, value] ) 
-    return util.default_setvalue( state, name, value, parser )
+    return util.default_set_value( state, name, value, parser )
 
-def local_getvalue( state, name, parser )
+def local_getvalue( state, name, parser ):
     if name == 'BLK2':            
         return random.choice( [False, value] )
     else:
-        return util.default_getvalue( state, name, parser )
+        return util.default_get_value( state, name, parser )
 
 engine = boolean.Engine( mode='async', text=text )
 engine.RULE_SETVALUE = local_setvalue
