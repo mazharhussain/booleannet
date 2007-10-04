@@ -12,7 +12,7 @@ STEPS  = 100 # number of steps
 text = util.read( 'Bb.txt')
 engine = Engine( mode='lpde', text=text )
 engine.initialize( miss_func = util.allfalse)
-engine.iterate( fullt=FULLT, steps=STEPS )
+engine.iterate( fullt=FULLT, steps=STEPS, debug=1 )
 
 print engine.dynamic_code
 #
