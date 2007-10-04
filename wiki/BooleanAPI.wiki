@@ -57,7 +57,7 @@ to the same random value). It is also possible to set all uninitialized values t
 for how to accomplish this. When run in LPDE mode (Linear Piecewise Differential Equations) we have
 the option of specifying other parameters during initialization. In that case each node of the network
 may be characterized by an a triplet of values that correspoind to the 
-_inital concentration_, a _decay_ and a _threshold_ (see [TutorialLPDE] for what these parameters mean).
+_inital concentration_, a _decay_ and a _threshold_ (see [HybridAPI] for what these parameters mean).
 Thus we could also write the inital conditions as:
 
 {{{
