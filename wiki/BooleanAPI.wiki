@@ -135,11 +135,37 @@ engine.RULE_OR  (node1, node2, parser)
 engine.RULE_NOT (node, parser)
 }}}
 
-Each of these rules have proper default action and only need be assigned new functions  if a special operation is desired. Typically the `RULE_SETVALUE` and `RULE_GETVALUE` functions more naturally lend themselves to interpretation. There is an important distinction between the two:
+Each of these rules have proper default action and only need be assigned behaviors  if a special operation is desired. Typically the `RULE_SETVALUE` and `RULE_GETVALUE` functions more naturally lend themselves to interpretation. There is an important distinction between the two:
   * `RULE_SETVALUE` will be called while assigning a value to a node and it will overwrite the value. 
   * `RULE_GETVALUE` will be called while querying the state of a node and will not overwrite the actual value of the node
 
+We'll demonstrate the use of these by implementing a hypothetical scenario in a gene regulatory network where:
 
+  _The expression level of gene `SAM1` is affected by unknown factors and it has been  observed that its mRNA level occasionally and spontaneously resets to a low value (OFF). Also it has been empirically observed that the levels of protein `BLK2` can vary more than its mRNA levels thus indicating a post-translational regulation_
 
+Here is the model that captures these behaviors (we will omit listing the rules as those are not relevant for the point we are making):
+{{{
+import random
+from boolean import engine, util
+
+def local_setvalue( state, name, value, parser )
+    if name == 'SAM1':
+        value = random.choice( [False, value] )
+    return util.default_setvalue( state, name, value, parser )
+
+def local_getvalue( state, name, parser )
+    if name == 'BLK2':            
+        return random.choice( [False, value] )
+    else:
+        return util.default_getvalue( state, name, parser )
+
+engine = boolean.Engine( mode='async', text=text )
+engine.RULE_SETVALUE = local_setvalue
+engine.RULE_SETVALUE = local_getvalue 
+engine.initialize()
+engine.iterate( steps=5 )
+
+}}}
+  
 The last of the parameters `parser` almost always can be ignored (that is you won't need it make any use of it). It is there to allow for situations where one would need to inspect the state of parser up to the point when the rule is triggered (rarely needed if ever).
  
