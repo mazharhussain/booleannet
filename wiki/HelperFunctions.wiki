@@ -28,8 +28,7 @@ print first['SAM1']['init']    # prints (1.0, 2.0, 3.0)
 print first['SAM1']['hill']    # prints (7.0, 8.0) 
 print first['Ca+2']['levels']  # prints 2.5 
 
-# or you can access by attribute like so
-
+# you can access by attribute like so
 print first.SAM1.init    # prints (1.0, 2.0, 3.0)
 print first.SAM1.hill    # prints (7.0, 8.0) 
 
