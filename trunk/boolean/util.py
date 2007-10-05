@@ -1,6 +1,6 @@
 from itertools import *
 import sys, os, logging, random, re, string
-import tokenizer
+import tokenizer, helper
 
 class SyntaxException(Exception):
     pass
