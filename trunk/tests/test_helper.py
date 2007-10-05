@@ -21,20 +21,20 @@ class HelperTest( unittest.TestCase ):
         equal ( active.Call.status, 'good' )
         equal ( active['Call']['status'], 'good' )
 
-        equal ( active.SAM1.init, (1.0, 2.0, 3.0) )
-        equal ( active['SAM1']['init'], (1.0, 2.0, 3.0) )
+        equal ( active.PIC.conc, 0.9 )
+        equal ( active['PIC']['conc'], 0.9 )
 
-        equal ( active.SAM1.hill, (7.0, 8.0) )
-        equal ( active['SAM1']['hill'], (7.0, 8.0) )
+        equal ( active.PIC.decay, 1.0 )
+        equal ( active['PIC']['decay'], 1.0 )
 
         # test second row
         active = self.params[1]
         
-        equal ( active.BLK2.init, (40.0, 50.0, 60.0) )
-        equal ( active['BLK2']['init'], (40.0, 50.0, 60.0) )
+        equal ( active.MP.gamma, 0.234 )
+        equal ( active['MP']['gamma'], 0.234 )
 
-        equal ( active.BLK2.hill, (10.0, 10.0) )
-        equal ( active['BLK2']['hill'], (10.0, 10.0) )
+        equal ( active.MP.n, 2 )
+        equal ( active['MP']['n'], 2 )
 
         equal ( active.Call.status, 'marginal' )
         equal ( active['Call']['status'], 'marginal' )
@@ -44,15 +44,17 @@ class HelperTest( unittest.TestCase ):
     def test_function_initializer( self ):
         "Testing function initializer"
         text = """
-        1: SAM1* = SAM1
-        1: BLK2* = SAM1 and BLK2
+        MP = True
+        1: PIC* = PIC
+        1: MP* = PIC and MP
         """
         data = self.params[1]
         eng  = Engine( mode='lpde', text=text )
         eng.initialize( miss_func = helper.initializer( data ) )
 
-        for node in 'SAM1 BLK2'.split():
-            self.assertEqual( eng.start[node], data[node].init )
+        for node in 'PIC'.split():
+            values = ( data[node].conc, data[node].decay, data[node].threshold )
+            self.assertEqual( eng.start[node], values )
 
     def test_default_initializer( self ):
         "Testing default initializer"
@@ -83,4 +85,5 @@ if __name__ == '__main__':
     # this contains all parameters
     params = helper.read_parameters( fname )
 
-    #params[0].x
+    #print params[0].PIC['conc']
+

@@ -22,7 +22,7 @@ def hill( conc, gamma, n ):
 
 """
 
-def initializer(data, label='init', **kwds):
+def initializer(data, labels=None, **kwds):
     """
     Function factory that returns an initializer 
     that can initialize based on a parameter row
@@ -33,15 +33,25 @@ def initializer(data, label='init', **kwds):
     """
 
     # the existence of the parameter will trigger behavior
-    if 'default' in kwds:
-        def func( node ):
-            try:
-                return data[node][label]
-            except KeyError:
+    labels = labels or 'conc decay threshold'.split()
+    
+    def func( node ):
+        # tries to give meaningful error messages
+
+        try:
+            values = [ data[node][label] for label in labels ]
+            return tuple(values) 
+        except KeyError, exc:
+            
+            if 'default' in kwds:
                 return kwds['default']
-    else:
-        def func( node ):
-            return data[node][label]
+            else:
+                if node not in data:
+                    raise KeyError( 'could not find parameter %s' % node )
+                for label in labels:
+                    if label not in data[node]:
+                        raise KeyError( "could not find parameter %s['%s']" % (node, label) )   
+
         
     return func 
 
