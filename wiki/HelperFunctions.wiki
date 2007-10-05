@@ -36,3 +36,14 @@ print first.SAM1.hill    # prints (7.0, 8.0)
 # this latter and simpler method works only if the nodes or labels 
 # are valid python identifiers. i.e. Ca+2 is not 
 }}}
+
+Finally to streamline the loading of custom initialization parameters into the the engine
+the `helper.py` module contains a function that will return another function that then can be used to initialize missing nodes in the system. For example to initialalize the engine 
+based on the second row ( zero based counting!) one would write the following:
+
+{{{
+row   = 1
+fname = 'parameter-data.csv'
+engine  = Engine( mode='lpde', text=text )
+engine.initialize( miss_func = helper.initializer( fname, row=row ) )
+}}}
