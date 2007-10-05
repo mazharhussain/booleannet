@@ -10,12 +10,12 @@ It is a very common use case to test the system with different sets of initial c
 
 http://booleannet.googlecode.com/svn/webdata/excel-data.png 
 
-The first line contains the node ids, in this case `SAM1`, `BLK2`, `Ca+2`, and `Status`. Note that the node ids need not be unique. The second line contains the type of the value for the column. In this case `init`, `hill`, `level` and `words`. Save this excel sheet into a *comma-separated format* then load it with:
+The first line contains the node ids, in this case `SAM1`, `BLK2`, `Ca+2`, and `Call`. Note that the node ids need not be unique. The second line contains the type of the value for the column. In this case `init`, `hill`, `level` and `status`. Save this excel sheet into a *comma-separated format* then load it with:
 
 {{{
 from boolean import helper
 
-params = helper.read_parameters('parameter-data.csv')
+lines = helper.read_parameters('parameter-data.csv')
 }}}
 
-
+The `lines` object returned by the helper method is a list that contains Parameter()
