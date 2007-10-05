@@ -30,7 +30,7 @@ class Parameter(object):
     def __contains__(self, key):
         return key in self.__dict__
 
-def read_params( fname ):
+def read_parameters( fname ):
     """
     Reads parameters from a comma separated file and 
     returns a bunch object with attributes corresponding
@@ -65,24 +65,31 @@ def read_params( fname ):
     nodes = lines[0]
     attrs = lines[1]
     
-    # each line will contain a nested Param instance that contains the type and
-    # the value for the nodes
-    # 
 
     def tuple_cast( word ):
         try:
-            return tuple(map( float, word.split(',')))
+            values = map( float, word.split(',') )
+            if len( values ) > 1 :
+                return tuple(values)
+            else:
+                return values[0]
         except ValueError:
             return word
+
+    # example input file
+    #
+    # NodeA, NodeB
+    # init, state
+    # "1,2,3", "yes,no"
     
     store  = []
     for elems in lines[2:]:
         param = Parameter()
         for index, attr, node in zip(count(), attrs, nodes):
-            if attr not in param:
-                param[attr] = Parameter()
+            if node not in param:
+                param[node] = Parameter()
             elem = elems[index]
-            param[attr][node] = tuple_cast( elem )
+            param[node][attr] = tuple_cast( elem )
         store.append( param )
     
     return store

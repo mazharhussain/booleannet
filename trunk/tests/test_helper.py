@@ -14,32 +14,35 @@ class HelperTest( unittest.TestCase ):
         fname  = 'test-params.csv'
         
         # this contains all parameters
-        params = helper.read_params( fname )
+        params = helper.read_parameters( fname )
         
         # take the first row of parameters
         active = params[0]
         
         # can be written in both ways
-        equal ( active.status.X, 'good' )
-        equal ( active['status']['X'], 'good' )
+        equal ( active.Status.words, 'good' )
+        equal ( active['Status']['words'], 'good' )
 
-        equal ( active.init.A, (1.0, 2.0, 3.0) )
-        equal ( active['init']['A'], (1.0, 2.0, 3.0) )
+        equal ( active.SAM1.init, (1.0, 2.0, 3.0) )
+        equal ( active['SAM1']['init'], (1.0, 2.0, 3.0) )
 
-        equal ( active.hill.A, (7.0, 8.0) )
-        equal ( active['hill']['A'], (7.0, 8.0) )
+        equal ( active.SAM1.hill, (7.0, 8.0) )
+        equal ( active['SAM1']['hill'], (7.0, 8.0) )
 
         # test second row
         active = params[1]
         
-        equal ( active.init.B, (40.0, 50.0, 60.0) )
-        equal ( active['init']['B'], (40.0, 50.0, 60.0) )
+        equal ( active.BLK2.init, (40.0, 50.0, 60.0) )
+        equal ( active['BLK2']['init'], (40.0, 50.0, 60.0) )
 
-        equal ( active.hill.B, (10.0, 10.0) )
-        equal ( active['hill']['B'], (10.0, 10.0) )
+        equal ( active.BLK2.hill, (10.0, 10.0) )
+        equal ( active['BLK2']['hill'], (10.0, 10.0) )
 
-        equal ( active.words.E, 'no' )
-        equal ( active['words']['E'], 'no' )
+        equal ( active.Status.words, 'bad' )
+        equal ( active['Status']['words'], 'bad' )
+
+        equal ( active['Ca+2']['levels'], 3.5 )
+
         
 
 def get_suite():
