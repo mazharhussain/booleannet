@@ -1,4 +1,4 @@
-# example script for ABA simulations
+# example script for LGL simulations
 
 # add the boolean module to the python path
 import sys
