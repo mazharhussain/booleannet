@@ -6,7 +6,7 @@ The software comes with a series of helper function to facilitate its use. These
 
 = Parameter Input =
 
-It is a very common use case to test the system with different sets of initial conditions or function parameters. Maintaining all these state can be a chore. The `Parameter()` class and its related helpers were created to alleviate problems relating to keeping track of all the states. These helper operate on comma separated files that may be created with Excel. The files should be in the following format. 
+It is a very common use case to test the system with different sets of initial conditions or function parameters. Maintaining all these states can be a chore. The `Parameter()` class and its related helpers were created to alleviate problems relating to keeping track of all the states. These helper operate on comma separated files that may be created with Excel. The files should be in the following format. 
 
 http://booleannet.googlecode.com/svn/webdata/excel-data.png 
 
