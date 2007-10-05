@@ -1,0 +1,9 @@
+#summary Tutorial on helper functions
+
+= Introduction =
+
+The software comes with a series of helper function to facilitate its use. These range to built-in function generators i.e. a *hill* function or a random *proportions* generator, to easy parameter parsing and data collection routines. The '`helper.py` module contains these function, below we document the most important ones.
+
+= Parameter Input =
+
+It is a very common use case to test the system with different sets of initial conditions or function parameters. Maintaining all these state can be a chore. The `Parameter()` class and its related helpers were created to alleviate problems relating to keeping track of all the states 
