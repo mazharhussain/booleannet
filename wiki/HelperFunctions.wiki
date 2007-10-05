@@ -24,11 +24,12 @@ The `lines` object returned by the helper method is a list that contains a neste
 
 first = lines[0]
 
+# access by keys
 print first['SAM1']['init']    # prints (1.0, 2.0, 3.0)
 print first['SAM1']['hill']    # prints (7.0, 8.0) 
 print first['Ca+2']['levels']  # prints 2.5 
 
-# you can access by attribute like so
+# access by attribute 
 print first.SAM1.init    # prints (1.0, 2.0, 3.0)
 print first.SAM1.hill    # prints (7.0, 8.0) 
 
