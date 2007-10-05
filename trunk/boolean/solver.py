@@ -1,7 +1,7 @@
 from pylab import arange, rk4
 import sys
 from itertools import *
-import util, odict, tokenizer
+import util, odict, tokenizer, helper
 from engine import Engine
 
 def override( base, indexer ):
@@ -15,7 +15,7 @@ def init_line( store ):
     """
     Store is an incoming dictionary prefilled with parameters
     """
-    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f/%(decay)f # %(node)s' 
+    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f # %(node)s' 
     return patt % store
 
 
@@ -95,7 +95,7 @@ class Solver( Engine ):
         if self.extra_init:
             init.append( self.extra_init )            
         
-        init_text = '\n'.join( init )
+        init_text = helper.helper_functions + '\n'.join( init )
         return init_text
     
     def create_equation( self, tokens ):

@@ -5,21 +5,45 @@ import csv, StringIO
 import string
 from itertools import *
 
-def initializer(fname, row, label='init'):
+helper_functions = """
+# helper functions from helper.py
+
+from math import log, pow
+from random import randint
+
+def prop( r1, r2 ):
+    if randint(0,1):
+        return r1 + r2
+    else:
+        return r1 - r2
+
+def hill( conc, gamma, n ):
+    return pow(conc, n)/( pow(gamma, n) + pow(conc, n) )
+
+"""
+
+def initializer(data, label='init', **kwds):
     """
-    This initializer will return a function that can initalize nodes 
-    based on a file. 
+    Function factory that returns an initializer 
+    that can initialize based on a parameter row
+
+    If a node is missing the function will raise an error. If a
+    default parameter is passed to the function factory the
+    function will return this value upon errors
     """
-    lines = read_parameters( fname )
-    size = len(lines)
-    assert row < size, 'Parameter file does not have row %d (0 based counting!)' % row
-    data = lines[row]
-    
-    def func( node ):
-        return data[node][label]
-    
-    return func
-                
+
+    # the existence of the parameter will trigger behavior
+    if 'default' in kwds:
+        def func( node ):
+            try:
+                return data[node][label]
+            except KeyError:
+                return kwds['default']
+    else:
+        def func( node ):
+            return data[node][label]
+        
+    return func 
 
 class Parameter(object):
     """
