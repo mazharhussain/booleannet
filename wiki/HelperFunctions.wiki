@@ -48,3 +48,11 @@ based on the second row ( zero based counting!) one could write the following:
 engine  = Engine( mode='lpde', text=text )
 engine.initialize( miss_func=helper.initializer( 'parameter-data.csv', row=1 ) )
 }}}
+
+= Data collectors =
+
+...
+
+= Cycle detection =
+
+...
