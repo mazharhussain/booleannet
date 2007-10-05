@@ -33,7 +33,7 @@ print first['Ca+2']['levels']  # prints 2.5
 print first.SAM1.init    # prints (1.0, 2.0, 3.0)
 print first.SAM1.hill    # prints (7.0, 8.0) 
 
-# get the last element
+# values from the last row
 print lines[-1].SAM1.hill # prints (7.0, 8.0) 
 
 # this latter and simpler method works only if the nodes or labels 
