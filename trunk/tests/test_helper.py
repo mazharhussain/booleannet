@@ -20,8 +20,8 @@ class HelperTest( unittest.TestCase ):
         active = params[0]
         
         # can be written in both ways
-        equal ( active.Status.words, 'good' )
-        equal ( active['Status']['words'], 'good' )
+        equal ( active.Call.status, 'good' )
+        equal ( active['Call']['status'], 'good' )
 
         equal ( active.SAM1.init, (1.0, 2.0, 3.0) )
         equal ( active['SAM1']['init'], (1.0, 2.0, 3.0) )
@@ -38,8 +38,8 @@ class HelperTest( unittest.TestCase ):
         equal ( active.BLK2.hill, (10.0, 10.0) )
         equal ( active['BLK2']['hill'], (10.0, 10.0) )
 
-        equal ( active.Status.words, 'bad' )
-        equal ( active['Status']['words'], 'bad' )
+        equal ( active.Call.status, 'marginal' )
+        equal ( active['Call']['status'], 'marginal' )
 
         equal ( active['Ca+2']['levels'], 3.5 )
 
