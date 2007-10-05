@@ -45,8 +45,10 @@ the `helper.py` module contains a function that will return another function tha
 based on the second row ( zero based counting!) one could write the following:
 
 {{{
+lines = helper.read_parameters('parameter-data.csv')
+data  = lines[0] # first row
 engine  = Engine( mode='lpde', text=text )
-engine.initialize( miss_func=helper.initializer( 'parameter-data.csv', row=1 ) )
+engine.initialize( miss_func=helper.initializer( data ) )
 }}}
 
 = Data collectors =
