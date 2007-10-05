@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The software comes with a series of helper function to facilitate its use. These range to built-in function generators i.e. a *hill* function or a random *proportions* generator, to easy parameter parsing and data collection routines. The '`helper.py` module contains these function, below we document the most important ones. All the functions listed here are for convenience only.
+The software comes with a series of helper function to facilitate its use. These range from built-in function generators i.e. a *hill* function or a random *proportions* generator, to easy parameter parsing and data collection routines. The '`helper.py` module contains these function, below we document the most important ones. All the functions listed here are for convenience only.
 
 = Parameter Input =
 
