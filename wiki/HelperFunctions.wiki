@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The software comes with a series of helper function to facilitate its use. These range to built-in function generators i.e. a *hill* function or a random *proportions* generator, to easy parameter parsing and data collection routines. The '`helper.py` module contains these function, below we document the most important ones.
+The software comes with a series of helper function to facilitate its use. These range to built-in function generators i.e. a *hill* function or a random *proportions* generator, to easy parameter parsing and data collection routines. The '`helper.py` module contains these function, below we document the most important ones. All the functions listed here are for convenience only.
 
 = Parameter Input =
 
@@ -18,4 +18,21 @@ from boolean import helper
 lines = helper.read_parameters('parameter-data.csv')
 }}}
 
-The `lines` object returned by the helper method is a list that contains Parameter()
+The `lines` object returned by the helper method is a list that contains a nested _dictionary-like_ object for every row. In practice this means that the data in the table can be accessed by using the node name and the node type as indices. 
+
+{{{
+
+first = lines[0]
+
+print first['SAM1']['init']    # prints (1.0, 2.0, 3.0)
+print first['SAM1']['hill']    # prints (7.0, 8.0) 
+print first['Ca+2']['levels']  # prints 2.5 
+
+# or you can access by attribute like so
+
+print first.SAM1.init    # prints (1.0, 2.0, 3.0)
+print first.SAM1.hill    # prints (7.0, 8.0) 
+
+# this latter and simpler method works only if the nodes or labels 
+# are valid python identifiers. i.e. Ca+2 is not 
+}}}
