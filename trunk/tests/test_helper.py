@@ -3,7 +3,7 @@ import sys
 sys.path.append( '..' )
 
 import unittest
-from boolean import helper
+from boolean import Engine, helper
 
 class HelperTest( unittest.TestCase ):
     
@@ -43,7 +43,25 @@ class HelperTest( unittest.TestCase ):
 
         equal ( active['Ca+2']['levels'], 3.5 )
 
+    def test_function_initializer( self ):
+        "Testing function initializer"
+        equal = self.assertEqual
         
+        fname  = 'test-params.csv'
+        
+        # this contains all parameters
+        params = helper.read_parameters( fname )
+
+        text = """
+        1: SAM1* = SAM1
+        1: BLK2* = SAM1 and BLK2
+        """
+        row  = 1
+        eng  = Engine( mode='lpde', text=text )
+        eng.initialize( miss_func = helper.initializer( fname, row=row ) )
+
+        for node in 'SAM1 BLK2'.split():
+            equal( eng.start[node], params[row][node].init )
 
 def get_suite():
     suite = unittest.TestLoader().loadTestsFromTestCase( HelperTest )

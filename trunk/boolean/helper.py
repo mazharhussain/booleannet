@@ -5,6 +5,22 @@ import csv, StringIO
 import string
 from itertools import *
 
+def initializer(fname, row, label='init'):
+    """
+    This initializer will return a function that can initalize nodes 
+    based on a file. 
+    """
+    lines = read_parameters( fname )
+    size = len(lines)
+    assert row < size, 'Parameter file does not have row %d (0 based counting!)' % row
+    data = lines[row]
+    
+    def func( node ):
+        return data[node][label]
+    
+    return func
+                
+
 class Parameter(object):
     """
     Allows attribute access. (Bunch)
@@ -30,6 +46,9 @@ class Parameter(object):
     def __contains__(self, key):
         return key in self.__dict__
 
+    def setdefault(self, key, default):
+        return self.__dict__.setdefault(key, default)
+
 def read_parameters( fname ):
     """
     Reads parameters from a comma separated file and 
@@ -38,19 +57,21 @@ def read_parameters( fname ):
     """
 
     #
-    # we'll do some extra error checking as files created with 
-    # Excel may contain seemingly empty lines
+    # contains extra error checking because files created with 
+    # Excel may contain artifacts => extra, empty lines (invisible)
     #
 
     # skips lines with empty elements
     def any( elems ):
-        elems = map( string.strip, elems)
-        return filter(lambda x:x, elems )
-
-    # check file size 
+        return filter(lambda x:x, map(string.strip, elems ))
+    
+    # load the file, skipping commented lines
     lines  = [ line for line in csv.reader( CommentedFile(fname) ) if any(line) ]
+    
+    # check file size 
     assert len(lines) > 2, "file '%s' needs to have more than two lines" % fname
     
+    # same number of columns in each line
     colnum = len( lines[0] )
     def coltest( elems ) :
         size = len(elems)
@@ -58,14 +79,12 @@ def read_parameters( fname ):
             raise Exception( "column number mismatch expected %d, found %s, at line '%s'" % (size, colnum, ', '.join(elems)))
         return True
     
-    # columns must all be the same size
     lines = filter( coltest, lines )
     
     # nodes and attributes
-    nodes = lines[0]
-    attrs = lines[1]
+    nodes, attrs = lines[0:2]
     
-
+    # tries to coerce the value into a datastructure
     def tuple_cast( word ):
         try:
             values = map( float, word.split(',') )
@@ -76,20 +95,13 @@ def read_parameters( fname ):
         except ValueError:
             return word
 
-    # example input file
-    #
-    # NodeA, NodeB
-    # init, state
-    # "1,2,3", "yes,no"
-    
+    # generate the datastructure
     store  = []
     for elems in lines[2:]:
         param = Parameter()
         for index, attr, node in zip(count(), attrs, nodes):
-            if node not in param:
-                param[node] = Parameter()
-            elem = elems[index]
-            param[node][attr] = tuple_cast( elem )
+            value = elems[index]
+            param.setdefault( node, Parameter() )[attr] = tuple_cast( value )
         store.append( param )
     
     return store
