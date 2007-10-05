@@ -10,7 +10,7 @@ It is a very common use case to test the system with different sets of initial c
 
 http://booleannet.googlecode.com/svn/webdata/excel-data.png 
 
-The first line contains the node ids, in this case `SAM1`, `BLK2`, `Ca+2`, and `Call`. Note that the node ids need not be unique. The second line contains the type of the value for the column. In this case `init`, `hill`, `level` and `status`. Save this excel sheet into a *comma-separated format* then load it with:
+The first line contains the node ids, in this case `PIC1`, `MP`, `Ca+2`, and `Call`. Note that the node ids need not be unique. The second line contains the type of the value for the column. In this case `conc`, `decay`, `threshold` etc. Save this excel sheet into a *comma-separated format* then load it with:
 
 {{{
 from boolean import helper
@@ -25,18 +25,19 @@ The `lines` object returned by the helper method is a list that contains a neste
 first = lines[0]
 
 # access by keys
-print first['SAM1']['init']    # prints (1.0, 2.0, 3.0)
-print first['SAM1']['hill']    # prints (7.0, 8.0) 
-print first['Ca+2']['levels']  # prints 2.5 
+print first['PIC']['conc']     # prints 0.9
+print first['PIC']['decay']    # prints 1.0
+print first['MP']['gamma']     # prints 0.123
+print first['Ca+2']['levels']  # prints 2.5
 
 # access by attribute 
-print first.SAM1.init    # prints (1.0, 2.0, 3.0)
-print first.SAM1.hill    # prints (7.0, 8.0) 
+print first.PIC.conc           # prints 0.9
+print first.MP.n               # prints 1.0
 
 # values from the last row
-print lines[-1].SAM1.hill # prints (7.0, 8.0) 
+print lines[-1].Call.status    # prints 'marginal'
 
-# this latter and simpler method works only if the nodes or labels 
+# the attribute access works only if the nodes or labels 
 # are valid python identifiers. i.e. Ca+2 is not 
 }}}
 
