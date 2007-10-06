@@ -1,10 +1,10 @@
 """
 Grammar file for a boolean parser based on PLY
 """
-import re, random, string, time, sys
+import random, time, sys
 import tokenizer, util
 from ply import yacc
-from util import State, SyntaxException
+from util import State, Problem
 from itertools import chain
 
 log, error = util.log, util.error
@@ -65,7 +65,8 @@ def p_expression_state(p):
             value = ( p[1] == 'True' )
         
         # LPDE mode will need triplets
-        value = p.parser.lpde_mode and truth_to_tuple(value) or value
+        if p.parser.lpde_mode:
+            value = truth_to_tuple(value)
 
         p[0] = value
     except LookupError:
@@ -106,7 +107,7 @@ def p_error(p):
     text = '%s\n%s' % (hdr, msg)
     util.error( text )
     
-class Engine:
+class Engine(object):
     "Represents a boolean parser"
     def __init__(self, mode, text ):
        
@@ -126,8 +127,8 @@ class Engine:
         self.init_lines = map(tok2line, self.init_tokens )
         
         # other tokens may not be present        
-        for tokens in self.other_tokens:
-            raise SyntaxException( "Invalid line '%s'" % tok2line( tokens ) )
+        for toks in self.other_tokens:
+            raise Problem( "Invalid line '%s'" % tok2line( toks ) )
 
         # extracts the node ids from the tokens
         init_ids, rank_ids = map( tokenizer.get_all_nodes, [ self.init_tokens, self.rank_tokens] )
@@ -266,7 +267,7 @@ class Engine:
         """
         nums = [ hash( str(x) ) for x in self.states ]        
         size = len(nums)
-        for step in range(1,4):            
+        for step in range(1, 4):            
             sub = [ nums[i:i+step] for i in range(0, size, step) ] 
             for count, elem in enumerate( zip(sub, sub[1:]) ):
                 x, y = elem
