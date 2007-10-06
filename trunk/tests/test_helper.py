@@ -3,13 +3,41 @@ import sys
 sys.path.append( '..' )
 
 import unittest
-from boolean import Engine, helper
+from boolean import Engine, helper, util
 
 class HelperTest( unittest.TestCase ):
     
     def setUp(self):
         self.params = helper.read_parameters(  'test-params.csv' )
     
+    def test_fixup( self ):
+        "Tests text fixup"
+
+        before = """
+        A = B = C 1
+        1: A* = A
+        2: B* = B
+        3: C* = C
+        4: D* = D
+        """
+
+        text = util.modify_states(text=before, turnon=["A", "B"], turnoff=[ "C" , "V" ])
+
+        after = """A = B = C 1.0
+        C=False
+        V=False
+        A=True
+        B=True
+        #1: A * = A
+        #2: B * = B
+        #3: C * = C
+        4: D * = D"""
+        
+        after = [ line.strip() for line in after.splitlines() ]
+        after = '\n'.join( after)
+        
+        self.assertEqual( text, after )
+
     def test_parameter_reader( self ):
         "Testing reader"
         equal = self.assertEqual

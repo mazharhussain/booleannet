@@ -2,7 +2,7 @@ from itertools import *
 import sys, os, logging, random, re, string
 import tokenizer, helper
 
-class SyntaxException(Exception):
+class Problem(Exception):
     pass
 
 class State(object):
@@ -81,35 +81,30 @@ def as_set( nodes ):
     else:
         return set(nodes)    
 
-def set_knockout( text, nodes=[]):
+def modify_states( text, turnon=[], turnoff=[] ):
     """
-    Alters the text to represent a knockout
-    """
-    return __fixup_text( text=text, state='False', nodes=nodes)
-
-def set_overexpressed( text, nodes=[]):
-    """
-    Alters the text to represent a overexpress
-    """
-    return __fixup_text( text=text, state='True', nodes=nodes)
-
-def __fixup_text( text, state, nodes=[]):
-    """
-    Sets the inital state of the nodes to 'state' and 
-    comments out lines that contain assignment to any of the nodes 
+    Turns nodes on and off and comments out lines 
+    that contain assignment to any of the nodes 
     
     Will use the main lexer.
     """
-    nodes  = as_set(nodes)
+    turnon  = as_set( turnon )
+    turnoff = as_set( turnoff )
     tokens = tokenize( text )
     init_tokens = filter( lambda x: x[0].type == 'ID', tokens )
     body_tokens = filter( lambda x: x[0].type == 'RANK', tokens )
-    init_lines = map( tokenizer.tok2line, init_tokens )
+    init_lines  = map( tokenizer.tok2line, init_tokens )
     
     # append the states will override other settings
-    for node in nodes:
-        init_lines.append( '%s=%s' % (node, state) )
+    init_lines.extend( [ '%s=False' % node for node in turnoff ] )
+    init_lines.extend( [ '%s=True' % node for node in turnon ] )
     
+    common = list( turnon & turnoff )
+    if common:
+        raise Problem( "Nodes %s are turned both on and off" % ', '.join(common) )
+
+    nodes = turnon | turnoff
+
     body_lines = []
     for tokens in body_tokens:
         values = [ t.value for t in tokens ]
@@ -189,7 +184,7 @@ def error( msg ):
     Logs errors
     """
     # bail out for now
-    raise SyntaxException( msg )
+    raise Problem( msg )
 
 def default_get_value(state, name, p):
     "Default get value function"

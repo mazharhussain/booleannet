@@ -48,9 +48,9 @@ class Solver( Engine ):
     def __init__(self, text, mode):
         
         # run the regular boolen engine one step to detect syntax errors
-        bool = Engine(text=text, mode='sync')
-        bool.initialize( miss_func=util.randomize )
-        bool.iterate( steps=1 )
+        eng = Engine(text=text, mode='sync')
+        eng.initialize( miss_func=util.randomize )
+        eng.iterate( steps=1 )
         self.INIT_LINE = init_line
         self.OVERRIDE  = default_override
         self.DEFAULT_FUNC = piecewise
@@ -171,7 +171,7 @@ class Solver( Engine ):
                 self.data[node] = [ row[index] for row in self.alldata ]
     
 if __name__ == '__main__':
-    text = """
+    stext = """
     #
     # this is a comment
     #
@@ -185,13 +185,14 @@ if __name__ == '__main__':
     3: C* = C
     """
 
-    engine = Solver( text=text, mode='lpde' )
+    engine = Solver( text=stext, mode='lpde' )
     engine.initialize()
     engine.iterate( fullt=1, steps=10, debug=1 )
     
     #print engine.dynamic_code
 
+    '''
     from pylab import *
     plot( engine.alldata ,'o-' )
     show()
-
+    '''
