@@ -56,7 +56,7 @@ def run( text, node, repeat, steps ):
 if __name__ == '__main__':
     
     node   = 'IL2'
-    repeat = 100 # raise this for better curves
+    repeat = 10 # raise this for better curves
     steps  = 100
 
     text = util.read( 'LGL.txt')
@@ -64,7 +64,9 @@ if __name__ == '__main__':
     data = []
     # overexpress = 'Mcl1'.split()
     # for target in overexpress:
-    mtext  = util.set_overexpressed( text=text, nodes=['IL15','PDGF'])
+    
+    mtext  = util.modify_states( text=text, turnon=['IL15','PDGF'])
+
     # you can print this text to see what it did to the rules
     print mtext
     values = run( text=mtext, repeat=repeat, node=node, steps=steps) 

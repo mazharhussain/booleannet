@@ -37,7 +37,7 @@ if __name__ == '__main__':
     data = []
     knockouts = 'WT S1P PA pHc ABI1 ROS'.split()
     for target in knockouts:
-        mtext  = util.set_knockout( text=text, nodes=target)
+        mtext  = util.modify_states( text=text, turnoff=target)
         values = run( text=mtext, repeat=repeat, node=node, steps=steps) 
         data.append( values )
     
