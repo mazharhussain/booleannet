@@ -48,7 +48,7 @@ based on the second row ( zero based counting!) one could write the following:
 
 {{{
 lines = helper.read_parameters('parameter-data.csv')
-data  = lines[0] # first row
+data  = lines[1] # second row
 engine  = Engine( mode='lpde', text=text )
 engine.initialize( miss_func=helper.initializer( data ) )
 }}}
