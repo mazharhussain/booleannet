@@ -142,8 +142,8 @@ class Solver( Engine ):
             sys.exit()
         else:
             try:
-                exec self.init_text
-                exec self.func_text in locals()
+                exec self.init_text in globals()
+                exec self.func_text in globals()
             except Exception, exc:
                 msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
                 util.error(msg)

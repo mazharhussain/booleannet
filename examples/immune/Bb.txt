@@ -1,7 +1,6 @@
 #
 # upon runtime set missing values to false!
 #
-Bb = True
 
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
 1: TTSS* = Bb and not (CA or OAb) 
@@ -23,6 +22,7 @@ Bb = True
 1: IL4* = IL4L
 1: IL10* = (Tr or Th2 or (MP and TTSS)) and not IFNg
 1: IL10L* = IL10
+1: IL10R* = IL10
 1: RP* = PIC
 1: DP* = RP and TTSS
 1: MP* = (PIC or IFNg) and not IL10 #lpde(MP)-Hill(MP, H, n)
