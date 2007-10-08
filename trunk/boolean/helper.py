@@ -9,13 +9,13 @@ helper_functions = """
 # helper functions from helper.py
 
 from math import log, pow
-from random import randint
+from random import randint, random
 
-def prop( r1, r2 ):
+def prop( rc, r ):
     if randint(0,1):
-        return r1 + r2
+        return rc + r * random()
     else:
-        return r1 - r2
+        return rc - r * random()
 
 def hill( conc, h, n ):
     return pow(conc, n)/( pow(h, n) + pow(conc, n) )
@@ -50,7 +50,7 @@ def hill_func( node, indexer, par):
 def prop_func( node, indexer, par):
     index = indexer[node]
     try:
-        text = ' prop( %s, %s ) ' % ( index, par[node].r, par[node].rc )
+        text = ' prop( %s, %s ) ' % ( par[node].r, par[node].rc )
     except Exception, exc:
         msg = "error creating proportion function for node %s -> %s" % (node, exc)
         raise Exception(msg)
