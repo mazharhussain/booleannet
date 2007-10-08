@@ -220,7 +220,7 @@ class Engine(object):
         assert self.states, 'States are empty'
         return self.states[-1]
 
-    def initialize( self, miss_func=None ):
+    def initialize( self, miss_func=None , extra_python=''):
         """
         Initializes the parser
         """

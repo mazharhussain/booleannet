@@ -22,6 +22,40 @@ def hill( conc, gamma, n ):
 
 """
 
+def assign(node, indexer):
+    index = indexer[node]
+    return 'n%d = ' % index 
+
+def conc( node, indexer):
+    index = indexer[node]
+    return ' c%d ' % index 
+
+def decay( node, indexer):
+    index = indexer[node]
+    return ' d%d ' % index 
+
+def threshold( node, indexer):
+    index = indexer[node]
+    return ' t%d ' % index 
+ 
+def hill_func( node, indexer, par):
+    index = indexer[node]
+    try:
+        text = ' hill( c%d, %s, %s ) ' % ( index, par[node].gamma, par[node].n )
+    except Exception, exc:
+        msg = "error creating hill function for node %s -> %s" % (node, exc)
+        raise Exception(msg)
+    return text
+
+def prop_func( node, indexer, par):
+    index = indexer[node]
+    try:
+        text = ' prop( %s, %s ) ' % ( index, par[node].rc, par[node].rc )
+    except Exception, exc:
+        msg = "error creating proportion function for node %s -> %s" % (node, exc)
+        raise Exception(msg)
+    return text
+
 def initializer(data, labels=None, **kwds):
     """
     Function factory that returns an initializer 
