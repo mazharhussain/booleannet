@@ -22,17 +22,18 @@ The `lines` object returned by the helper method is a list that contains a neste
 
 {{{
 
-first = lines[0]
+# take first line
+row = lines[0]
 
 # access by keys
-print first['PIC']['conc']     # prints 0.9
-print first['PIC']['decay']    # prints 1.0
-print first['MP']['gamma']     # prints 0.123
-print first['Ca+2']['levels']  # prints 2.5
+print row['PIC']['conc']     # prints 0.9
+print row['PIC']['decay']    # prints 1.0
+print row['MP']['gamma']     # prints 0.123
+print row['Ca+2']['levels']  # prints 2.5
 
 # access by attribute 
-print first.PIC.conc           # prints 0.9
-print first.MP.n               # prints 1.0
+print row.PIC.conc           # prints 0.9
+print row.MP.n               # prints 1.0
 
 # values from the last row
 print lines[-1].Call.status    # prints 'marginal'
