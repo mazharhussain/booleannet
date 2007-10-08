@@ -4,12 +4,12 @@ from itertools import *
 import util, odict, tokenizer, helper
 from engine import Engine
 
-def override( base, indexer ):
+def default_override( node, indexer, tokens ):
     """
     Gets called at the before the transformation.
     If this function returns anything other than false it will override the entire equation
     """
-    return False
+    return None
 
 def init_line( store ):
     """
@@ -18,9 +18,10 @@ def init_line( store ):
     patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f # %(node)s' 
     return patt % store
 
-
 def piecewise( tokens, indexer ):
-    
+    """
+    Generates a piecewise equation from the tokens
+    """
     base_node  = tokens[1].value
     base_index = indexer[base_node]
     line = []
@@ -38,9 +39,6 @@ def piecewise( tokens, indexer ):
     
     return ' '.join( line )
 
-def default_override(*args, **kwds):
-    return False
-
 class Solver( Engine ):
     """
     This class generates python code that will be executed inside the Runge-Kutta integrator.
@@ -53,8 +51,7 @@ class Solver( Engine ):
         eng.iterate( steps=1 )
         self.INIT_LINE = init_line
         self.OVERRIDE  = default_override
-        self.DEFAULT_FUNC = piecewise
-        self.CREATE_EQUATION = self.create_equation
+        self.DEFAULT_EQUATION = piecewise
         self.extra_init = ''
 
         # setting up this engine
@@ -62,7 +59,7 @@ class Solver( Engine ):
         self.dynamic_code = '*** not yet generated ***'
         self.data = {}
     
-    def initialize(self, miss_func=None):
+    def initialize(self, miss_func=None, extra_python=''):
         "Custom initializer"
         Engine.initialize( self, miss_func=miss_func )
         
@@ -77,12 +74,21 @@ class Solver( Engine ):
             triplet = self.start[node]
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
+        
+        self.extra_init += extra_python
 
     def generate_init( self ):
         """
         Generates the initialization lines
         """
-        init = [ '# dynamically generated code' ]
+        init = [ ]
+        
+        if self.extra_init:
+            init.append( '# extra code' )
+            init.append( self.extra_init )
+            init.append( '' )
+
+        init.append( '# dynamically generated code' )
         init.append( '# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue' )
         init.append( '# %s' % self.mapper.values() )
         for index, node, triplet in self.mapper.values():
@@ -91,9 +97,6 @@ class Solver( Engine ):
             store = dict( index=index, conc=conc, decay=decay, tresh=tresh, node=node)
             line = self.INIT_LINE( store )
             init.append( line )
-        
-        if self.extra_init:
-            init.append( self.extra_init )            
         
         init_text = helper.helper_functions + '\n'.join( init )
         return init_text
@@ -105,8 +108,10 @@ class Solver( Engine ):
         original = '#' + tokenizer.tok2line(tokens)
         node  = tokens[1].value
         lines = [ '', original ]
-        line  = self.OVERRIDE(node, indexer=self.indexer, tokens=tokens) or self.DEFAULT_FUNC( tokens=tokens, indexer=self.indexer )
-        lines.append( line )
+        line  = self.OVERRIDE(node, indexer=self.indexer, tokens=tokens)
+        if line is None:
+            line = self.DEFAULT_EQUATION( tokens=tokens, indexer=self.indexer )
+        lines.append( line.strip() )
         return lines  
 
     def generate_function(self ):
@@ -126,7 +131,7 @@ class Solver( Engine ):
         body.append( '    %s = x' % assign )
         body.append( '    %s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
-            equation = self.CREATE_EQUATION( tokens )
+            equation = self.create_equation( tokens )
             equation = [ '    ' + e for e in equation ]
             body.append( '\n'.join( equation)  )
         body.append( '' )
@@ -158,8 +163,8 @@ class Solver( Engine ):
             sys.exit()
         else:
             try:
-                exec self.init_text in globals()
-                exec self.func_text in globals()
+                exec self.init_text
+                exec self.func_text in locals()
             except Exception, exc:
                 msg = "'%s' in:\n%s\n*** dynamic code error ***" % ( exc, self.dynamic_code )
                 util.error(msg)

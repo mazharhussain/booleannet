@@ -3,33 +3,45 @@ import sys
 sys.path.append("../..")
 
 from boolean import Engine, helper, util
+from boolean.helper import hill_func, assign, prop_func
 
-
-params = helper.read_parameters(  'parameters.csv' )
-param  = params[0]
-
-def override( node, indexer, tokens, param=param ):
+def override( node, indexer, tokens, param ):
+    """
+    Main override
+    """
     if node == 'MP':
-        return helper.hill_func( node, indexer, param )
+        
+        return assign(node, indexer) + hill_func( node, indexer, param )
     else:
         return None
+
 def run( text, param):
     """
     Runs the engine with a given text and parameters
     """
     engine = Engine( text=text, mode='lpde' )
-    engine.initialize( extra_python='123' )
+    engine.initialize( extra_python='123', miss_func=util.randomize )
     
-    def local_override( param=param, **kwds):
-        return override( param=param, **kwds)
+    # this function binds the current value of the parameter
+    # to the override function
+    def local_override( node, indexer, tokens, param=param ):
+        return override( node, indexer, tokens, param )
 
     engine.OVERRIDE = local_override
 
     engine.iterate( fullt=1, steps=10, debug=1 )
 
 if __name__ == '__main__':
-    
-    text = util.read( 'Bb.txt' )
+    """
+    Main script
+    """
+    text  = util.read( 'Bb.txt' )
+    lines = helper.read_parameters(  'Bb-parameters.csv' )
+
+    # get the first row
+    param  = lines[0]
+
+    run (text=text, param=param )
 
     '''
     import pylab
