@@ -11,33 +11,12 @@ def default_override( node, indexer, tokens ):
     """
     return None
 
-def init_line( store ):
+def default_equation( tokens, indexer ):
     """
-    Store is an incoming dictionary prefilled with parameters
+    Default equation generator
     """
-    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f # %(node)s' 
-    return patt % store
-
-def piecewise( tokens, indexer ):
-    """
-    Generates a piecewise equation from the tokens
-    """
-    base_node  = tokens[1].value
-    base_index = indexer[base_node]
-    line = []
-    line.append ( 'n%d = float(' % base_index )
-    nodes = [ t.value for t in tokens[4:] ]
-    for node in nodes:
-        if node in indexer:
-            index = indexer[node]
-            value = " ( c%d > t%d ) " % ( index, index )
-        else:
-            value = node
-        line.append ( value )
-    line.append ( ')' )
-    line.append ( "- d%d * c%d" % ( base_index, base_index ) )
-    
-    return ' '.join( line )
+    node = tokens[1].value
+    return helper.newval(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
 
 class Solver( Engine ):
     """
@@ -49,9 +28,9 @@ class Solver( Engine ):
         eng = Engine(text=text, mode='sync')
         eng.initialize( miss_func=util.randomize )
         eng.iterate( steps=1 )
-        self.INIT_LINE = init_line
+        self.INIT_LINE = helper.init_line
         self.OVERRIDE  = default_override
-        self.DEFAULT_EQUATION = piecewise
+        self.DEFAULT_EQUATION = default_equation
         self.extra_init = ''
 
         # setting up this engine
@@ -93,7 +72,7 @@ class Solver( Engine ):
         init.append( '# %s' % self.mapper.values() )
         for index, node, triplet in self.mapper.values():
             conc, decay, tresh = triplet
-            assert decay > 0, 'Decay must be larger than 0 -> %s' % str(triplet)  
+            #assert decay > 0, 'Decay for node %s must be larger than 0 -> %s' % (node, str(triplet))   
             store = dict( index=index, conc=conc, decay=decay, tresh=tresh, node=node)
             line = self.INIT_LINE( store )
             init.append( line )
@@ -166,7 +145,7 @@ class Solver( Engine ):
                 exec self.init_text
                 exec self.func_text in locals()
             except Exception, exc:
-                msg = "'%s' in:\n%s\n*** dynamic code error ***" % ( exc, self.dynamic_code )
+                msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
                 util.error(msg)
 
             # x0 has been auto generated in the initialization

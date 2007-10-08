@@ -17,14 +17,14 @@ def prop( r1, r2 ):
     else:
         return r1 - r2
 
-def hill( conc, gamma, n ):
-    return pow(conc, n)/( pow(gamma, n) + pow(conc, n) )
+def hill( conc, h, n ):
+    return pow(conc, n)/( pow(h, n) + pow(conc, n) )
 
 """
 
-def assign(node, indexer):
+def newval(node, indexer):
     index = indexer[node]
-    return 'n%d = ' % index 
+    return 'n%d' % index 
 
 def conc( node, indexer):
     index = indexer[node]
@@ -41,7 +41,7 @@ def threshold( node, indexer):
 def hill_func( node, indexer, par):
     index = indexer[node]
     try:
-        text = ' hill( c%d, %s, %s ) ' % ( index, par[node].gamma, par[node].n )
+        text = ' hill( c%d, %s, %s ) ' % ( index, par[node].h, par[node].n )
     except Exception, exc:
         msg = "error creating hill function for node %s -> %s" % (node, exc)
         raise Exception(msg)
@@ -50,11 +50,39 @@ def hill_func( node, indexer, par):
 def prop_func( node, indexer, par):
     index = indexer[node]
     try:
-        text = ' prop( %s, %s ) ' % ( index, par[node].rc, par[node].rc )
+        text = ' prop( %s, %s ) ' % ( index, par[node].r, par[node].rc )
     except Exception, exc:
         msg = "error creating proportion function for node %s -> %s" % (node, exc)
         raise Exception(msg)
     return text
+
+def piecewise( tokens, indexer ):
+    """
+    Generates a piecewise equation from the tokens
+    """
+    base_node  = tokens[1].value
+    base_index = indexer[base_node]
+    line = []
+    line.append ( 'float(' )
+    nodes = [ t.value for t in tokens[4:] ]
+    for node in nodes:
+        if node in indexer:
+            index = indexer[node]
+            value = " ( c%d > t%d ) " % ( index, index )
+        else:
+            value = node
+        line.append ( value )
+    line.append ( ')' )
+    line.append ( "- d%d * c%d" % ( base_index, base_index ) )
+    
+    return ' '.join( line )
+
+def init_line( store ):
+    """
+    Store is an incoming dictionary prefilled with parameters
+    """
+    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f # %(node)s' 
+    return patt % store
 
 def initializer(data, labels=None, **kwds):
     """
