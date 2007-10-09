@@ -12,6 +12,7 @@ include examples/LGL/LGL-lpde.py
 
 include examples/immune/*.py
 include examples/immune/*.txt
+include examples/immune/*.csv
 
 recursive-include examples/demos *.txt *.py
 recursive-include test test*.txt test*.py
