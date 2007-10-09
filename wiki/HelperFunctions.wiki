@@ -52,3 +52,14 @@ data  = lines[1] # second row
 engine  = Engine( mode='lpde', text=text )
 engine.initialize( miss_func=helper.initializer( data, default=(1,1,0.5) ) )
 }}}
+
+= Column Types =
+
+Some helper functions are able to extract the proper information from the files as long as  some simple naming conventions are followed. For example the 
+
+{{
+helper.initialize( param )
+}}}
+
+module function can initialize nodes by looking up the *conc*, *decay* and *threshold* column labels. The hill function generator required the *h* and *n* labels, while the proportions generator looks for *rc* and *r* values. 
+ 
