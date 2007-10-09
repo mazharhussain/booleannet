@@ -50,13 +50,5 @@ based on the second row ( zero based counting!) one could write the following:
 lines = helper.read_parameters('parameter-data.csv')
 data  = lines[1] # second row
 engine  = Engine( mode='lpde', text=text )
-engine.initialize( miss_func=helper.initializer( data ) )
+engine.initialize( miss_func=helper.initializer( data, default=(1,1,0.5) ) )
 }}}
-
-= Data collectors =
-
-...
-
-= Cycle detection =
-
-...
