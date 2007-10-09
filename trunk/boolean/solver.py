@@ -32,15 +32,16 @@ class Solver( Engine ):
         self.OVERRIDE  = default_override
         self.DEFAULT_EQUATION = default_equation
         self.extra_init = ''
+        self.invariants = ''
 
         # setting up this engine
         Engine.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
         self.data = {}
     
-    def initialize(self, miss_func=None, extra_python=''):
+    def initialize(self, miss_func=None, defaults={}, extra_init='', invariants='' ):
         "Custom initializer"
-        Engine.initialize( self, miss_func=miss_func )
+        Engine.initialize( self, miss_func=miss_func, defaults=defaults )
         
         # will also maintain the order of insertion
         self.mapper  = odict.odict() 
@@ -54,7 +55,8 @@ class Solver( Engine ):
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
         
-        self.extra_init += extra_python
+        self.extra_init += extra_init
+        self.invariants += invariants
 
     def generate_init( self ):
         """
@@ -103,10 +105,13 @@ class Solver( Engine ):
         retvals = [ 'n%d' % i for i in indices ]
         assign  = ', '.join(assign)
         retvals = ', '.join(retvals)
-        
         body = []
         body.append( 'x0 = %s' % assign )
         body.append( 'def derivs( x, t):' )
+        
+        # add loop invariants
+        body.extend( '    %s' % line for line in self.invariants.splitlines() )
+        
         body.append( '    %s = x' % assign )
         body.append( '    %s = %s' % (retvals, assign) )
         for tokens in self.rank_tokens:
@@ -119,9 +124,7 @@ class Solver( Engine ):
         
         return text
 
-    def iterate( self, fullt, steps, debug=False, params={} ):
-        
-        globals().update( params )
+    def iterate( self, fullt, steps, debug=False, invariants='' ):
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)

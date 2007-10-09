@@ -47,6 +47,25 @@ class EngineTest( unittest.TestCase ):
         EQ( len(eng.data), 3)
         EQ( len(eng.data['A']), 10)
 
+    
+    def test_initializer( self ):
+        "Testing initializer"
+        
+        EQ = self.assertEqual
+
+        text = """
+        A = False
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
+        """
+        eng  = boolean.Engine( mode='sync', text=text )
+        eng.initialize( miss_func= boolean.util.allfalse, defaults=dict(A=True, B=True) )
+        eng.iterate( steps=10 )
+        EQ( eng.start.A, True )
+        EQ( eng.start.B, True )
+        EQ( eng.start.C, False )
+        EQ( len(eng.states), 11)
 
     def test_engine( self ):
         "Basic operation"

@@ -220,7 +220,7 @@ class Engine(object):
         assert self.states, 'States are empty'
         return self.states[-1]
 
-    def initialize( self, miss_func=None , extra_python=''):
+    def initialize( self, miss_func=None, defaults={} ):
         """
         Initializes the parser
         """
@@ -248,7 +248,12 @@ class Engine(object):
             if self.missing_nodes:
                 util.error('Not initialized nodes %s' % ', '.join(self.missing_nodes) )
 
-    def iterate( self, steps, debug=False, params={}):
+        # final override
+        for node, value in defaults.items():
+            self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
+            self.parser.RULE_SETVALUE( self.parser.after, node, value, None)    
+    
+    def iterate( self, steps, debug=False ):
         """
         Iterates over the instruction 'count' times
         """
