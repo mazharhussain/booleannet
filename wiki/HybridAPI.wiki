@@ -57,11 +57,13 @@ To display the code that was dynamically generated pass the `debug=1` parameter 
 {{{
 # dynamically generated code
 # abbreviations: c=concentration, d=decay, t=threshold, n=newvalue
-# [(0, 'A', (1.0, 1.0, 0.5)), (1, 'B', (1.0, 1.0, 0.5)), (2, 'C', (1.0, 1.0, 0.5))]
-c0, d0, t0 = 1.000000, 1.000000, 0.500000/1.000000 # A
-c1, d1, t1 = 1.000000, 1.000000, 0.500000/1.000000 # B
-c2, d2, t2 = 1.000000, 1.000000, 0.500000/1.000000 # C
+# [(0, 'A', (1.0, 1.0, 0.5)), (1, 'B', (1.0, 2.0, 0.5)), (2, 'C', (1.0, 3.0, 0.5))]
+
+c0, d0, t0 = 1.0, 1.0, 0.5 # A
+c1, d1, t1 = 1.0, 2.0, 0.5 # B
+c2, d2, t2 = 1.0, 3.0, 0.5 # C
 x0 = c0, c1, c2
+
 def derivs( x, t):
 	c0, c1, c2 = x
 	n0, n1, n2 = c0, c1, c2
