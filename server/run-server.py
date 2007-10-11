@@ -4,14 +4,23 @@ sys.path.extend( [ '..', 'web.zip'] )
 
 import web
 import boolean
+import pylab
 
 urls = (
-  '/', 'index'  
+  '/', 'index',
+  '/simulate', 'simulate' 
+  
 )
 
 render = web.template.render('static/', cache=False )
 
+class simulate:
+    "Simulation results"
+    def POST(self ):
+        print render.results()
+
 class index:
+    "Main index"
     def GET(self ):
         print render.index()
 
