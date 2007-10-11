@@ -23,13 +23,14 @@ def missing( node ):
 engine.initialize( misssing=missing, default=dict(A=True) )
 
 #
-# both the miss_func, and default parameters are optional
-# the miss_func, if present will be called for every node that was not 
+# both the missing, and default parameters are optional
+# the missing parameter needs to be a function that, if 
+# present will be called for every node that was not 
 # initialized in the main body of the text input
 #
-# the default parameter, if present will be used to override all values
-# that may be set beforehand, thus node A above will alwyas have
-# the value True, no matter what the text or the miss_func may be set it to
+# the parameter named default, if present is used to override all values
+# that may be set beforehand either in the text file or via the missing
+# parameter
 #
 }}}
 
