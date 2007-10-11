@@ -17,7 +17,18 @@ render = web.template.render('static/', cache=False )
 class simulate:
     "Simulation results"
     def POST(self ):
-        print render.results()
+        params = web.input( method='sync', rules="A=0", fullt="1", steps="10" )
+        
+        try:
+            message = None
+            steps   = min( [ 100, abs(int(params.steps)) ] )
+            fullt   = min( [  10, abs(int(params.fullt)) ] )
+            assert params.method in "sync async lpde".split()
+        except Exception, exc:
+            message = str(exc)
+        
+    
+        print render.results( message=message, params=params )
 
 class index:
     "Main index"
