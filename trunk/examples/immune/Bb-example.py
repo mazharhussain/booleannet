@@ -185,7 +185,7 @@ def local_override( node, indexer, tokens ):
 
 engine.OVERRIDE = local_override
 
-engine.initialize( miss_func = helper.initializer( conc, default=(0,0,0) )  )
+engine.initialize( missing = helper.initializer( conc, default=(0,0,0) )  )
 
 engine.iterate( fullt=FULLT, steps=STEPS, debug=1 )
 

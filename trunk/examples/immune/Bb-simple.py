@@ -17,7 +17,7 @@ eng = Engine( mode='async', text=text )
 
 for i in xrange( REPEAT ):
     # unintialized nodes set to random
-    eng.initialize( miss_func= util.randomize )
+    eng.initialize( missing= util.randomize )
     eng.iterate( steps=STEPS )
     coll.collect( states=eng.states, node=NODE )
 

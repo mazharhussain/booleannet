@@ -45,7 +45,7 @@ def run( text, node, repeat, steps ):
     eng.RULE_GETVALUE = new_getvalue
 
     for i in xrange( repeat ):
-        eng.initialize( miss_func= missing_nodes )
+        eng.initialize( missing= missing_nodes )
         eng.iterate( steps=steps)
         coll.collect( states=eng.states, node=node )
 
