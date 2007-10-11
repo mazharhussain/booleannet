@@ -6,14 +6,14 @@ import web
 import boolean
 
 urls = (
-  '/(.*)', 'index'  
+  '/', 'index'  
 )
 
-render = web.template.render('templates/', cache=False )
+render = web.template.render('static/', cache=False )
 
 class index:
-    def GET(self, name):
-        print render.index( name )
+    def GET(self ):
+        print render.index()
 
 web.webapi.internalerror = web.debugerror
 

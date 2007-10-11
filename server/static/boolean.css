@@ -1,1 +1,10 @@
-TEST
+body {
+	font-family: "Trebuchet MS", Arial, tahoma, sans-serif;
+	font-size: 14px;
+	line-height: 1.6em;
+	margin: 0; 
+	padding: 0;
+	border-top: 9px solid #ff8f26;	
+	background: #EEEEEE;
+}
+
