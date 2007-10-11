@@ -34,12 +34,14 @@ First plot shows the relative gene expression levels while the system approaches
 
 == Credits ==
 
+The library has been conceived and programmed by [http://www.personal.psu.edu/iua1/ István Albert] using previous work, ideas and contributions from Song Li, [http://www.phys.psu.edu/%7Ejthakar/ Juilee Thakar] and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [http://www.phys.psu.edu/~ralbert/ Réka Albert].
+
 For user convenience the following third party libraries are distributed with  the software:
 
   * [http://www.dabeaz.com/ply/ PLY] by David Beazley
   * [http://www.webpy.org web.py] started by Aaron Schwartz
   * [http://oakwinter.com/code/functional/ functional.py] by Colin Winters
 
-One of the following libraries must be also installed if the engine will be used in `lpde` mode (differential equations):
+The following library must be also installed if the engine will be used in `lpde` mode (differential equations):
 
   * [http://matplotlib.sourceforge.net/ matplotlib] by Dave Hunter
