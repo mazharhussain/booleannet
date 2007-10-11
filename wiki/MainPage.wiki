@@ -1,0 +1,45 @@
+#summary The main page
+
+=Boolean Network Simulations= 
+
+The goal of this software package is to provide intuitive and accessible tools for simulating *biological regulatory networks* in a boolean formalism. Using this simulator biologist and bioinformaticians can specify their system in a simple textual language then explore various dynamic behaviors via a web interface or an application programming interface (API) each designed to facilitate scientific discovery, data collection and reporting.
+
+The software is primarly distributed as [http://www.python.org Python] source code and requires that [http://www.python.org Python 2.4] (or later) be installed on the target computer. 
+
+==Introduction==
+
+When trying to understand the role and functioning of a regulatory network,
+the first step is to assemble the components of the network and the interactions
+between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of Stuart Kauffman and Rene Thomas.
+
+In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. In general, a Boolean or logical function is written as a statement acting on the inputs using the logical operators *and*, *or* and *not* and its output is ON(OFF) if the statement is true (false).
+
+In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the  processes. The first method introduces *asynchronous updates* where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a _linear system of piecewise differential equations_, leading to a *hybrid model* in the manner first suggested by Leon Glass and collaborators.
+
+  *  A tutorial on the [BooleanAPI boolean operating mode ]
+  *  A description of the [HybridAPI hybrid operating mode ]
+  *  Get things done faster with [HelperFunctions helper functions]
+  *  See the  [ApiReference quick reference] for a reminder of how the library works.
+  * [http://code.google.com/p/booleannet/downloads/list Download the library]. 
+
+*Note:* to run the examples you'll need to have [http://matplotlib.sourceforge.net/ matplotlib] installed.  
+
+== Examples ==
+
+Here are two example plots obtained when using *[http://booleannet.googlecode.com/svn/webdata/aba.txt aba.txt]* as input file
+
+http://booleannet.googlecode.com/svn/webdata/footer.png 
+
+First plot shows the relative gene expression levels while the system approaches a steady state in a *hybrid model*, the second shows the effect of mutations on the closure of stomata cells in an *asynchronous model*. These and other examples can be found in the `examples` directory of the distribution
+
+== Credits ==
+
+For user convenience the following third party libraries are distributed with  the software:
+
+  * [http://www.dabeaz.com/ply/ PLY] by David Beazley
+  * [http://www.webpy.org web.py] started by Aaron Schwartz
+  * [http://oakwinter.com/code/functional/ functional.py] by Colin Winters
+
+One of the following libraries must be also installed if the engine will be used in `lpde` mode (differential equations):
+
+  * [http://matplotlib.sourceforge.net/ matplotlib] by Dave Hunter
