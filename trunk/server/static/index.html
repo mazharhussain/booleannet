@@ -3,18 +3,59 @@
 <head>
 	<title>BooleanNet Webserver</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link href="/boolean.css" rel="stylesheet" type="text/css" />
-	<link rel="shortcut icon" href="/boolean.ico" type="image/x-icon">
+	<link href="/static/boolean.css" rel="stylesheet" type="text/css" />
+	<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
 
-$def with (name)
+<h1 align="center">BooleanNet Webserver</h1>
 
-$if name:
-    I just wanted to say <em>hello</em> to $name.
-$else:
-    <em>Hello</em>, world!
+<form action="/simulate" method="post">
 
+<table align="center" cellpadding="5" cellspacing="2">
+
+<tr align="center">
+	<td align="center">
+		Paste your simulation in the box below. Examples: demo.txt, aba.txt
+	</td>
+</tr>
+
+<tr>
+	<td align="center">
+	<textarea name="rules" rows="25" cols="80">
+	</textarea>
+	</td>
+</tr>
+
+<tr>
+	<td align="center">
+		Method 
+		<select name="method">
+			<option name="sync" selected="yes">synchronous</option>
+			<option name="async">asynchronous</option>
+			<option name="lpde">piece-wise</option>
+		</select>
+		&nbsp;&nbsp;&nbsp; Steps: <input type="text" name="steps" value="100" size="5">
+		&nbsp;&nbsp;&nbsp; Time: <input type="text" name="time" value="1" size="2">  (lpde only)
+
+	</td>
+</tr>
+
+<tr>
+	<td align="center">
+		<input type="submit" name="submit" value="Run Simulation" />
+	</td>
+</tr>
+
+<tr>
+	<td align="center"> 
+		<br>
+		More information on the homepage:<a href="http://booleannet.googlecode.com">http://booleannet.googlecode.com</a>
+	</td>
+</tr>
+
+</table>
+</form>
 </body>
 </html>
