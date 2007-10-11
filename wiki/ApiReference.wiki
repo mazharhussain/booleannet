@@ -91,10 +91,10 @@ Simple functions to make your program more reusable. Used when overriding node b
 
 # return the newvalue, concentration, decay 
 # and treshold for each node. 
-helper.newval(node, indexer)
-helper.conc(node, indexer)
-helper.decay(node, indexer)
-helper.threshold(node, indexer)
+helper.newval( node, indexer )
+helper.conc ( node, indexer )
+helper.decay( node, indexer )
+helper.threshold( node, indexer )
 
 # automatically extracts the proper parameters to generate 
 # a hill or a proportion function for the node (see naming conventions)
