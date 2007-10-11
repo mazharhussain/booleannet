@@ -1,0 +1,26 @@
+#summary Programmin Interface Reference
+
+= Programming Interface Reference =
+
+Below we document the class and method signatures.
+
+Engine initialization:
+
+{{{
+engine = boolean.Engine( mode='sync', text=text )
+# mode may be: sync, async or lpde
+}}}
+
+State modifications:
+
+{{{
+from boolean import util
+text = util.modify_states(text=text, turnon=["A", "B"], turnoff=["C", "D"])
+
+#
+# a convenience function that modifies the input rules it
+# takes the rules as text and turns on or off nodes in it
+# it sets the nodes to True (or False) and comments out updating
+# rules for each of them
+#
+}}}
