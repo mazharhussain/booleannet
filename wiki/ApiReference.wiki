@@ -2,7 +2,7 @@
 
 = Programming Interface Reference =
 
-Below we document the class and method signatures.
+Below we document the class and method signatures. This is a quick reference, some functionality is explained in  more detail at [BooleanAPI] and [HybridAPI].
 
 ===Engine Creation===
 
@@ -45,4 +45,23 @@ text = util.modify_states(text=text, turnon=["A", "B"], turnoff=["C", "D"])
 # it sets the nodes to True (or False) and comments out updating
 # rules for each of them
 #
+}}}
+
+===Operation Override in sync/async Modes===
+
+{{{
+# setting and getting node values
+engine.RULE_SETVALUE ( state, name, value, parser)
+engine.RULE_GETVALUE ( state, name, parser)
+
+# changing the semantics of the operators 
+engine.RULE_AND (node1, node2, parser)
+engine.RULE_OR  (node1, node2, parser)
+engine.RULE_NOT (node, parser)
+}}}
+
+===Operation Override in LPDE Mode===
+
+{{{
+
 }}}
