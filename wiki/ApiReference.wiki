@@ -40,10 +40,10 @@ from boolean import util
 text = util.modify_states(text=text, turnon=["A", "B"], turnoff=["C", "D"])
 
 #
-# a convenience function that modifies the input rules it
-# takes the rules as text and turns on or off nodes in it
-# it sets the nodes to True (or False) and comments out updating
-# rules for each of them
+# a convenience function that modifies the input rules
+# it turns on or off nodes (sets the nodes to True or False) 
+# and comments out updating rules for each node, print the text
+# to see what it does
 #
 }}}
 
@@ -82,4 +82,22 @@ engine.INIT_LINE( params )
 
 # modify the default equation that is created
 engine.DEFAULT_EQUATION( tokens, indexer )
+}}}
+
+===LPDE Helper Functions===
+
+Simple functions to make your program more reusable. Used when overriding node behavior in LPDE mode.
+{{{
+
+# return the newvalue, concentration, decay 
+# and treshold for each node. 
+helper.newval(node, indexer)
+helper.conc(node, indexer)
+helper.decay(node, indexer)
+helper.threshold(node, indexer)
+
+# automatically extracts the proper parameters to generate 
+# a hill or a proportion function for the node (see naming conventions)
+helper.hill_func( node, indexer, param )
+helper.prop_func( node, indexer, param )
 }}}
