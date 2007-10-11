@@ -1,6 +1,5 @@
-#
-# upon runtime set missing values to false!
-#
+#I: compartment I/ Lungs
+#II: compartment II/ Lymph
 
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
 1: TTSS* = Bb and not (CA or OAb) 
@@ -10,29 +9,33 @@
 1: C* = (Bb and not OAg) or (AgAb and CAb) 
 1: AgAb* = Bb and (OAb or CAb)
 1: OAb* = BC or OAb
-1: BC* = Th2L
-1: PIC* = (EC or DP or AP) and not IL10
-1: TIL12* = (DCL and T0) and not (IL4L or IFNgL)
-1: IL12L* = TIL12 #prop*TIL12
-1: IL12* = TIL12 #(1-prop)*TIL12
-## IFNg, IL4 and IL10 nodes are modeled similar to IL12. TIL12 is a psuedo node. We can discuss how I calculate proportions if we want to include this part.
-1: IFNg* = (Th1 or MP) and not IL10
-1: IFNgL* = IFNg
-1: IL4L* = (DCL and T0) and not IL12L
-1: IL4* = IL4L
-1: IL10* = (Tr or Th2 or (MP and TTSS)) and not IFNg
-1: IL10L* = IL10
-1: IL10R* = IL10
+1: BC* = Th2II
+1: PIC* = (EC or DP or AP) and not IL10I
+1: IL12* = (DCII and T0) and not (IL4II or IFNgII)
+1: IL12I* = IL12 #prop*TIL12
+1: IL12II* = IL12 #(1-prop)*TIL12
+1: IFNg* = (Th1I or MPI) and not IL10I
+1: IFNgI* = IFNg
+1: IFNgII* = IFNg
+1: IL4* = (DCII and T0) and not IL12II
+1: IL4I* = IL4
+1: IL4II* = IL4
+1: IL10* = (TrI or Th2I or (MPI and TTSS)) and not IFNgI
+1: IL10I* = IL10
+1: IL10II* = IL10
 1: RP* = PIC
 1: DP* = RP and TTSS
-1: MP* = (PIC or IFNg) and not IL10 #lpde(MP)-Hill(MP, H, n)
-1: MPL* = MP # Hill(MP, H, n)- gamma* MPL
-#Similar to MP I simulate Th1, Th2, DCL nodes.
+1: MPI* = (PIC or IFNgI) and not IL10I #lpde(MP)-Hill(MP, H, n)
+1: MPII* = MP
 1: AP* = Bb and (RP or MP) and ((C and CAb) or AgAb)
-1: T0* = DCL
-1: Tr* = (DCL and T0 and TTSS) # or too_much_Th1 #too_much_Th1 is used to assess the conc. of Th1 by using second threshold value for node Th1
-1: Th1L* = DCL and T0 and IL12L
-1: Th2L* = DCL and T0 and not IL12L
-1: DC* = IFNg or PIC or Bb
-1: DCL* = DC
+1: T0* = DCII
+1: TrII* = (DCII and T0 and TTSS) or Th1_thr2II
+1: TrI* = TrII
+1: Th1II* = DCII and T0 and IL12II
+1: Th1I* = Th1II
+1: Th1t2* = Th1I
+1: Th2II* = DCII and T0 and not IL12II
+1: Th2I* = Th2II
+1: DCI* = IFNgI or PIC or Bb
+1: DCII* = DC
 1: PH* = AP and Bb
