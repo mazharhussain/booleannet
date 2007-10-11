@@ -4,14 +4,36 @@
 
 Below we document the class and method signatures.
 
-Engine initialization:
+===Engine Creation===
 
 {{{
 engine = boolean.Engine( mode='sync', text=text )
-# mode may be: sync, async or lpde
+#
+# mode may be: sync, async or lpde corresponding to
+# synchronous, asycnhronous and linear piece wise differential equations
 }}}
 
-State modifications:
+===State Initialization===
+
+{{{
+
+def miss_func( node ):
+    return True
+
+engine.initialize( miss_func=miss_func, default=dict(A=True) )
+
+#
+# both the miss_func, and default parameters are optional
+# the miss_func, if present will be called for every node that was not 
+# initialized in the main body of the text input
+#
+# the default parameter, if present will be used to override all values
+# that may be set beforehand, thus node A above will alwyas have
+# the value True, no matter what the text or the miss_func may be set it to
+#
+}}}
+
+===State Modifications===
 
 {{{
 from boolean import util
