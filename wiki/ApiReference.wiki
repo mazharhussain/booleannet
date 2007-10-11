@@ -17,10 +17,10 @@ engine = boolean.Engine( mode='sync', text=text )
 
 {{{
 
-def miss_func( node ):
+def missing( node ):
     return True
 
-engine.initialize( miss_func=miss_func, default=dict(A=True) )
+engine.initialize( misssing=missing, default=dict(A=True) )
 
 #
 # both the miss_func, and default parameters are optional
