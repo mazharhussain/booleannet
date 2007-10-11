@@ -132,11 +132,12 @@ class EngineTest( unittest.TestCase ):
     def test_rules( self ):
         """Testing rules (stress test)
         
-        Generates lots of random rules and then compares the results when executed 
-        in python and with the engine ... might be more complicated than it needs be
+        Generates lots of random rules and then compares the results 
+        when executed in python and with the engine
         """
         EQ = self.assertEqual
 
+        # valid nodes
         nodes  = string.uppercase[:]
 
         #
@@ -151,12 +152,12 @@ class EngineTest( unittest.TestCase ):
         body  = []
   
         #    
-        # for each node it attempts to build a complicated expression like:
+        # for each node it attempts to build a complicated random expression like:
         #
         # (N or (J and B and M or not Z)) and not G
         #  
         # places nodes, operators and parentheses randomly (but syntactically correct)
-        # then executes the rules in python and with the engine in synchronous 
+        # then executes the rules in python but also with the engine in synchronous 
         # mode and compares the outputs
         # 
         for node in nodes:
@@ -204,7 +205,7 @@ class EngineTest( unittest.TestCase ):
         bool_text = join( bool_text )
         full_text = init_text + py_text
         
-        # execute the code in python
+        # execute the code in python for a number of steps
         steps = 4
         exec init_text
         for i in range( steps ):
@@ -219,6 +220,8 @@ class EngineTest( unittest.TestCase ):
         # execute the code with the engine
         states = get_states(mode='sync', text=text, steps=steps)
         last   = states[-1]
+        
+        # checks all states for equality with both methods
         for attr in nodes:
             oldval = locals()[attr]
             newval = getattr(last, attr )

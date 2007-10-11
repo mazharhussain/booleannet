@@ -4,6 +4,13 @@ from itertools import *
 import util, odict, tokenizer, helper
 from engine import Engine
 
+def default_invariants( indexer ):
+    """
+    Gets called first in the loop.
+    Allows setting the loop invariants
+    """
+    return ''
+
 def default_override( node, indexer, tokens ):
     """
     Gets called at the before the transformation.
@@ -28,10 +35,11 @@ class Solver( Engine ):
         eng = Engine(text=text, mode='sync')
         eng.initialize( miss_func=util.randomize )
         eng.iterate( steps=1 )
-        self.INIT_LINE = helper.init_line
-        self.OVERRIDE  = default_override
+        self.INIT_LINE  = helper.init_line
+        self.OVERRIDE   = default_override
+        self.INVARIANTS = default_invariants
         self.DEFAULT_EQUATION = default_equation
-        self.extra_init = ''
+        self.EXTRA_INIT = ''
         self.invariants = ''
 
         # setting up this engine
@@ -39,7 +47,7 @@ class Solver( Engine ):
         self.dynamic_code = '*** not yet generated ***'
         self.data = {}
     
-    def initialize(self, miss_func=None, defaults={}, extra_init='', invariants='' ):
+    def initialize(self, miss_func=None, defaults={} ):
         "Custom initializer"
         Engine.initialize( self, miss_func=miss_func, defaults=defaults )
         
@@ -55,18 +63,15 @@ class Solver( Engine ):
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
         
-        self.extra_init += extra_init
-        self.invariants += invariants
-
     def generate_init( self ):
         """
         Generates the initialization lines
         """
         init = [ ]
         
-        if self.extra_init:
-            init.append( '# extra code' )
-            init.append( self.extra_init )
+        if self.EXTRA_INIT:
+            init.append( '# extra code'  )
+            init.append( self.EXTRA_INIT )
             init.append( '' )
 
         init.append( '# dynamically generated code' )
@@ -110,7 +115,9 @@ class Solver( Engine ):
         body.append( 'def derivs( x, t):' )
         
         # add loop invariants
-        body.extend( '    %s' % line for line in self.invariants.splitlines() )
+        invariants = self.INVARIANTS( self.indexer )
+        for line in invariants.splitlines():
+            body.extend( '    %s' % line.strip()  )
         
         body.append( '    %s = x' % assign )
         body.append( '    %s = %s' % (retvals, assign) )

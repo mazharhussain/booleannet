@@ -1,4 +1,10 @@
-import sys
+#!/usr/bin/python
+
+import sys, os
+
+file('pid.txt','wt').write( '%s' % os.getpid() )
+
+
 # add
 sys.path.extend( [ '..', 'web.zip'] )
 
