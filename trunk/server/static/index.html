@@ -24,8 +24,7 @@
 
 <tr>
 	<td align="center">
-	<textarea name="rules" rows="25" cols="80">
-	</textarea>
+	<textarea name="rules" rows="25" cols="80"></textarea>
 	</td>
 </tr>
 
@@ -35,9 +34,9 @@
 		<td>
 		Method: 
 		<select name="method" id="method" onchange="javascript:main()">
-			<option name="sync" selected="yes">synchronous</option>
-			<option name="async">asynchronous</option>
-			<option name="lpde">piece-wise</option>
+			<option value="sync" selected="yes">synchronous</option>
+			<option value="async">asynchronous</option>
+			<option value="lpde">piece-wise</option>
 		</select>
 		</td>
 		
@@ -46,11 +45,11 @@
 		</td>
 		
 		<td>
-			<span id="time">&nbsp; Time: <input type="text" name="time" value="1" size="2"></span>
+			<span id="time">&nbsp; Time: <input type="text" name="fullt" value="1" size="2"></span>
 		</td>
 		
 		<td>
-			&nbsp; Graph nodes: <input type="text" name="targets" value="A, B, C" size="25">
+			&nbsp; Plot nodes: <input type="text" name="targets" value="A, B, C" size="25">
 		</td>
 		
 		</tr></table>

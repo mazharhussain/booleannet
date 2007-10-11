@@ -1,3 +1,5 @@
+$def with (message, params)
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -12,13 +14,30 @@
 <h1 align="center">Simulation Results</h1>
 
 
+$if message:
+	<div class="error" align="center">
+    <p>Error: <b>$message</b></p>
+	<p>Please press the Back button and fix the error.</p>
+	</div>
+$else:
+	&nbsp;
+
 <table align="center" cellpadding="5" cellspacing="2">
 
 <tr align="center">
 	<td align="center">
-		<a href="/">new simulation</a>
+		Method: $params.method, Steps: $params.steps, Time=$params.fullt, Nodes=$params.targets 
 	</td>
 </tr>
+
+$if message:
+	&nbsp;
+$else:
+	<tr align="center">
+	<td align="center">
+	<a href="/">New Simulation</a>
+	</td>
+	</tr>
 
 <tr>
 	<td align="center"> 
@@ -26,6 +45,7 @@
 		More information at <a href="http://booleannet.googlecode.com">http://booleannet.googlecode.com</a>
 	</td>
 </tr>
+
 
 </table>
 </form>
