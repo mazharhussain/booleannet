@@ -12,7 +12,7 @@ text = util.read( 'LGL.txt')
 engine = Engine( mode='sync', text=text )
 
 # sets all missing values to False
-engine.initialize( miss_func=util.allfalse )
+engine.initialize( missing=util.allfalse )
 
 engine.iterate( steps=1 )
 

@@ -33,7 +33,7 @@ class Solver( Engine ):
         
         # run the regular boolen engine one step to detect syntax errors
         eng = Engine(text=text, mode='sync')
-        eng.initialize( miss_func=util.randomize )
+        eng.initialize( missing=util.randomize )
         eng.iterate( steps=1 )
         self.INIT_LINE  = helper.init_line
         self.OVERRIDE   = default_override
@@ -47,9 +47,9 @@ class Solver( Engine ):
         self.dynamic_code = '*** not yet generated ***'
         self.data = {}
     
-    def initialize(self, miss_func=None, defaults={} ):
+    def initialize(self, missing=None, defaults={} ):
         "Custom initializer"
-        Engine.initialize( self, miss_func=miss_func, defaults=defaults )
+        Engine.initialize( self, missing=missing, defaults=defaults )
         
         # will also maintain the order of insertion
         self.mapper  = odict.odict() 

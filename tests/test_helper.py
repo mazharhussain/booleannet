@@ -78,7 +78,7 @@ class HelperTest( unittest.TestCase ):
         """
         data = self.params[1]
         eng  = Engine( mode='lpde', text=text )
-        eng.initialize( miss_func = helper.initializer( data ) )
+        eng.initialize( missing=helper.initializer( data ) )
 
         for node in 'PIC'.split():
             values = ( data[node].conc, data[node].decay, data[node].threshold )
@@ -93,7 +93,7 @@ class HelperTest( unittest.TestCase ):
         """
         data = self.params[1]
         eng  = Engine( mode='lpde', text=text )
-        eng.initialize( miss_func = helper.initializer( data, default=(1,1,1) ) )
+        eng.initialize( missing=helper.initializer( data, default=(1,1,1) ) )
 
         for node in 'ABC1 ABC2'.split():
             self.assertEqual( eng.start[node], (1, 1, 1) )

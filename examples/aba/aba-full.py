@@ -18,7 +18,7 @@ def run( text, node, repeat, steps ):
     eng  = Engine( mode='async', text=text )
 
     for i in xrange( repeat ):
-        eng.initialize( miss_func= util.randomize )
+        eng.initialize( missing= util.randomize )
         eng.iterate( steps=steps)
         coll.collect( states=eng.states, node=node )
 

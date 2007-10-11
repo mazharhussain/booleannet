@@ -11,7 +11,7 @@ STEPS  = 100 # number of steps
 
 text = util.read( 'LGL.txt')
 engine = Engine( mode='lpde', text=text )
-engine.initialize( miss_func=util.randomize )
+engine.initialize( missing=util.randomize )
 engine.iterate( fullt=FULLT, steps=STEPS )
 
 #

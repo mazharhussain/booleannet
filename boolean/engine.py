@@ -220,7 +220,7 @@ class Engine(object):
         assert self.states, 'States are empty'
         return self.states[-1]
 
-    def initialize( self, miss_func=None, defaults={} ):
+    def initialize( self, missing=None, defaults={} ):
         """
         Initializes the parser
         """
@@ -230,9 +230,9 @@ class Engine(object):
         map( self.local_parse, self.init_lines )
 
         # deal with unintialized variables
-        if miss_func:
+        if missing:
             for node in self.missing_nodes:
-                value = miss_func( node )
+                value = missing( node )
 
                 # this allow one to use other randomizers
                 if self.parser.lpde_mode and ( type(value) != tuple ):
@@ -298,7 +298,7 @@ if __name__ == '__main__':
 
     be = Engine( mode='sync', text=text )
 
-    be.initialize( miss_func=util.randomize )
+    be.initialize( missing=util.randomize )
 
     be.iterate( steps=4)
     

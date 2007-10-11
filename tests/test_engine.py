@@ -18,12 +18,12 @@ get     = lambda elem, attr: getattr(elem, attr)
 istrue  = lambda x: x 
 isfalse = lambda x: not x 
 
-def get_states( mode, text, steps, miss_func=None):
+def get_states( mode, text, steps, missing=None):
     """
     Helper function to generate the states
     """
     eng  = boolean.Engine( mode=mode, text=text )
-    eng.initialize( miss_func=miss_func )
+    eng.initialize( missing=missing )
     eng.iterate( steps=steps )
     return eng.states
             
@@ -60,7 +60,7 @@ class EngineTest( unittest.TestCase ):
         3: C* = not C
         """
         eng  = boolean.Engine( mode='sync', text=text )
-        eng.initialize( miss_func= boolean.util.allfalse, defaults=dict(A=True, B=True) )
+        eng.initialize( missing= boolean.util.allfalse, defaults=dict(A=True, B=True) )
         eng.iterate( steps=10 )
         EQ( eng.start.A, True )
         EQ( eng.start.B, True )

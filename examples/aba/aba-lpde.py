@@ -11,7 +11,7 @@ STEPS  = 100 # number of steps
 
 text = util.read( 'aba.txt')
 engine = Engine( mode='lpde', text=text )
-engine.initialize( miss_func=util.randomize )
+engine.initialize( missing=util.randomize )
 
 # this is the intial state
 #print engine.start
