@@ -1,4 +1,4 @@
-#summary Programmin Interface Reference
+#summary Application Programming Interface Reference
 
 = Programming Interface Reference =
 
@@ -62,6 +62,24 @@ engine.RULE_NOT (node, parser)
 
 ===Operation Override in LPDE Mode===
 
-{{{
+The `indexer` is a dictionary that contains the numerical index for every node i.e. the index for node `MT1` is `indexer['MT1']`.
 
+{{{
+# called before every node, needs to return None
+# for nodes that should not be overriden,
+engine.OVERRIDE( node, indexer, tokens )
+
+# used to generate text based on the indexer that
+# will be inserted into the main loop of the iterations
+engine.INVARIANTS( indexer )
+
+# this is a text that will be passed into the initialization section
+engine.EXTRA_INIT = ''
+
+# modifies initialization lines, params is a dictionary 
+# containing the states for each node
+engine.INIT_LINE( params ) 
+
+# modify the default equation that is created
+engine.DEFAULT_EQUATION( tokens, indexer )
 }}}
