@@ -5,6 +5,7 @@ import csv, StringIO
 import string
 from itertools import *
 
+# these function get injected into the generated code
 helper_functions = """
 # helper functions from helper.py
 
@@ -12,12 +13,14 @@ from math import log, pow
 from random import randint, random
 
 def prop( rc, r ):
+    'A proportion distribution function with a rate rc and an uncertanity r'
     if randint(0,1):
         return rc + r * random()
     else:
         return rc - r * random()
 
 def hill( conc, h, n ):
+    'Hill function with base h and exponent n'
     return pow(conc, n)/( pow(h, n) + pow(conc, n) )
 
 """
@@ -39,6 +42,9 @@ def threshold( node, indexer):
     return ' t%d ' % index 
  
 def hill_func( node, indexer, par):
+    """
+    Generates a hill function call based on the parameters 
+    """
     index = indexer[node]
     try:
         text = ' hill( c%d, %s, %s ) ' % ( index, par[node].h, par[node].n )
@@ -48,6 +54,9 @@ def hill_func( node, indexer, par):
     return text
 
 def prop_func( node, indexer, par):
+    """
+    Generates a proportion function call based on the parameters        
+    """
     index = indexer[node]
     try:
         text = ' prop( %s, %s ) ' % ( par[node].r, par[node].rc )
@@ -66,6 +75,7 @@ def piecewise( tokens, indexer ):
     line.append ( 'float(' )
     nodes = [ t.value for t in tokens[4:] ]
     for node in nodes:
+        # replace each node with the comparison
         if node in indexer:
             index = indexer[node]
             value = " ( c%d > t%d ) " % ( index, index )
@@ -73,6 +83,8 @@ def piecewise( tokens, indexer ):
             value = node
         line.append ( value )
     line.append ( ')' )
+    
+    # add decay term
     line.append ( "- d%d * c%d" % ( base_index, base_index ) )
     
     return ' '.join( line )
@@ -87,19 +99,18 @@ def init_line( store ):
 def initializer(data, labels=None, **kwds):
     """
     Function factory that returns an initializer 
-    that can initialize based on a parameter row
+    that can initialize based on a parameter row (and naming convention)
 
     If a node is missing the function will raise an error. If a
     default parameter is passed to the function factory the
     function will return this value upon errors
     """
 
-    # the existence of the parameter will trigger behavior
+    # allow to override the parameter labels, the order is important
     labels = labels or 'conc decay threshold'.split()
     
     def func( node ):
-        # tries to give meaningful error messages
-
+        # the extra work is to produce helpful error messages
         try:
             values = [ data[node][label] for label in labels ]
             return tuple(values) 
@@ -119,7 +130,7 @@ def initializer(data, labels=None, **kwds):
 
 class Parameter(object):
     """
-    Allows attribute access. (Bunch)
+    Allows attribute access to the parameters (Bunch)
     """
     def __init___(self, **kwds):
         self.__dict__.update( kwds )
@@ -153,17 +164,18 @@ def read_parameters( fname ):
     """
 
     #
-    # contains extra error checking because files created with 
-    # Excel may contain artifacts => extra, empty lines (invisible)
+    # needs extra error checking because files created with 
+    # Excel may contain artifacts => empty columns, empty lines, invisible values (spaces)
     #
 
-    # skips lines with empty elements
-    def any( elems ):
-        return filter(lambda x:x, map(string.strip, elems ))
     
-    # load the file, skipping commented lines
-    lines  = [ line for line in csv.reader( CommentedFile(fname) ) if any(line) ]
+    def something( row ):
+        # skips rows with empty elements
+        return filter(lambda x:x, map(string.strip, row ))
     
+    # load the file, skipping commented or empty rows
+    lines = filter( something, csv.reader( CommentedFile(fname))) 
+
     # check file size 
     assert len(lines) > 2, "file '%s' needs to have more than two lines" % fname
     
@@ -180,7 +192,7 @@ def read_parameters( fname ):
     # nodes and attributes
     nodes, attrs = lines[0:2]
     
-    # tries to coerce the value into a datastructure
+    # tries to coerce the value into a datastructure, float tuples, float or string
     def tuple_cast( word ):
         try:
             values = map( float, word.split(',') )

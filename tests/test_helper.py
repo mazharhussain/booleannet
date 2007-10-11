@@ -11,7 +11,7 @@ class HelperTest( unittest.TestCase ):
         self.params = helper.read_parameters(  'test-params.csv' )
     
     def test_fixup( self ):
-        "Tests text fixup"
+        "Tests knockout and overexpression"
 
         before = """
         A = B = C 1
