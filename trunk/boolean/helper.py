@@ -21,7 +21,8 @@ def prop( rc, r ):
 
 def hill( conc, h, n ):
     'Hill function with base h and exponent n'
-    return pow(conc, n)/( pow(h, n) + pow(conc, n) )
+    pval = pow(conc, n)
+    return pval / ( pow(h, n) + pval )
 
 """
 
