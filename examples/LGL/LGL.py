@@ -5,7 +5,7 @@ sys.path.append("../..")
 from boolean import Engine, util
 import random
 
-TARGET = set( "Stimuli IL15 PDGF".split()  )
+TARGET = set( "Stimuli".split()  )
 
 def new_getvalue( state, name, p):
     """
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     
     node   = 'IL2'
     repeat = 10 # raise this for better curves
-    steps  = 100
+    steps  = 20
 
     text = util.read( 'LGL.txt')
 
