@@ -192,7 +192,7 @@ engine.iterate( fullt=FULLT, steps=STEPS, debug=1 )
 
 import pylab 
 #nodes = "Bb PH AgAb C".split()
-nodes = "Bb".split()
+nodes = "IFNgI Bb".split()
 
 collect = []
 for node in nodes:

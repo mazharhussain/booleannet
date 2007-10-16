@@ -1,6 +1,8 @@
 #I: compartment I/ Lungs
 #II: compartment II/ Lymph
 
+Bb = True
+
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
 1: TTSS* = Bb and not (CA or OAb) 
 1: OAg* = Bb

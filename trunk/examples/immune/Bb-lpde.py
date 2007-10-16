@@ -12,14 +12,14 @@ STEPS  = 100 # number of steps
 text = util.read( 'Bb.txt')
 engine = Engine( mode='lpde', text=text )
 engine.initialize( missing=util.allfalse)
-engine.iterate( fullt=FULLT, steps=STEPS, debug=0 )
+engine.iterate( fullt=FULLT, steps=STEPS, debug=1 )
 
 #print engine.dynamic_code
 #
 # now plot with matplotlib
 #
 import pylab 
-nodes = "Bb PH AgAb C".split()
+nodes = "IFNgI PH AgAb C".split()
 collect = []
 for node in nodes:
     values = engine.data[node]

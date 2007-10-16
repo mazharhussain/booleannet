@@ -48,7 +48,7 @@ def hill_func( node, indexer, par):
     """
     index = indexer[node]
     try:
-        text = ' hill( c%d, %s, %s ) ' % ( index, par[node].h, par[node].n )
+        text = ' hill( c%d, h=%s, n=%s ) ' % ( index, par[node].h, par[node].n )
     except Exception, exc:
         msg = "error creating hill function for node %s -> %s" % (node, exc)
         raise Exception(msg)
@@ -60,7 +60,7 @@ def prop_func( node, indexer, par):
     """
     index = indexer[node]
     try:
-        text = ' prop( %s, %s ) ' % ( par[node].r, par[node].rc )
+        text = ' prop( r=%s, rc=%s ) ' % ( par[node].r, par[node].rc )
     except Exception, exc:
         msg = "error creating proportion function for node %s -> %s" % (node, exc)
         raise Exception(msg)
