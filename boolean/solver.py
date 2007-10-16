@@ -105,11 +105,15 @@ class Solver( Engine ):
         Generates the function that will be used to integrate
         """
         sep = '    '
+
         indices = [ x[0] for x in self.mapper.values() ]
         assign  = [ 'c%d' % i for i in indices ]
         retvals = [ 'n%d' % i for i in indices ]
+        zeros   = map(lambda x: '0.0', indices ) 
         assign  = ', '.join(assign)
         retvals = ', '.join(retvals)
+        zeros   = ', '.join( zeros )
+
         body = []
         body.append( 'x0 = %s' % assign )
         body.append( 'def derivs( x, t):' )
@@ -120,7 +124,7 @@ class Solver( Engine ):
             body.extend( '    %s' % line.strip()  )
         
         body.append( '    %s = x' % assign )
-        body.append( '    %s = %s' % (retvals, assign) )
+        body.append( '    %s = %s' % (retvals, zeros) )
         for tokens in self.rank_tokens:
             equation = self.create_equation( tokens )
             equation = [ '    ' + e for e in equation ]
