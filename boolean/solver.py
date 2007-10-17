@@ -16,7 +16,8 @@ def default_equation( tokens, indexer ):
     Default equation generator
     """
     node = tokens[1].value
-    return helper.newval(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
+    text = helper.newval(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
+    return text
 
 class Solver( Engine ):
     """
@@ -60,11 +61,7 @@ class Solver( Engine ):
         """
         init = [ ]
         
-        if self.EXTRA_INIT:
-            init.append( '# extra code'  )
-            init.append( self.EXTRA_INIT )
-            init.append( '' )
-
+        init.extend( self.EXTRA_INIT.splitlines() )
         init.append( '# dynamically generated code' )
         init.append( '# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue' )
         init.append( '# %s' % self.mapper.values() )
@@ -75,7 +72,8 @@ class Solver( Engine ):
             line = self.INIT_LINE( store )
             init.append( line )
         
-        init_text = helper.helper_functions + '\n'.join( init )
+        init.extend( helper.helper_modules.splitlines() )
+        init_text = '\n'.join( init )
         return init_text
     
     def create_equation( self, tokens ):
@@ -85,10 +83,15 @@ class Solver( Engine ):
         original = '#' + tokenizer.tok2line(tokens)
         node  = tokens[1].value
         lines = [ '', original ]
+        
         line  = self.OVERRIDE(node, indexer=self.indexer, tokens=tokens)
         if line is None:
             line = self.DEFAULT_EQUATION( tokens=tokens, indexer=self.indexer )
-        lines.append( line.strip() )
+        
+        if isinstance(line, str):
+            line = [ line ]
+
+        lines.extend( [ x.strip() for x in line ] )
         return lines  
 
     def generate_function(self ):
@@ -125,7 +128,7 @@ class Solver( Engine ):
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
-        t  = [ dt * i for i in range(steps) ]
+        self.t  = [ dt * i for i in range(steps) ]
 
         # generates the initializator
         self.init_text = self.generate_init()
@@ -151,7 +154,7 @@ class Solver( Engine ):
                 util.error(msg)
 
             # x0 has been auto generated in the initialization
-            self.alldata = rk4(derivs, x0, t) 
+            self.alldata = rk4(derivs, x0, self.t) 
             self.nodes = self.parser.before.keys()
             for index, node in enumerate( self.nodes ):
                 self.data[node] = [ row[index] for row in self.alldata ]
