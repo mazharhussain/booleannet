@@ -31,6 +31,7 @@ def p_stmt_init(p):
     'stmt : ID "=" stmt '    
 
     # this will only be executed during initialization
+
     p.parser.RULE_SETVALUE( p.parser.before, p[1], p[3], p)
     p.parser.RULE_SETVALUE( p.parser.after , p[1], p[3], p)       
     p[0] = p[3]
@@ -153,7 +154,8 @@ class Engine(object):
         self.RULE_NOT = lambda a, p: not a
         self.RULE_SETVALUE = util.default_set_value
         self.RULE_GETVALUE = util.default_get_value
-     
+        self.RULE_START_ITERATION = lambda index, engine: index
+
     def elapsed(self, repeat=1):
         total = (time.time() - self.time_start)
         persec = repeat/total
@@ -259,7 +261,7 @@ class Engine(object):
         """
         for index in xrange(steps):
             self.update_states()
-            
+            self.RULE_START_ITERATION( index, self )
             for lines in self.body:
                 # randomize in async mode
                 if not self.parser.sync_mode:
