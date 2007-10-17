@@ -2,22 +2,19 @@
 import sys
 sys.path.append("../..")
 from boolean import helper
+from localdefs import *
 
 init_pars   = helper.read_parameters( 'Bb-concentration.csv' )
 comp_params = helper.read_parameters( 'Bb-compartmental.csv' )
 
 conc = init_pars[5]
 comp_par = comp_params[5]
-print conc.IFNgI.decay
-DEBUG = 1
+#print conc.IFNgI.decay
 
-helper.helper_functions += """
-def safe( x ):
-    if x >= 0:
-        return x
-    else:
-        return 0
-"""
+FULLT = 25
+STEPS = FULLT*5
+DEBUG = 0
+
 def override( node, indexer, tokens, param ):
     
     #Th1_thr2I - This node will be on if Th1I is more than threshold. 
@@ -137,26 +134,27 @@ def override( node, indexer, tokens, param ):
         return expr
     
     elif node == 'IFNgI':
-        newval = helper.newval(node, indexer)
-        prop   = helper.prop_func( 'IFNg', indexer, param ) 
-#        newIFNg = helper.newval('IFNg', indexer)
-        concIFNg = helper.conc('IFNg', indexer)
-        concIFNg1 = helper.conc('IFNgI', indexer)
+        # 
+        # distributing IFNg into the two compartments
+        #
+        newIFNg1 = helper.newval('IFNgI' , indexer)
+        newIFNg2 = helper.newval('IFNgII', indexer)
+        
+        concIFNg  = helper.conc('IFNg'  , indexer)
+        concIFNg1 = helper.conc('IFNgI' , indexer)
+        concIFNg2 = helper.conc('IFNgII', indexer)
 
-#        expr   = '%s = %s * %s' % (newval, prop, newIFNg  )
-        expr   = '%s = %s * %s - %s' % (newval, prop, concIFNg, concIFNg1  )
+        prop_text = make_slow_prop( node='IFNg', indexer=indexer, param=param) 
+
+        step1 = 'PROP = %s' % prop_text
+        step2 = '%s = PROP * %s - %s' % ( newIFNg1, concIFNg, concIFNg1)
+        step3 = '%s = (1-PROP) * %s - %s' % ( newIFNg2, concIFNg, concIFNg2)
+
+        expr = [ step1, step2, step3 ]
         return expr
      
     elif node == 'IFNgII':
-        newval1 = helper.newval(node, indexer)
-        newIFNgI  = helper.newval('IFNgI', indexer)
-        concIFNgII = helper.conc('IFNgII', indexer)
-
-#        newIFNg = helper.newval('IFNg', indexer)
-        concIFNg = helper.conc('IFNg', indexer)
-#        expr   = '%s = %s - %s' % ( newval1, newIFNg, newIFNgI  )
-        expr   = '%s = %s - %s - %s' % ( newval1, concIFNg, newIFNgI, concIFNgII  )
-        return expr
+        return "# executed at node IFNgI"
     
     elif node == 'IL4II':
         newval = helper.newval(node, indexer)
@@ -215,15 +213,8 @@ def override( node, indexer, tokens, param ):
 
 from boolean import Engine, helper, util
 
-FULLT = 25
-STEPS = FULLT*5
-dt=float(FULLT)/STEPS
-t= [dt*i for i in range(STEPS)]
-
 text = util.read( 'Bb.txt' )
-
 #text  = util.modify_states( text=text, turnoff= [ "IL10" ] )
-           
 engine = Engine( text=text, mode='lpde' )
 
 def local_override( node, indexer, tokens ):
@@ -234,7 +225,7 @@ engine.OVERRIDE = local_override
 engine.initialize( missing = helper.initializer( conc, default=(0,0,0) )  )
 
 engine.iterate( fullt=FULLT, steps=STEPS, debug=DEBUG )
-
+t = engine.t
 
 import pylab 
 #nodes = "Bb PH AgAb C".split()

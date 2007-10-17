@@ -3,9 +3,6 @@
 
 Bb = True
 
-1: IFNg* = (Th1I or MPI) and not IL10I
-1: IFNgI* = IFNg
-1: IFNgII* = IFNg
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
 1: TTSS* = Bb and not (CA or OAb) 
 1: OAg* = Bb
@@ -41,3 +38,6 @@ Bb = True
 1: DCI* = IFNgI or PIC or Bb
 1: DCII* = DC
 1: PH* = AP and Bb
+1: IFNg* = (Th1I or MPI) and not IL10I
+1: IFNgI* = IFNg
+1: IFNgII* = IFNg
