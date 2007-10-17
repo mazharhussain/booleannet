@@ -6,25 +6,17 @@ import string
 from itertools import *
 
 # these function get injected into the generated code
-helper_functions = """
-# helper functions from helper.py
 
-from math import log, pow
-from random import randint, random
-
-def prop( rc, r ):
-    'A proportion distribution function with a rate rc and an uncertanity r'
-    if randint(0,1):
-        return rc + r * random()
-    else:
-        return rc - r * random()
-
-def hill( conc, h, n ):
-    'Hill function with base h and exponent n'
-    pval = pow(conc, n)
-    return pval / ( pow(h, n) + pval )
-
+helper_modules = """
+# import functions from funcdefs and localdefs
+from boolean.funcdefs import *
+try:
+    from localdefs import *
+except:
+    pass
 """
+
+from funcdefs import *
 
 def newval(node, indexer):
     index = indexer[node]
@@ -60,7 +52,8 @@ def prop_func( node, indexer, par):
     """
     index = indexer[node]
     try:
-        text = ' prop( r=%s, rc=%s ) ' % ( par[node].r, par[node].rc )
+        nconc = conc(node, indexer)
+        text = ' prop( r=%s, rc=%s ) - %s ' % ( par[node].r, par[node].rc, nconc )
     except Exception, exc:
         msg = "error creating proportion function for node %s -> %s" % (node, exc)
         raise Exception(msg)
