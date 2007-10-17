@@ -41,8 +41,16 @@ def prop(rc, r):
     else:
         return rc - value
 
-def make_slow_prop():
-    pass
+def make_slow_prop( node, indexer, param ):
+    "Makes a slow proportion function from the parameters"
+    text = 'slow_prop(label="%s", rc=%s, r=%s, t=t)' % (node, param[node].rc, param[node].r)
+    return text
+
+def safe(x):
+    if x >=0:
+        return x
+    else:
+        return 0
 
 if __name__ == '__main__':
     for i in range(10):
