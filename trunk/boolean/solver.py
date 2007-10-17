@@ -4,13 +4,6 @@ from itertools import *
 import util, odict, tokenizer, helper
 from engine import Engine
 
-def default_invariants( indexer ):
-    """
-    Gets called first in the loop.
-    Allows setting the loop invariants
-    """
-    return ''
-
 def default_override( node, indexer, tokens ):
     """
     Gets called at the before the transformation.
@@ -37,10 +30,8 @@ class Solver( Engine ):
         eng.iterate( steps=1 )
         self.INIT_LINE  = helper.init_line
         self.OVERRIDE   = default_override
-        self.INVARIANTS = default_invariants
         self.DEFAULT_EQUATION = default_equation
         self.EXTRA_INIT = ''
-        self.invariants = ''
 
         # setting up this engine
         Engine.__init__(self, text=text, mode=mode)
@@ -117,12 +108,7 @@ class Solver( Engine ):
         body = []
         body.append( 'x0 = %s' % assign )
         body.append( 'def derivs( x, t):' )
-        
-        # add loop invariants
-        invariants = self.INVARIANTS( self.indexer )
-        for line in invariants.splitlines():
-            body.extend( '    %s' % line.strip()  )
-        
+         
         body.append( '    %s = x' % assign )
         body.append( '    %s = %s' % (retvals, zeros) )
         for tokens in self.rank_tokens:
@@ -135,7 +121,7 @@ class Solver( Engine ):
         
         return text
 
-    def iterate( self, fullt, steps, debug=False, invariants='' ):
+    def iterate( self, fullt, steps, debug=False  ):
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
@@ -143,6 +129,8 @@ class Solver( Engine ):
 
         # generates the initializator
         self.init_text = self.generate_init()
+        self.init_text += '\ndt=%s' % dt
+
         #print init_text
         
         # generates the derivatives

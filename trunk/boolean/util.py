@@ -195,7 +195,8 @@ def default_get_value(state, name, p):
 
 def default_set_value(state, name, value, p):
     "Default set value function"
-    return setattr( state, name, value )
+    setattr( state, name, value )
+    return value
 
 def randomize(*args, **kwds):
     "Default randomizer function"
