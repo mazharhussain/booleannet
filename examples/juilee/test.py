@@ -9,30 +9,24 @@ STEPS = 1000
 dt = float(FULLT)/STEPS
 t = pylab.arange(0, FULLT, dt)
 
-RC = 0.6
 
-lastT = lastR = EXPIRATION = LOOPY = None
+lastT = lastR = None
+RC = 0.6
+EXPIRATION = 0.5
 
 def init():
-    global lastT, lastR, EXPIRATION, LOOPY
+    global lastT, lastR
     #seed(1003)
     lastT  = -10 
     lastR = None
-
-    EXPIRATION = 0.5
-    LOOPY = [ i for i in  range(1, 11) ]
-
-    LOOPY.reverse()
+    
 
 def myrandint(low, hi, t):
     global lastT, lastR
     if abs(lastT - t) > EXPIRATION:
         lastR = 0.39 * random()
-        #lastR = LOOPY.pop()
-        #lastR = 0
         lastT = t
         #print lastR
-
     return lastR  
 
 def derivs(x, t):
