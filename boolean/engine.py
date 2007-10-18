@@ -22,9 +22,10 @@ precedence = (
 def tuple_to_truth( value ):
     """
     Converts lpde triplets to truth values
-    concentration, decay, threshold
+    From a triplet: concentration, decay, threshold
+    Truth value = conc > threshold/decay
     """
-    return value[0] > value[1] / value[2]
+    return value[0] > value[2] / value[1]
 
 def truth_to_tuple( value ):
     "Converts truth value to lpde triplets"
@@ -81,7 +82,7 @@ def p_expression_tuple(p):
     if p.parser.lpde_mode:
         p[0] = (p[2], p[4], p[6])
     else:
-        p[0] = p[2] > p[6]
+        p[0] = p[2] > p[6] / p[4]
 
 def p_expression_paren(p):
     "expression : LPAREN expression RPAREN"
