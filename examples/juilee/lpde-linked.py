@@ -36,7 +36,7 @@ def override( node, indexer, tokens ):
 engine = Engine( mode='lpde', text=text )
 engine.OVERRIDE = override
 engine.initialize( missing=util.allfalse )
-engine.iterate( fullt=FULLT, steps=STEPS, debug=DEBUG )
+engine.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
 t = engine.t
 
 # plotting

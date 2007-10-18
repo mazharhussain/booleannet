@@ -205,7 +205,7 @@ engine.OVERRIDE = local_override
 
 engine.initialize( missing = helper.initializer( conc )  )
 
-engine.iterate( fullt=FULLT, steps=STEPS )
+engine.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
 t = engine.t
 
 import pylab 
