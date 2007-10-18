@@ -29,8 +29,8 @@ def override( node, indexer, tokens ):
         cA = helper.conc( 'A', indexer)
         cC = helper.conc( 'C', indexer)
 
-        step1 = "prop = slow_prop( label='something', rc=0.3, r=0.3, t=t )" 
-        step2 = "%s = prop * %s - %s" % (nB, cA, cB)
+        step1 = "prop = slow_prop( label='something', rc=0.0, r=0.0, t=t )" 
+        step2 = "%s = prop * %s - %s; print prop" % (nB, cA, cB)
         step3 = "%s = (1-prop) * %s - %s" % (nC, cA, cC)
         
         expr  = [ step1, step2, step3 ]
@@ -50,7 +50,8 @@ t = engine.t
 import pylab
 
 coll = []
-nodes = list("ABCD")
+#nodes = list("ABCD")
+nodes = list("AC")
 for node in nodes:
     p = pylab.plot(t, engine.data[node] , 'o-' )
     coll.append( p )
