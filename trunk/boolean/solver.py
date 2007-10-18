@@ -55,7 +55,7 @@ class Solver( Engine ):
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
         
-    def generate_init( self ):
+    def generate_init( self, localdefs ):
         """
         Generates the initialization lines
         """
@@ -72,7 +72,9 @@ class Solver( Engine ):
             line = self.INIT_LINE( store )
             init.append( line )
         
-        init.extend( helper.helper_modules.splitlines() )
+        if localdefs:
+            init.extend( [ '# custom imports', 'from %s import *' % localdefs, '' ]   )
+
         init_text = '\n'.join( init )
         return init_text
     
@@ -124,15 +126,15 @@ class Solver( Engine ):
         
         return text
 
-    def iterate( self, fullt, steps, autogen_fname='autogen'  ):
+    def iterate( self, fullt, steps, autogen_fname='autogen', localdefs=None  ):
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
         self.t  = [ dt * i for i in range(steps) ]
 
         # generates the initializator
-        self.init_text = self.generate_init()
-        self.init_text += '\ndt=%s' % dt
+        self.init_text = self.generate_init( localdefs=localdefs )
+        self.init_text += '\ndt = %s' % dt
 
         #print init_text
         

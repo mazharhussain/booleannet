@@ -8,10 +8,9 @@ from itertools import *
 # these function get injected into the generated code
 
 helper_modules = """
-# import functions from funcdefs and localdefs
-
+# import localdefs
 try:
-    from localdefs import *
+    from %s import *
 except:
     pass
 """
