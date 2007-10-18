@@ -112,7 +112,7 @@ class Engine(object):
     "Represents a boolean parser"
     def __init__(self, mode, text ):
        
-        self.parser = yacc.yacc( tabmodule='zparsetab' )
+        self.parser = yacc.yacc( write_tables=0, debug=0 )
 
         assert mode in ('sync', 'async', 'lpde'), "Incorrect mode %s" % mode    
         self.mode = mode

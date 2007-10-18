@@ -6,7 +6,7 @@ from boolean import Engine, util, helper
 
 FULLT = 20
 STEPS = FULLT * 10
-DEBUG = 0
+DEBUG = 1
 
 text = """
 A = ( 0, 1, 0.5 )

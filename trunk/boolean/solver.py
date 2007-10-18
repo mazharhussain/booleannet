@@ -124,7 +124,7 @@ class Solver( Engine ):
         
         return text
 
-    def iterate( self, fullt, steps, debug=False  ):
+    def iterate( self, fullt, steps, autogen_fname='autogen'  ):
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
@@ -141,23 +141,22 @@ class Solver( Engine ):
         #print func_text
        
         self.dynamic_code = self.init_text + '\n' + self.func_text             
-       
-        if debug:
-            print self.dynamic_code
-            sys.exit()
-        else:
-            try:
-                exec self.init_text in globals()
-                exec self.func_text in globals()
-            except Exception, exc:
-                msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
-                util.error(msg)
+        
+        try:
+            fp = open( '%s.py' % autogen_fname, 'wt')
+            fp.write( '%s\n' % self.init_text )
+            fp.write( '%s\n' % self.func_text )
+            fp.close()
+            autogen = __import__( autogen_fname )
+        except Exception, exc:
+            msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
+            util.error(msg)
 
-            # x0 has been auto generated in the initialization
-            self.alldata = rk4(derivs, x0, self.t) 
-            self.nodes = self.parser.before.keys()
-            for index, node in enumerate( self.nodes ):
-                self.data[node] = [ row[index] for row in self.alldata ]
+        # x0 has been auto generated in the initialization
+        self.alldata = rk4(autogen.derivs, autogen.x0, self.t) 
+        self.nodes = self.parser.before.keys()
+        for index, node in enumerate( self.nodes ):
+            self.data[node] = [ row[index] for row in self.alldata ]
     
 if __name__ == '__main__':
     stext = """
@@ -176,7 +175,7 @@ if __name__ == '__main__':
 
     engine = Solver( text=stext, mode='lpde' )
     engine.initialize()
-    engine.iterate( fullt=1, steps=10, debug=1 )
+    engine.iterate( fullt=1, steps=10 )
     
     #print engine.dynamic_code
 
