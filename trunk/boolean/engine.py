@@ -20,7 +20,10 @@ precedence = (
 )
 
 def tuple_to_truth( value ):
-    "Converts lpde triplets to truth values"
+    """
+    Converts lpde triplets to truth values
+    concentration, decay, threshold
+    """
     return value[0] > value[1] / value[2]
 
 def truth_to_tuple( value ):
