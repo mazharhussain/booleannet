@@ -157,6 +157,11 @@ class Solver( Engine ):
         # x0 has been auto generated in the initialization
         self.alldata = rk4(autogen.derivs, autogen.x0, self.t) 
         self.nodes = self.parser.before.keys()
+        
+        # it returns a single list for one node
+        if len(self.nodes) == 1:
+            self.alldata = [ [ x ] for x in self.alldata ]
+
         for index, node in enumerate( self.nodes ):
             self.data[node] = [ row[index] for row in self.alldata ]
     
