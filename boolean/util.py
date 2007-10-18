@@ -39,7 +39,10 @@ class State(object):
     def items( self):
         "Returns the items by sorted keys"
         return [ (k, self[k]) for k in self.keys() ]
-        
+
+    def __iter__(self):
+        return iter( self.keys() )
+
     def copy(self):            
         "Duplicates itself"
         s = State( **self.__dict__ )

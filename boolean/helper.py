@@ -9,7 +9,7 @@ from itertools import *
 
 helper_modules = """
 # import functions from funcdefs and localdefs
-from boolean.funcdefs import *
+
 try:
     from localdefs import *
 except:

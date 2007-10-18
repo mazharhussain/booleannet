@@ -6,7 +6,6 @@ from boolean import Engine, util, helper
 
 FULLT = 20
 STEPS = FULLT * 5
-DEBUG = 0
 
 text = """
 A = ( 0, 1, 0.6 )
@@ -43,7 +42,7 @@ def override( node, indexer, tokens ):
 engine = Engine( mode='lpde', text=text )
 engine.OVERRIDE = override
 engine.initialize( missing=util.allfalse )
-engine.iterate( fullt=FULLT, steps=STEPS, debug=DEBUG )
+engine.iterate( fullt=FULLT, steps=STEPS )
 t = engine.t
 
 # plotting

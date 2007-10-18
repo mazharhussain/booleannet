@@ -13,7 +13,6 @@ comp_par = comp_params[5]
 
 FULLT = 25
 STEPS = FULLT*5
-DEBUG = 0
 
 def override( node, indexer, tokens, param ):
     
@@ -224,7 +223,7 @@ engine.OVERRIDE = local_override
 
 engine.initialize( missing = helper.initializer( conc, default=(0,0,0) )  )
 
-engine.iterate( fullt=FULLT, steps=STEPS, debug=DEBUG )
+engine.iterate( fullt=FULLT, steps=STEPS )
 t = engine.t
 
 import pylab 
