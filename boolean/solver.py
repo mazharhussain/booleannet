@@ -1,5 +1,5 @@
 from pylab import arange, rk4
-import sys
+import sys, os
 from itertools import *
 import util, odict, tokenizer, helper
 from engine import Engine
@@ -150,6 +150,12 @@ class Solver( Engine ):
             fp.write( '%s\n' % self.func_text )
             fp.close()
             autogen = __import__( autogen_fname )
+            try:
+                os.remove( '%s.pyc' % autogen_fname )
+            except OSError:
+                pass # must be a read only filesystem
+
+            reload( autogen )
         except Exception, exc:
             msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
             util.error(msg)

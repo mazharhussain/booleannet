@@ -66,10 +66,11 @@ class Collector(object):
         all  = self.store[node]
         size = float( len(all) )        
         
-        def add( xdata, ydata ):
-            return [ x+y for x, y in zip(xdata, ydata) ]
+        # this sums lists!
+        def listadd( xlist, ylist ):
+            return [ x+y for x, y in zip(xlist, ylist) ]
         
-        values = reduce(add, all)
+        values = reduce(listadd, all)
         
         if normalize:
             def divide(x):
