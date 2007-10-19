@@ -89,6 +89,13 @@ def init_line( store ):
     patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, %(decay)f, %(tresh)f # %(node)s' 
     return patt % store
 
+def init_from_conc_max_threshold( param ):
+    """
+    Store is an incoming dictionary prefilled with parameters
+    """
+    patt = 'c%(index)d, d%(index)d, t%(index)d = %(conc)f, 1.0/%(decay)f, %(tresh)f # %(node)s' 
+    return patt % param
+
 def initializer(data, labels=None, **kwds):
     """
     Function factory that returns an initializer 
