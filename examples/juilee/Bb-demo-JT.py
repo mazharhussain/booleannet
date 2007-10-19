@@ -113,14 +113,14 @@ def override( node, indexer, tokens, param ):
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
         prop_text = make_slow_prop( node='IL10I', indexer=indexer, param=param) 
         step1 = 'PROP = %s' % prop_text
-        step2 = '%s = PROP * %s' % ( newIL101, piece)
+        step2 = '%s = (PROP * %s)*2' % ( newIL101, piece)
         expr = [ step1, step2 ]
         return expr
      
     elif node == 'IL10II':
         newIL102 = helper.newval('IL10II' , indexer)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        step2 = '%s = (1-PROP) * %s' % ( newIL102, piece)
+        step2 = '%s = ((1-PROP) * %s)*2' % ( newIL102, piece)
         expr = [ step2 ]
         return expr
     
@@ -129,14 +129,14 @@ def override( node, indexer, tokens, param ):
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
         prop_text = make_slow_prop( node='IFNgI', indexer=indexer, param=param) 
         step1 = 'PROP = %s' % prop_text
-        step2 = '%s = (PROP * %s) * 2' % ( newIFNg1, piece)
+        step2 = '%s = (PROP * %s) * 0.5' % ( newIFNg1, piece)
         expr = [ step1, step2 ]
         return expr
      
     elif node == 'IFNgII':
         newIFNg2 = helper.newval('IFNgII' , indexer)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        step2 = '%s = ((1-PROP) * %s)' % ( newIFNg2, piece)
+        step2 = '%s = ((1-PROP) * %s)*0.5' % ( newIFNg2, piece)
         expr = [ step2 ]
         return expr
             
@@ -194,34 +194,49 @@ def override( node, indexer, tokens, param ):
 
 from boolean import Engine, helper, util
 
-text = util.read( 'Bb_JT.txt' )
-#text  = util.modify_states( text=text, turnoff= [ "TTSS" ] )
+text = util.read( 'Bb.txt' )
+#text2 = util.read('Bb_JT.txt')
+#text2  = util.modify_states( text=text2, turnoff= [ "TTSS" ] )
+
 engine = Engine( text=text, mode='lpde' )
+#engine2 = Engine( text=text2, mode='lpde' )
 
 def local_override( node, indexer, tokens ):
     return override( node, indexer, tokens, comp_par )
 
 engine.OVERRIDE = local_override
+#engine2.OVERRIDE = local_override
 
 engine.initialize( missing = helper.initializer( conc )  )
+#engine2.initialize( missing = helper.initializer( conc )  )
 
 engine.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
+#engine2.iterate( fullt=FULLT, steps=STEPS )
+
 t = engine.t
+#t = engine2.t
 
 import pylab 
+
 #nodes = "Bb".split()
 #nodes = "EC PIC IL10I IL10 TTSS IFNgI".split()
 #nodes = "Bb TTSS IL10I IFNgI".split()
-#nodes = "IL4I IL4II IL12I IL12II".split()
+nodes = "IL4I IL4II IL12I IL12II".split()
 #nodes = "Cab Oab".split()
 #nodes = "Th2I Th2II Th1I Th1II".split()
-nodes = "IL10I IFNgI".split()
+#nodes = "IL10I IFNgI".split()
+
 collect = []
+#collect2 = []
 for node in nodes:
     values = engine.data[node]
+#    values2 = engine2.data[node]
+#    values = values/max(values)
     p = pylab.plot(t, values , 'o-' )
+#    p2 = pylab.plot(t, values2 , 'o-' )
     collect.append( p )
-
+#    collect.append( p2 )
+    
 pylab.legend( collect, nodes, loc='best' )
 pylab.title ( 'Time=%s, steps=%d' % ( FULLT, STEPS) )
 pylab.xlabel( 'Time' )
