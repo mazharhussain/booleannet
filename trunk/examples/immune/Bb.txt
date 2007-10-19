@@ -4,7 +4,7 @@
 Bb = True
 
 1: Bb* = Bb and not PH #MyFunc(PH, Bb)
-1: TTSS* = Bb and not (CA or OAb) 
+1: TTSS* = Bb and not (CAb or OAb) 
 1: OAg* = Bb
 1: EC* = Bb
 1: CAb* = BC or CAb
