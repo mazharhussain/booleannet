@@ -154,7 +154,6 @@ class Solver( Engine ):
                 os.remove( '%s.pyc' % autogen_fname )
             except OSError:
                 pass # must be a read only filesystem
-
             reload( autogen )
         except Exception, exc:
             msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
