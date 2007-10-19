@@ -32,9 +32,9 @@ import boolean
 text = """
 A = B = (1, 1, 0.5)
 C = (0, 1, 0.5)
-1: A* = not A 
+1: A* = not C 
 2: B* = A and B
-3: C* = not C
+3: C* = B
 """
 
 engine = boolean.Engine( text=text, mode='lpde' )
