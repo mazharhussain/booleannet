@@ -17,7 +17,7 @@ seed(100)
 #MAX_AGE = 1.2
 
 MIN_AGE = 0.2
-MAX_AGE = 1.0
+MAX_AGE = 2.0
 
 DIFF_AGE = float(MAX_AGE) - MIN_AGE
 
