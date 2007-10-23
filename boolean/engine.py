@@ -1,7 +1,7 @@
 """
 Grammar file for a boolean parser based on PLY
 """
-import random, time, sys
+import random, time, sys, warnings
 import tokenizer, util
 from ply import yacc
 from util import State, Problem
@@ -21,14 +21,14 @@ precedence = (
 
 def tuple_to_truth( value ):
     """
-    Converts lpde triplets to truth values
+    Converts plde triplets to truth values
     From a triplet: concentration, decay, threshold
     Truth value = conc > threshold/decay
     """
     return value[0] > value[2] / value[1]
 
 def truth_to_tuple( value ):
-    "Converts truth value to lpde triplets"
+    "Converts truth value to plde triplets"
     return value and (1.0, 1.0, 0.5) or (0.0, 1.0, 0.5)
 
 def p_stmt_init(p):
@@ -69,8 +69,8 @@ def p_expression_state(p):
         else:
             value = ( p[1] == 'True' )
         
-        # LPDE mode will need triplets
-        if p.parser.lpde_mode:
+        # PLDE mode will need triplets
+        if p.parser.plde_mode:
             value = truth_to_tuple(value)
 
         p[0] = value
@@ -79,7 +79,7 @@ def p_expression_state(p):
 
 def p_expression_tuple(p):
     "expression : LPAREN NUMBER COMMA NUMBER COMMA NUMBER RPAREN"
-    if p.parser.lpde_mode:
+    if p.parser.plde_mode:
         p[0] = (p[2], p[4], p[6])
     else:
         p[0] = p[2] > p[6] / p[4]
@@ -118,7 +118,13 @@ class Engine(object):
        
         self.parser = yacc.yacc( write_tables=0, debug=0 )
 
-        assert mode in ('sync', 'async', 'lpde'), "Incorrect mode %s" % mode    
+        assert mode in ('sync', 'async', 'lpde', 'plde'), "Incorrect mode %s" % mode   
+
+        if mode == 'lpde': # it was a typo in the early versions
+            message = "'lpde' mode has been deprecated, use 'plde' instead (piecewise-linear)" 
+            util.warn( message )
+            mode = 'plde'
+
         self.mode = mode
         self.tokens = util.tokenize( text )
         self.time_start  = time.time()
@@ -176,7 +182,7 @@ class Engine(object):
         
         # build the parser
         self.parser.sync_mode = ( self.mode == 'sync' )
-        self.parser.lpde_mode = ( self.mode == 'lpde' )
+        self.parser.plde_mode = ( self.mode == 'plde' )
         
         # this will store the parser states
         self.start  = self.parser.before = State()
@@ -241,10 +247,10 @@ class Engine(object):
                 value = missing( node )
 
                 # this allow one to use other randomizers
-                if self.parser.lpde_mode and ( type(value) != tuple ):
+                if self.parser.plde_mode and ( type(value) != tuple ):
                     value = truth_to_tuple(value)
                 
-                if not self.parser.lpde_mode and ( type(value) == tuple ):
+                if not self.parser.plde_mode and ( type(value) == tuple ):
                     value = tuple_to_truth(value)
 
                 self.parser.RULE_SETVALUE( self.parser.before, node, value, None)

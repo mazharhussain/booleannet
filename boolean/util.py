@@ -2,6 +2,10 @@ from itertools import *
 import sys, os, logging, random, re, string
 import tokenizer, helper
 
+def warn(message):
+    sys.stderr.write('*** Warning: %s\n' % message )
+    sys.stderr.flush()
+
 class Problem(Exception):
     pass
 
