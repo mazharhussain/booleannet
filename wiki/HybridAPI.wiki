@@ -46,6 +46,8 @@ pylab.plot( engine.data['A'] , 'o-' )
 pylab.show()
 }}}
 
+And a little puzzle, can you predict the shape of the curves that these very simple equations take? How about the steady state values for each node? I personally was suprised by the richness of the behavior ([http://booleannet.googlecode.com/svn/webdata/excel-data.png see plot]).
+
 = Advanced Usage =
 
 There are common circumstances where the default behaviors need to be augmented to account for certain biological knowledge. The software provides great flexibility allowing one to alter all aspects of the process.
