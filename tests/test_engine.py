@@ -29,8 +29,8 @@ def get_states( mode, text, steps, missing=None):
             
 class EngineTest( unittest.TestCase ):
     
-    def test_lpde_engine( self ):
-        "Testing LPDE"
+    def test_plde_engine( self ):
+        "Testing PLDE"
         
         EQ = self.assertEqual
 
@@ -41,7 +41,7 @@ class EngineTest( unittest.TestCase ):
         2: B* = A and B
         3: C* = not C
         """
-        eng  = boolean.Engine( mode='lpde', text=text )
+        eng  = boolean.Engine( mode='plde', text=text )
         eng.initialize()
         eng.iterate( fullt=1, steps=10 )
         EQ( len(eng.data), 3)

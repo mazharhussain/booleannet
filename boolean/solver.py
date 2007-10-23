@@ -128,7 +128,7 @@ class Solver( Engine ):
 
     def iterate( self, fullt, steps, autogen_fname=None, localdefs=None, autogen='autogen'  ):
 
-        if autogen_fname:
+        if autogen_fname is not None:
             autogen = autogen_fname
             del autogen_fname
             util.warn("parameter 'autogen_fname' is deprecated. Use 'autogen' instead." )
