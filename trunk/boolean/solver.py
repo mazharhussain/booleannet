@@ -126,7 +126,12 @@ class Solver( Engine ):
         
         return text
 
-    def iterate( self, fullt, steps, autogen_fname='autogen', localdefs=None  ):
+    def iterate( self, fullt, steps, autogen_fname=None, localdefs=None, autogen='autogen'  ):
+
+        if autogen_fname:
+            autogen = autogen_fname
+            del autogen_fname
+            util.warn("parameter 'autogen_fname' is deprecated. Use 'autogen' instead." )
 
         # iterate once with the old parser to detect possible syntax errors
         dt = fullt/float(steps)
@@ -145,22 +150,22 @@ class Solver( Engine ):
         self.dynamic_code = self.init_text + '\n' + self.func_text             
         
         try:
-            fp = open( '%s.py' % autogen_fname, 'wt')
+            fp = open( '%s.py' % autogen, 'wt')
             fp.write( '%s\n' % self.init_text )
             fp.write( '%s\n' % self.func_text )
             fp.close()
-            autogen = __import__( autogen_fname )
+            autogen_mod = __import__( autogen )
             try:
-                os.remove( '%s.pyc' % autogen_fname )
+                os.remove( '%s.pyc' % autogen )
             except OSError:
                 pass # must be a read only filesystem
-            reload( autogen )
+            reload( autogen_mod )
         except Exception, exc:
             msg = "'%s' in:\n%s\n*** dynamic code error ***\n%s" % ( exc, self.dynamic_code, exc )
             util.error(msg)
 
         # x0 has been auto generated in the initialization
-        self.alldata = rk4(autogen.derivs, autogen.x0, self.t) 
+        self.alldata = rk4(autogen_mod.derivs, autogen_mod.x0, self.t) 
         self.nodes = self.parser.before.keys()
         
         # it returns a single list for one node

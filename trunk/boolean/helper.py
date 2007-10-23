@@ -18,6 +18,10 @@ except:
 from funcdefs import *
 
 def newval(node, indexer):
+    "Here for compatibility reasons, will be deprecated"
+    return change( node, indexer)
+
+def change(node, indexer):
     index = indexer[node]
     return 'n%d' % index 
 
@@ -32,7 +36,13 @@ def decay( node, indexer):
 def threshold( node, indexer):
     index = indexer[node]
     return ' t%d ' % index 
- 
+
+def default( node, indexer, tokens):
+    "Default equation builder"
+    change = change( node, indexer )
+    piece  = piecewise( tokens, indexer )
+    return '%s = %s' % ( change, piece )
+
 def hill_func( node, indexer, par):
     """
     Generates a hill function call based on the parameters 
