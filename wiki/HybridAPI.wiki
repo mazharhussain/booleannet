@@ -24,14 +24,14 @@ This means that in time we may have either an exponential type increase (to a ma
 
 = Usage =
 
-The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. An automatic conversion will take place if the initialization values correspond to the boolean mode:`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)`.Here is a typical use case:
+The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. An automatic conversion will take place if the initialization values correspond to the boolean mode:`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)`. Here is a typical use case:
 
 {{{
 import boolean
 
 text = """
-A = B = (1, 1, 0.5)
-C = (0, 1, 0.5)
+A = B = True 
+C = False
 1: A* = not C 
 2: B* = A and B
 3: C* = B
@@ -46,7 +46,7 @@ pylab.plot( engine.data['A'] , 'o-' )
 pylab.show()
 }}}
 
-And a little puzzle, can you predict the shape of the curves that these very simple equations take? How about the steady state values for each node? I personally was suprised by the richness of the behavior ([http://booleannet.googlecode.com/svn/webdata/excel-data.png see plot]).
+And a little puzzle for you. Note how simple these equations are, could you predict what the shape of the curves for `A`, `B` and `C` will be like? How about the steady state values for each node? I myself was suprised by the richness of the behavior ([http://booleannet.googlecode.com/svn/webdata/example-hybrid.png see plot]).
 
 = Advanced Usage =
 
@@ -95,21 +95,21 @@ engine.initialize( )
 engine.iterate( fullt=FULLT, steps=STEPS )
 }}}
 
-then slowly build up the function, while watching how the code is being altered. Let's assume that we want to replace the node `MP` with a hill function (to fully understand this example you need to have read the [HelperFunctions helper functions] as well). THe override code would need to look as follows:
+then slowly build up the function, while watching how the code is being altered. In this example we notice that the levels of `A` and `C` return to initial values. But the levels for `B` change from a concentration of 1 (`True`) to a concentration of 0 (`False`). What if we wished to simulate a system where the levels of node `B` are periodically replenished, e.g. set to 1 every 10 seconds. The override function above would need to take the following form:
 
 {{{
-from boolean import helper
-
-data  = helper.read_parameters( 'compartment.csv')
-param = data[0]
-
 def override( node, indexer, tokens ):
 
-    if node == 'MP':
-        newval = helper.newval( node, indexer)
-        hill   = helper.hill_func( node, indexer, param)
-        expr = '%s = %s' % ( newval, hill)
-        return expr
+    if node == 'B':
+	
+	concB = helper.conc( node, indexer)
+	expr1 = "%s = reset( %s, t)" % ( concB, concB )
+			
+        changeB = helper.newval( node, indexer)
+	pieceB  = helper.piecewise( node, indexer, tokens)
+        expr2   = '%s = %s' % ( changeB, pieceB )
+        
+	return [ expr1, expr2 ]
 
     return None
 }}}
