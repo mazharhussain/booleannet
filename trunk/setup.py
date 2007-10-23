@@ -7,10 +7,10 @@
 from distutils.core import setup
 
 setup( name='BooleanNet',
-       version='0.9.4',
-       description='Boolean Network Simulator',
+       version='0.9.5',
+       description='Boolean Network Simulation Toolbox',
        author='Istvan Albert',
        author_email='istvan.albert@gmail.com',
-       url='http://www.personal.psu.edu/iua1/',
-       packages = [ 'boolean', 'boolean.ply' ],
+       url='http://code.google.com/p/booleannet/',
+       packages = [ 'boolean', 'boolean.ply', 'boolean.functional' ],
      )

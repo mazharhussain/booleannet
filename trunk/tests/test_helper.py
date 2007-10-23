@@ -77,7 +77,7 @@ class HelperTest( unittest.TestCase ):
         1: MP* = PIC and MP
         """
         data = self.params[1]
-        eng  = Engine( mode='lpde', text=text )
+        eng  = Engine( mode='plde', text=text )
         eng.initialize( missing=helper.initializer( data ) )
 
         for node in 'PIC'.split():
@@ -92,7 +92,7 @@ class HelperTest( unittest.TestCase ):
         1: ABC2* = ABC1 and ABC2
         """
         data = self.params[1]
-        eng  = Engine( mode='lpde', text=text )
+        eng  = Engine( mode='plde', text=text )
         eng.initialize( missing=helper.initializer( data, default=(1,1,1) ) )
 
         for node in 'ABC1 ABC2'.split():

@@ -1,6 +1,13 @@
-MIT Open Source License
 
-Copyright (c) 2007, Istvan Albert
+Note there are two packaged that are included with BooleanNet, these are goverened by 
+the licenses below and have different copyrights.
+
+ply: GNU Lesser General Public License, Copyright (C) 2001-2007, David M. Beazley
+functional: Python Software Foundation License, Copyright (C) 2004-2006 Python Software Foundation
+
+The rest of the software is licensed with the MIT Open Source License
+
+Copyright (C) 2007, Istvan Albert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
