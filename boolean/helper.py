@@ -23,7 +23,7 @@ def newval(node, indexer):
 
 def change(node, indexer):
     index = indexer[node]
-    return 'n%d' % index 
+    return ' n%d ' % index 
 
 def conc( node, indexer):
     index = indexer[node]
@@ -39,9 +39,9 @@ def threshold( node, indexer):
 
 def default( node, indexer, tokens):
     "Default equation builder"
-    change = change( node, indexer )
+    newval = change( node, indexer )
     piece  = piecewise( tokens, indexer )
-    return '%s = %s' % ( change, piece )
+    return '%s = %s' % ( newval, piece )
 
 def hill_func( node, indexer, par):
     """
