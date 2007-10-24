@@ -71,13 +71,6 @@ The `indexer` is a dictionary that contains the numerical index for every node i
 # for nodes that should not be overriden,
 engine.OVERRIDE( node, indexer, tokens )
 
-# used to generate text based on the indexer that
-# will be inserted into the main loop of the iterations
-engine.INVARIANTS( indexer )
-
-# this is a text that will be passed into the initialization section
-engine.EXTRA_INIT = ''
-
 # modifies initialization lines, params is a dictionary 
 # containing the states for each node
 engine.INIT_LINE( params ) 
@@ -93,13 +86,14 @@ Simple functions to make your program more reusable. Used when overriding node b
 
 # return the newvalue, concentration, decay 
 # and treshold for each node. 
-helper.newval( node, indexer )
+helper.change( node, indexer )
 helper.conc ( node, indexer )
 helper.decay( node, indexer )
 helper.threshold( node, indexer )
 
 # automatically extracts the proper parameters to generate 
 # a hill or a proportion function for the node (see naming conventions)
+
 helper.hill_func( node, indexer, param )
 helper.prop_func( node, indexer, param )
 }}}
