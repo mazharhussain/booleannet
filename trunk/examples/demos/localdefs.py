@@ -1,7 +1,7 @@
 import math
 
 def choose( p1, p2, t):
-    "Every ten seconds reset the concentration for one second"
+    "Every ten seconds chooses p2"
     
     mult = math.floor( t / 10.0)
     t = t - 10 * mult 
