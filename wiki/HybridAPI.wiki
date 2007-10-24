@@ -114,4 +114,4 @@ def override( node, indexer, tokens ):
     return None
 }}}
 
-The code above will replace the piecewise differential equation with a hill function for node MP. The helper functions will automatically extract the right parameters from the csv file, as long as the column naming convention is followed (more on this in the section on [HelperFunctions helper functions].
+http://booleannet.googlecode.com/svn/webdata/example-hybrid-override.png 
