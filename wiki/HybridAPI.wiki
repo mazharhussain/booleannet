@@ -46,7 +46,7 @@ pylab.plot( engine.data['A'] , 'o-' )
 pylab.show()
 }}}
 
-Note how simple these equations are, could you predict what the shape of the curves for `A`, `B` and `C` will be like? How about the steady state values for each node ([http://booleannet.googlecode.com/svn/webdata/example-hybrid.png see answer])?
+Note how simple these equations are, could you predict what the shape of the curves for `A`, `B` and `C` will be like? How about the steady state values for each node? See the image at the bottom image for the answer.
 
 = Advanced Usage =
 
