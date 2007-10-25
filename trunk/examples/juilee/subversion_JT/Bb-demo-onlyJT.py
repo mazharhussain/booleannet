@@ -11,7 +11,7 @@ comp_params = helper.read_parameters( 'Bb-compartmental_org.csv' )
 conc = init_pars[5]
 comp_par = comp_params[5]
 print conc.IFNgI.threshold, conc.IL10I.threshold
-FULLT = 50
+FULLT = 120
 STEPS = FULLT*5
 
 from boolean import Engine, helper, util
