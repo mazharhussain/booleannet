@@ -280,8 +280,15 @@ class Engine(object):
 
     def detect_cycles(self):
         """
-        Detects cycles
+        Detects cycles after states have been formed.
+
+        Returns a tuple where the first item is a number indicating 
+        the lenght of the cycle (it is 1 for a steady state) while 
+        the second is the index at wich the cycle occurs the first time
         """
+        
+        assert len(self.states) > 1, 'Needs more than one state'
+        # each state is characterized by its hash id
         nums = [ hash( str(x) ) for x in self.states ]        
         size = len(nums)
         for step in range(1, 4):            
@@ -289,35 +296,41 @@ class Engine(object):
             for count, elem in enumerate( zip(sub, sub[1:]) ):
                 x, y = elem
                 if x == y:                    
-                    return count+1, step, self.states[count:count+step]                
+                    return step, count
         return None  
+
+    def report_cycles(self):
+        "Convenience function that reports on steady states"
+        size, index = self.detect_cycles()
+        if size==1:
+            print 'Steady state starting at index %s -> %s' % (index, self.states[index] )
+        else:
+            states = self.states[index, index+size]
+            print 'Cycle of lenght %s starting at index %s -> %s' % (size, index, states )
+
+    def steady_states(self):
+        "Convenience function that computes the steady states"
 
 if __name__ == '__main__':
     
 
     text = """
-    #
-    # this is a comment
-    #
-    A  = B = Random
-    # conc, decay, threshold as percent
-    B  = (0, 1, 0.5)
-
-    1: A* = not A
-    1: B* = A and not B
-    1: C* = A and B
+    A = B = True 
+    C = False
+    1: A* = not C 
+    2: B* = A and B
+    3: C* = B
     """
 
-    be = Engine( mode='sync', text=text )
+    engine = Engine( mode='sync', text=text )
 
-    be.initialize( missing=util.randomize )
+    engine.initialize( )
 
-    be.iterate( steps=4)
+    engine.iterate( steps=10)
     
-    for state in be.states:
+    for state in engine.states:
         print state
     
-
-
+    engine.report_cycles()
     
           

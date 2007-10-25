@@ -73,7 +73,7 @@ class Solver( Engine ):
             init.append( line )
         
         if localdefs:
-            init.extend( [ '# custom imports', 'from %s import *' % localdefs, '' ]   )
+            init.extend( [ '# custom imports', 'import %s' % localdefs, 'reload(%s)' % localdefs, 'from %s import *' % localdefs ]   )
 
         init_text = '\n'.join( init )
         return init_text
