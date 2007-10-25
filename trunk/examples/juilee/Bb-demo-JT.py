@@ -11,7 +11,7 @@ conc = init_pars[5]
 comp_par = comp_params[5]
 #print conc.IFNgI.decay
 
-FULLT = 20
+FULLT = 60
 STEPS = FULLT*5
 
 def override( node, indexer, tokens, param ):
@@ -186,16 +186,16 @@ def override( node, indexer, tokens, param ):
         concAgAb = helper.conc( 'AgAb', indexer)
         concC = helper.conc( 'C', indexer)
         concBb = helper.conc( 'Bb', indexer)                
-        expr = '%s = ((%s + %s) * (%s * 0.4 + %s * 0.2)) * %s' % (newval, concMP, concRP, concAgAb, concC, concBb)
-#        expr = '%s = ((%s + %s) * (%s * 0.4 + %s * 0.2 + %s)) * %s * 2' % (newval, concMP, concRP, concAgAb, concC, concBb, concBb) #TTSS deletion
+#        expr = '%s = ((%s + %s) * (%s * 0.4 + %s * 0.2)) * %s' % (newval, concMP, concRP, concAgAb, concC, concBb)
+        expr = '%s = ((%s + %s) * (%s * 0.4 + %s * 0.2 + %s)) * %s * 2' % (newval, concMP, concRP, concAgAb, concC, concBb, concBb)
         return expr
         
     return None
 
 from boolean import Engine, helper, util
 
-text = util.read( 'Bb.txt' )
-#text2 = util.read('Bb_JT.txt')
+text = util.read( 'Bb_mod_BN_paper.txt' )
+#text2 = util.read('Bb_mod_BN_paper.txt')
 #text2  = util.modify_states( text=text2, turnoff= [ "TTSS" ] )
 
 engine = Engine( text=text, mode='lpde' )
@@ -221,10 +221,10 @@ import pylab
 #nodes = "Bb".split()
 #nodes = "EC PIC IL10I IL10 TTSS IFNgI".split()
 #nodes = "Bb TTSS IL10I IFNgI".split()
-nodes = "IL4I IL4II IL12I IL12II".split()
+#nodes = "IL4I IL4II IL12I IL12II".split()
 #nodes = "Cab Oab".split()
 #nodes = "Th2I Th2II Th1I Th1II".split()
-#nodes = "IL10I IFNgI".split()
+nodes = "IL10I IFNgI".split()
 
 collect = []
 #collect2 = []
@@ -233,6 +233,7 @@ for node in nodes:
 #    values2 = engine2.data[node]
 #    values = values/max(values)
     p = pylab.plot(t, values , 'o-' )
+#    p = pylab.semilogy(t, values , 'o-' )
 #    p2 = pylab.plot(t, values2 , 'o-' )
     collect.append( p )
 #    collect.append( p2 )
