@@ -2,14 +2,14 @@
 Boolean Network Library
 """
 
-import engine, solver
+import async, plde
 
 from util import Problem
 
-# masquerades as a class but it is a factory function
+# class factory function 
 def Engine(text, mode):
-    if mode in ('plde', 'lpde'):
-        return solver.Solver(text=text, mode=mode)
+    if mode in ('plde', 'lpde'): 
+        return plde.Engine(text=text, mode=mode)
     else:
-        return engine.Engine(text=text, mode=mode)
+        return async.Engine(text=text, mode=mode)
 

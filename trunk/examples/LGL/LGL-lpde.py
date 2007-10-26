@@ -10,7 +10,7 @@ FULLT  = 10 # total time
 STEPS  = 100 # number of steps
 
 text = util.read( 'LGL.txt')
-engine = Engine( mode='lpde', text=text )
+engine = Engine( mode='plde', text=text )
 engine.initialize( missing=util.randomize )
 engine.iterate( fullt=FULLT, steps=STEPS )
 
