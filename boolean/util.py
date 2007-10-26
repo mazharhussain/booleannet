@@ -52,6 +52,9 @@ class State(object):
         s = State( **self.__dict__ )
         return s
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 class Collector(object):
     """
     Collects data over a run

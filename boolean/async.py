@@ -287,7 +287,6 @@ class Engine(object):
         the second is the index at wich the cycle occurs the first time
         """
         
-        assert len(self.states) > 1, 'Needs more than one state'
         # each state is characterized by its hash id
         nums = [ hash( str(x) ) for x in self.states ]        
         size = len(nums)
@@ -297,15 +296,18 @@ class Engine(object):
                 x, y = elem
                 if x == y:                    
                     return step, count
-        return None  
+        return None, None  
 
     def report_cycles(self):
         "Convenience function that reports on steady states"
         size, index = self.detect_cycles()
-        if size==1:
+        
+        if size == None:
+            print "No cycle or steady state could be detected from the %d states" % len(self.states)
+        elif size==1:
             print 'Steady state starting at index %s -> %s' % (index, self.states[index] )
         else:
-            states = self.states[index, index+size]
+            states = self.states[index: index+size]
             print 'Cycle of lenght %s starting at index %s -> %s' % (size, index, states )
 
 if __name__ == '__main__':
@@ -323,7 +325,7 @@ if __name__ == '__main__':
 
     engine.initialize( )
 
-    engine.iterate( steps=10)
+    engine.iterate( steps=6 )
     
     for state in engine.states:
         print state
