@@ -2,7 +2,7 @@ from pylab import arange, rk4
 import sys, os
 from itertools import *
 import util, odict, tokenizer, helper
-from engine import Engine
+import async
 
 def default_override( node, indexer, tokens ):
     """
@@ -19,14 +19,14 @@ def default_equation( tokens, indexer ):
     text = helper.newval(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
     return text
 
-class Solver( Engine ):
+class Engine( async.Engine ):
     """
     This class generates python code that will be executed inside the Runge-Kutta integrator.
     """
     def __init__(self, text, mode):
         
         # run the regular boolen engine one step to detect syntax errors
-        eng = Engine(text=text, mode='sync')
+        eng = async.Engine(text=text, mode='sync')
         eng.initialize( missing=util.randomize )
         eng.iterate( steps=1 )
         self.INIT_LINE  = helper.init_line
@@ -35,13 +35,13 @@ class Solver( Engine ):
         self.EXTRA_INIT = ''
 
         # setting up this engine
-        Engine.__init__(self, text=text, mode=mode)
+        async.Engine.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
         self.data = {}
     
     def initialize(self, missing=None, defaults={} ):
         "Custom initializer"
-        Engine.initialize( self, missing=missing, defaults=defaults )
+        async.Engine.initialize( self, missing=missing, defaults=defaults )
         
         # will also maintain the order of insertion
         self.mapper  = odict.odict() 
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     3: C* = C
     """
 
-    engine = Solver( text=stext, mode='lpde' )
+    engine = Engine( text=stext, mode='plde' )
     engine.initialize()
     engine.iterate( fullt=1, steps=10 )
     

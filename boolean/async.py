@@ -308,9 +308,6 @@ class Engine(object):
             states = self.states[index, index+size]
             print 'Cycle of lenght %s starting at index %s -> %s' % (size, index, states )
 
-    def steady_states(self):
-        "Convenience function that computes the steady states"
-
 if __name__ == '__main__':
     
 

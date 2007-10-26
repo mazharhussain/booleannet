@@ -194,16 +194,16 @@ def override( node, indexer, tokens, param ):
 
 from boolean import Engine, helper, util
 
-text = util.read( 'Bb_JT.txt' )
+text = util.read( 'Bb.txt' )
 #text  = util.modify_states( text=text, turnoff= [ "TTSS" ] )
-engine = Engine( text=text, mode='lpde' )
+engine = Engine( text=text, mode='plde' )
 
 def local_override( node, indexer, tokens ):
     return override( node, indexer, tokens, comp_par )
 
 engine.OVERRIDE = local_override
 
-engine.initialize( missing = helper.initializer( conc )  )
+engine.initialize( missing = helper.initializer( conc, default=(1,1,0.5))  )
 
 engine.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
 t = engine.t
