@@ -103,7 +103,7 @@ class Engine( async.Engine ):
         """
         Generates the function that will be used to integrate
         """
-        sep = '    '
+        sep = ' ' * 4
 
         indices = [ x[0] for x in self.mapper.values() ]
         assign  = [ 'c%d' % i for i in indices ]
@@ -121,7 +121,7 @@ class Engine( async.Engine ):
         body.append( '    %s = %s' % (retvals, zeros) )
         for tokens in self.rank_tokens:
             equation = self.create_equation( tokens )
-            equation = [ '    ' + e for e in equation ]
+            equation = [ sep + e for e in equation ]
             body.append( '\n'.join( equation)  )
         body.append( '' )
         body.append( "    return ( %s ) " % retvals )
@@ -130,18 +130,20 @@ class Engine( async.Engine ):
         return text
 
     def iterate( self, fullt, steps, autogen_fname=None, localdefs=None, autogen='autogen'  ):
-
+        """
+        Iterates over the system of equations 
+        """
         if autogen_fname is not None:
             autogen = autogen_fname
             del autogen_fname
             util.warn("parameter 'autogen_fname' is deprecated. Use 'autogen' instead." )
-
-        # iterate once with the old parser to detect possible syntax errors
+        
+        # setting up the timesteps
         dt = fullt/float(steps)
         self.t  = [ dt * i for i in range(steps) ]
 
-        # generates the initializator
-        self.init_text = self.generate_init( localdefs=localdefs )
+        # generates the initializator and adds the timestep
+        self.init_text  = self.generate_init( localdefs=localdefs )
         self.init_text += '\ndt = %s' % dt
 
         #print init_text

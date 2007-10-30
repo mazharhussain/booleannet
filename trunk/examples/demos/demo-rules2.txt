@@ -1,6 +1,0 @@
-SAM1 = True
-BLK2 = False
-
-1: SAM1* = SAM1 or BLK2
-1: BLK2* = SAM1 and BLK2
-
