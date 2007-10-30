@@ -157,6 +157,21 @@ def get_lines ( text ):
     lines = filter( lambda x: not x.startswith('#'), lines )
     return lines
 
+def all_nodes( text ):
+    """
+    >>> text = 'A and B or C and (A or C and not E)'
+    >>> all_nodes( text )
+    ['A', 'B', 'C', 'E']
+    """
+    lexer = tokenizer.Lexer()
+    lexer.build()
+    lines = get_lines( text )
+    tokenlist = map( lexer.tokenize, lines)
+    nodes = tokenizer.get_all_nodes( tokenlist )
+    nodes = list( set( nodes ) )
+    nodes.sort()
+    return nodes
+
 def case_sensitivity_check( tokenlist ):
     """
     Verifies IDs in the tokenlist. It may not contain

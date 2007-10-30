@@ -1,5 +1,6 @@
 include COPYRIGHT.txt
-include readme.html
+
+include examples/README.txt
 include examples/aba/aba.txt
 include examples/aba/aba-simple.py
 include examples/aba/aba-full.py
@@ -7,13 +8,17 @@ include examples/aba/aba-lpde.py
 include examples/aba/aba-full.png
 
 include examples/LGL/LGL.txt
-include examples/LGL/LGL.py
-include examples/LGL/LGL-lpde.py
+include examples/LGL/LGL-final.bin
+include examples/LGL/LGL-final.png
+include examples/LGL/LGL-plot.py
+include examples/LGL/LGL-sim.py
 
-include examples/immune/*.py
-include examples/immune/*.txt
-include examples/immune/*.csv
+include examples/immune/Bb-plot.py
+include examples/immune/Bb-sim.py
+include examples/immune/localdefs.py
+include examples/immune/overrides.py
+include examples/immune/Bb-compartmental.txt
+include examples/immune/Bb-concentration.txt
+include examples/immune/Bb-final.bin
 
-recursive-include examples/demos *.txt *.py
 recursive-include test test*.txt test*.py
-recursive-include html *.html *.css *.js *.png

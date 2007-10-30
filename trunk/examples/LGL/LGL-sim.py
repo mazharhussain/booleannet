@@ -50,13 +50,16 @@ if __name__ == '__main__':
     text = util.read( 'LGL.txt')
 
     # the nodes of interest that are collected over the run
-    NODES  = 'Apoptosis STAT3 FasL Ras'.split()
+    # NODES  = 'Apoptosis STAT3 FasL Ras'.split()
+    
+    # this collects the state of all nodes 
+    NODES  = util.all_nodes( text )
 
     #
     # raise this for better curves (will take about 2 seconds per repeat)
-    # plots were made for repeat = 500
+    # plots were made for repeat = 1000
     #
-    REPEAT = 2
+    REPEAT = 1000
     STEPS  = 100
 
     data = []

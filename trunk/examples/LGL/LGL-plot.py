@@ -15,6 +15,8 @@ def smooth(data, w=0):
     return out
 
 def make_plot():
+    
+    # contains averaged node information based on 1000 runs
     data = util.bload( 'LGL-final.bin' )
 
     # each of these is a dictionary keyed by nodes
@@ -50,7 +52,9 @@ def make_plot():
     xlabel( 'Time Steps' )
 
 if __name__ == '__main__':
-
+    
+    # resize this to change figure size
+    figure(num = None, figsize=(14, 6), dpi=80, facecolor='w', edgecolor='k')
     make_plot( )
     show()
     
