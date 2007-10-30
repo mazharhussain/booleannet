@@ -1,5 +1,5 @@
 from itertools import *
-import sys, os, logging, random, re, string
+import sys, os, logging, random, re, string, pickle
 import tokenizer, helper
 
 def warn(message):
@@ -63,28 +63,36 @@ class Collector(object):
         "Default constructor"
         self.store = {}
 
-    def collect(self, states, node):
+    def collect(self, states, nodes):
         "Collects the node values into a list"
-        values = [ int( getattr(state, node)) for state in states ]
-        self.store.setdefault(node, []).append( values )
+        nodes = as_set( nodes )
+        for node in nodes:
+            values = [ int( getattr(state, node)) for state in states ]
+            self.store.setdefault(node, []).append( values )
 
-    def get_averages(self, node, normalize=True):
-        "Averages the collected data for the node"
-        all  = self.store[node]
-        size = float( len(all) )        
-        
-        # this sums lists!
-        def listadd( xlist, ylist ):
-            return [ x+y for x, y in zip(xlist, ylist) ]
-        
-        values = reduce(listadd, all)
-        
-        if normalize:
-            def divide(x):
-                return x/size
-            return map(divide, values)
-        else:
-            return values
+    def get_averages(self, normalize=True):
+        """
+        Averages the collected data for the each node
+        Returns a dictionary keyes by nodes containing the
+
+        """
+        out = {}
+        for node in self.store:
+            all  = self.store[node]
+            size = float( len(all) )        
+            
+            # this sums lists!
+            def listadd( xlist, ylist ):
+                return [ x+y for x, y in zip(xlist, ylist) ]
+            
+            values = reduce(listadd, all)
+            
+            if normalize:
+                def divide(x):
+                    return x/size
+                values = map(divide, values)
+            out[node] = values
+        return out
 
 def as_set( nodes ):
     """
@@ -226,6 +234,20 @@ def allfalse(*args, **kwds):
     "Default False function"
     return False
 
+def bsave(obj, fname='data.bin'):
+    """
+    Saves (pickles) objects
+    >>> obj = { 1:[2,3], 2:"Hello" }
+    >>> bsave( obj )
+    >>> obj == bload()
+    True
+    """
+    pickle.dump( obj, file(fname, 'wb'), protocol=0 ) # maximal compatibility
+
+def bload(fname='data.bin'):
+    "Loads a pickle from a file"
+    return pickle.load( file(fname, 'rb') )
+    
 def _test():
     """
     Main testrunnner
