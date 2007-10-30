@@ -41,7 +41,7 @@ def run( text, nodes, repeat, steps ):
         coll.collect( states=eng.states, nodes=nodes )
         print 'run %d, %s' % ( i+1, eng.elapsed( 1 ) )
 
-    print 'completed %s' % eng.elapsed( repeat )
+    print '- completed'
     avgs = coll.get_averages( normalize=True )
     return avgs
 
@@ -61,14 +61,18 @@ if __name__ == '__main__':
 
     data = []
     
+    print '- starting simulation with REPEAT=%s, STEPS=%s' % (REPEAT, STEPS)
+
     # a single overexpressed node
-    mtext = util.modify_states( text=text, turnon=['Stimuli'])
+    mtext = util.modify_states( text=text, turnon=['Stimuli'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
 
     # multiple overexrpessed nodes
-    mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1','sFas'])
+    mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1','sFas'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
     
-    util.bsave( data, fname='LGL-run.bin' )
+    fname = 'LGL-run.bin'
+    util.bsave( data, fname=fname )
+    print '- data saved into %s' % fname
