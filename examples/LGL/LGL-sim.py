@@ -52,8 +52,11 @@ if __name__ == '__main__':
     # the nodes of interest that are collected over the run
     NODES  = 'Apoptosis STAT3 FasL Ras'.split()
 
+    #
     # raise this for better curves (will take about 2 seconds per repeat)
-    REPEAT = 500 
+    # plots were made for repeat = 500
+    #
+    REPEAT = 2
     STEPS  = 100
 
     data = []
@@ -68,4 +71,4 @@ if __name__ == '__main__':
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
     
-    util.bsave( data, fname='LGLrun.bin' )
+    util.bsave( data, fname='LGL-run.bin' )
