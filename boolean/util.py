@@ -109,7 +109,7 @@ def modify_states( text, turnon=[], turnoff=[] ):
     body_tokens = filter( lambda x: x[0].type == 'RANK', tokens )
     init_lines  = map( tokenizer.tok2line, init_tokens )
     
-    # append the states will override other settings
+    # append to the states to override other settings
     init_lines.extend( [ '%s=False' % node for node in turnoff ] )
     init_lines.extend( [ '%s=True' % node for node in turnon ] )
     
@@ -121,10 +121,13 @@ def modify_states( text, turnon=[], turnoff=[] ):
 
     body_lines = []
     for tokens in body_tokens:
+        
+        # a sanity check
         values = [ t.value for t in tokens ]
         body_line = ' '.join( map(str, values ))
-        # sanity check
         assert len(tokens) > 4, 'Invalid line -> %s' % body_line
+        
+        # comment out certain nodes 
         if tokens[1].value in nodes:
             body_line = '#' + body_line
         body_lines.append( body_line )
@@ -151,6 +154,8 @@ def case_sensitivity_check( tokenlist ):
     Verifies IDs in the tokenlist. It may not contain
     the same ID with different capitalization
     """
+
+    # extract all node values from the tokenlist
     toks  = filter(lambda tok: tok.type=='ID', chain( *tokenlist ) )
     names = map( lambda tok: tok.value, toks)
 

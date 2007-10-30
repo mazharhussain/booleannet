@@ -1,6 +1,7 @@
 """
 Boolean Network Library
 """
+__VERSION__ = '0.9.6'
 
 import async, plde
 
