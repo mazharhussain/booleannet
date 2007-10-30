@@ -55,6 +55,9 @@ class Engine( async.Engine ):
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
         
+        # a sanity check
+        assert self.nodes == self.mapper.keys()
+
     def generate_init( self, localdefs ):
         """
         Generates the initialization lines
@@ -166,7 +169,6 @@ class Engine( async.Engine ):
 
         # x0 has been auto generated in the initialization
         self.alldata = rk4(autogen_mod.derivs, autogen_mod.x0, self.t) 
-        self.nodes = self.parser.before.keys()
         
         # it returns a single list for one node
         if len(self.nodes) == 1:
