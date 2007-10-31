@@ -282,8 +282,8 @@ class Engine(object):
         Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
         """
         for index in xrange(steps):
-            self.update_states()
             self.RULE_START_ITERATION( index, self )
+            self.update_states()
             for lines in self.body:
                 # randomize in async mode
                 if not self.parser.sync_mode:
