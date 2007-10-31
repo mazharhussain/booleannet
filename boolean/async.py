@@ -267,7 +267,7 @@ class Engine(object):
     
     def iterate( self, steps, debug=False ):
         """
-        Iterates over the instruction 'count' times
+        Iterates over the lines 'steps' times
         """
         for index in xrange(steps):
             self.update_states()
