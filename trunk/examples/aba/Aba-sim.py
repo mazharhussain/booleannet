@@ -54,6 +54,7 @@ def run_mutations( text ):
 
 if __name__ == '__main__':
 
+    
     REPEAT = 1000
     STEPS  = 10
     FULLT  = 10
