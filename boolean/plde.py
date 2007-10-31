@@ -37,8 +37,13 @@ class Engine( async.Engine ):
         # setting up this engine
         async.Engine.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
-        self.data = {}
+        self.lazy_data = {}
     
+    @property
+    def data(self):
+        "For compatibility with the async engine"
+        return self.lazy_data
+
     def initialize(self, missing=None, defaults={} ):
         "Custom initializer"
         async.Engine.initialize( self, missing=missing, defaults=defaults )
@@ -177,7 +182,7 @@ class Engine( async.Engine ):
             self.alldata = [ [ x ] for x in self.alldata ]
 
         for index, node in enumerate( self.nodes ):
-            self.data[node] = [ row[index] for row in self.alldata ]
+            self.lazy_data[node] = [ row[index] for row in self.alldata ]
     
 if __name__ == '__main__':
     stext = """
