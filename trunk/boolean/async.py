@@ -235,6 +235,7 @@ class Engine(object):
 
     @property
     def data(self):
+        # this is an expensive operation
         assert self.states, 'States are empty'
         if not self.lazy_data:
             nodes = self.start.keys()
