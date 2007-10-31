@@ -4,7 +4,7 @@ LGL simulator
 It is also a demonstration on how the collector works
 
 """
-from boolean import Engine, util
+from boolean import engineine, util
 from random import choice
 
 # ocasionally randomized nodes
@@ -33,13 +33,13 @@ def run( text, nodes, repeat, steps ):
     coll = util.Collector()
     
     for i in xrange( repeat ):
-        eng  = Engine( mode='async', text=text )
-        eng.RULE_GETVALUE = new_getvalue
+        engine  = engineine( mode='async', text=text )
+        engine.RULE_GETVALUE = new_getvalue
         # minimalist initial conditions, missing nodes set to false
-        eng.initialize( missing=util.allfalse )
-        eng.iterate( steps=steps)
-        coll.collect( states=eng.states, nodes=nodes )
-        print 'run %d, %s' % ( i+1, eng.elapsed( 1 ) )
+        engine.initialize( missing=util.allfalse )
+        engine.iterate( steps=steps)
+        coll.collect( states=engine.states, nodes=nodes )
+        print 'run %d, %s' % ( i+1, engine.elapsed( 1 ) )
 
     print '- completed'
     avgs = coll.get_averages( normalize=True )
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # raise this for better curves (will take about 2 seconds per repeat)
     # plots were made for repeat = 1000
     #
-    REPEAT = 1000
+    REPEAT = 10
     STEPS  = 100
 
     data = []

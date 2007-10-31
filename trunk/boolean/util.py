@@ -96,7 +96,8 @@ class Collector(object):
 
 def as_set( nodes ):
     """
-    Wraps input into a set if needed
+    Wraps input into a set if needed. Allows single input or
+    any iterable
     """
     if isinstance(nodes, str):
         return set( [ nodes ] )
@@ -249,7 +250,7 @@ def allfalse(*args, **kwds):
     "Default False function"
     return False
 
-def bsave(obj, fname='data.bin'):
+def bsave( obj, fname='data.bin' ):
     """
     Saves (pickles) objects
     >>> obj = { 1:[2,3], 2:"Hello" }
@@ -259,7 +260,7 @@ def bsave(obj, fname='data.bin'):
     """
     pickle.dump( obj, file(fname, 'wb'), protocol=0 ) # maximal compatibility
 
-def bload(fname='data.bin'):
+def bload( fname='data.bin' ):
     "Loads a pickle from a file"
     return pickle.load( file(fname, 'rb') )
     
