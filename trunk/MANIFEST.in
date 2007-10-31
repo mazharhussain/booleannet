@@ -1,11 +1,11 @@
 include COPYRIGHT.txt
 
 include examples/README.txt
-include examples/aba/aba.txt
-include examples/aba/aba-simple.py
-include examples/aba/aba-full.py
-include examples/aba/aba-lpde.py
-include examples/aba/aba-full.png
+include examples/aba/ABA.txt
+include examples/aba/Aba-sim.py
+include examples/aba/Aba-plot.py
+include examples/aba/Aba-final.png
+include examples/aba/Aba-final.bin
 
 include examples/LGL/LGL.txt
 include examples/LGL/LGL-final.bin
@@ -17,8 +17,8 @@ include examples/immune/Bb-plot.py
 include examples/immune/Bb-sim.py
 include examples/immune/localdefs.py
 include examples/immune/overrides.py
-include examples/immune/Bb-compartmental.txt
-include examples/immune/Bb-concentration.txt
+include examples/immune/Bb-compartmental.csv
+include examples/immune/Bb-concentration.csv
 include examples/immune/Bb-final.bin
 
 recursive-include test test*.txt test*.py

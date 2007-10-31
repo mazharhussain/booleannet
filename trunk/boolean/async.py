@@ -196,6 +196,7 @@ class Engine(object):
         self.parser.RULE_NOT = self.RULE_NOT 
         self.parser.RULE_SETVALUE = self.RULE_SETVALUE
         self.parser.RULE_GETVALUE = self.RULE_GETVALUE
+        self.lazy_data = {}
 
     def update_states(self ):       
         "Keeps track of the states"
@@ -232,9 +233,19 @@ class Engine(object):
         assert self.states, 'States are empty'
         return self.states[-1]
 
-    def initialize( self, missing=None, defaults={} ):
+    @property
+    def data(self):
+        assert self.states, 'States are empty'
+        if not self.lazy_data:
+            nodes = self.start.keys()
+            for state in self.states:
+                for node in nodes:
+                    self.lazy_data.setdefault( node, []).append( state[node] )
+        return self.lazy_data
+
+    def initialize( self, missing=None, defaults={},  ):
         """
-        Initializes the parser
+        Initializes the parser. 
         """
         
         self.init_engine()
@@ -265,9 +276,9 @@ class Engine(object):
             self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
             self.parser.RULE_SETVALUE( self.parser.after, node, value, None)    
     
-    def iterate( self, steps, debug=False ):
+    def iterate( self, steps, **kwds ):
         """
-        Iterates over the lines 'steps' times
+        Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
         """
         for index in xrange(steps):
             self.update_states()
@@ -330,6 +341,8 @@ if __name__ == '__main__':
     for state in engine.states:
         print state
     
+    print engine.data
+
     engine.report_cycles()
     
           

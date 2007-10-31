@@ -1,5 +1,6 @@
 from itertools import *
-import sys, os, logging, random, re, string, pickle
+import sys, os, logging, random, re, string
+import cPickle as pickle
 import tokenizer, helper
 
 def warn(message):
@@ -258,7 +259,7 @@ def bsave( obj, fname='data.bin' ):
     >>> obj == bload()
     True
     """
-    pickle.dump( obj, file(fname, 'wb'), protocol=0 ) # maximal compatibility
+    pickle.dump( obj, file(fname, 'wb'), protocol=2 ) # maximal compatibility
 
 def bload( fname='data.bin' ):
     "Loads a pickle from a file"

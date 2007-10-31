@@ -22,7 +22,7 @@ def make_plot():
     # each of these is a dictionary keyed by nodes
     run1, run2 = data 
 
-    # apply smoothing
+    # applies smoothing to all values
     for run in (run1, run2):
         for key, values in run.items():
             run[key] = smooth( values, w=10 )
