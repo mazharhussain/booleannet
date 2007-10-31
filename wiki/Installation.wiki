@@ -1,0 +1,8 @@
+#summary One-sentence summary of this page.
+
+= Installation =
+
+
+Library installation:
+
+ - Windows users should download the latest windows installer. Once downloaded open the executable and follow the on screen instructions. This
