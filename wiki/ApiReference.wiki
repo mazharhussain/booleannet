@@ -10,8 +10,8 @@ Below we document the class and method signatures. This is a quick reference, so
 {{{
 engine = boolean.Engine( mode='sync', text=text )
 #
-# mode may be: sync, async or lpde corresponding to
-# synchronous, asycnhronous and linear piece wise differential equations
+# mode may be: sync, async or plde corresponding to
+# synchronous, asycnhronous and piece-wise linear differential equations
 }}}
 
 ===State Initialization===
