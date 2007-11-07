@@ -16,7 +16,7 @@ In a Boolean representation we assume that nodes are equivalent, and their inter
 
 In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the  processes. The first method introduces *asynchronous updates* where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a _linear system of piecewise differential equations_, leading to a *hybrid model* in the manner first suggested by Leon Glass and collaborators.
 
-  *  A tutorial on the [BooleanAPI boolean operating mode ]
+  *  A [BooleanAPI general introduction and tutorial] on the boolean operating mode
   *  A description of the [HybridAPI hybrid operating mode ]
   *  Get things done faster with [HelperFunctions helper functions]
   *  See the  [ApiReference quick reference] for a reminder of how the library works.
@@ -42,6 +42,6 @@ For user convenience the following third party libraries are distributed with  t
   * [http://www.webpy.org web.py] started by Aaron Schwartz
   * [http://oakwinter.com/code/functional/ functional.py] by Colin Winters
 
-The following library must be also installed if the engine will be used in `lpde` mode (differential equations):
+The following library must be also installed if the engine will be used in `plde` mode (piece-wise linear differential equations):
 
   * [http://matplotlib.sourceforge.net/ matplotlib] by Dave Hunter
