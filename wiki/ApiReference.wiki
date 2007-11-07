@@ -62,7 +62,7 @@ engine.RULE_OR  (node1, node2, parser)
 engine.RULE_NOT (node, parser)
 }}}
 
-===Operation Override in LPDE Mode===
+===Operation Override in PLDE Mode===
 
 The `indexer` is a dictionary that contains the numerical index for every node i.e. the index for node `MT1` is `indexer['MT1']`.
 
@@ -79,9 +79,9 @@ engine.INIT_LINE( params )
 engine.DEFAULT_EQUATION( tokens, indexer )
 }}}
 
-===LPDE Helper Functions===
+===PLDE Helper Functions===
 
-Simple functions to make your program more reusable. Used when overriding node behavior in LPDE mode.
+Simple functions to make your program more reusable. Used when overriding node behavior in PLDE mode.
 {{{
 
 # return the newvalue, concentration, decay 
