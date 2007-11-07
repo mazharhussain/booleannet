@@ -8,7 +8,6 @@ from itertools import *
 # these function get injected into the generated code
 
 helper_modules = """
-# import localdefs
 try:
     from %s import *
 except:
@@ -17,23 +16,32 @@ except:
 
 from funcdefs import *
 
-def newval(node, indexer):
-    "Here for compatibility reasons, will be deprecated"
-    return change( node, indexer)
-
 def change(node, indexer):
+    "Returns the change for a node"
     index = indexer[node]
     return ' n%d ' % index 
 
+def newval(node, indexer):
+    """
+    Returns the change for a node,
+    
+    chose a bad name originally still here for compatibility reasons, 
+    will be deprecated
+    """
+    return change( node, indexer)
+
 def conc( node, indexer):
+    "Returns the concentration for a node"
     index = indexer[node]
     return ' c%d ' % index 
 
 def decay( node, indexer):
+    "Returns the decay for a node"
     index = indexer[node]
     return ' d%d ' % index 
 
 def threshold( node, indexer):
+    "Returns the threshold for a node"
     index = indexer[node]
     return ' t%d ' % index 
 

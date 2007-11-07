@@ -39,7 +39,7 @@ def make_plot():
     #
     subplot(122)
     coll = []
-    knockouts = 'WT S1P PA pHc ABI1 ROS'.split()
+    knockouts = 'WT S1P PA pHc ABI1'.split()
 
     for target in knockouts:
         p = plot( muts[target]['Closure'], 'o-')

@@ -6,29 +6,34 @@ import async
 
 def default_override( node, indexer, tokens ):
     """
-    Gets called at the before the transformation.
-    If this function returns anything other than false it will override the entire equation
+    Gets called before the generating each equation.
+    If this function returns anything other than None 
+    it will override the equation
     """
     return None
 
 def default_equation( tokens, indexer ):
     """
-    Default equation generator
+    Default equation generator, override this to generate
+    other equations without explicit overrides
     """
     node = tokens[1].value
-    text = helper.newval(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
+    text = helper.change(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
     return text
 
 class Engine( async.Engine ):
     """
-    This class generates python code that will be executed inside the Runge-Kutta integrator.
+    This class generates python code that will be executed inside 
+    the Runge-Kutta integrator.
     """
     def __init__(self, text, mode):
         
-        # run the regular boolen engine one step to detect syntax errors
+        # run the regular boolen engine for one step to detect syntax errors
         eng = async.Engine(text=text, mode='sync')
         eng.initialize( missing=util.randomize )
         eng.iterate( steps=1 )
+
+        # onto the main initialization
         self.INIT_LINE  = helper.init_line
         self.OVERRIDE   = default_override
         self.DEFAULT_EQUATION = default_equation
