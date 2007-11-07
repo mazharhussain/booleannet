@@ -9,6 +9,7 @@ from itertools import chain
 
 log, error = util.log, util.error
 
+# this is used to allow better error reporting (not thread safe)
 LAST_LINE = ''
 
 tokens = tokenizer.Lexer.tokens
@@ -115,7 +116,12 @@ def p_error(p):
 class Engine(object):
     "Represents a boolean parser"
     def __init__(self, mode, text ):
-       
+        """
+        Main parser            
+
+        Does a lot of error checking.
+        """
+
         self.parser = yacc.yacc( write_tables=0, debug=0 )
 
         assert mode in ('sync', 'async', 'lpde', 'plde'), "Incorrect mode %s" % mode   
@@ -167,12 +173,17 @@ class Engine(object):
         self.RULE_START_ITERATION = lambda index, engine: index
 
     def elapsed(self, repeat=1):
+        """
+        Helper function to benchmark performance
+        """
         total = (time.time() - self.time_start)
         persec = repeat/total
         return '%1.1f runs/sec, %d iterations in %4.2f sec' % (persec, repeat, total) 
 
     def init_engine(self ):
-        "Initializes the parser"
+        """
+        Initializes the parser
+        """
         
         # create the lexer
         tok = tokenizer.Lexer()
@@ -184,13 +195,14 @@ class Engine(object):
         self.parser.sync_mode = ( self.mode == 'sync' )
         self.parser.plde_mode = ( self.mode == 'plde' )
         
-        # this will store the parser states
-        self.start  = self.parser.before = State()
+        # this will store the parser states 
+        # some objects must also be referenced by the parser class
+        # so that to be visible during parsing
+        self.first  = self.start  = self.parser.before = State() # backward compatibility
         self.states = self.parser.states = [ self.parser.before ]
         self.parser.after  = State()
-        self.parser.settings = State()        
 
-        # this allows it to be redefined by the time the engine initializes
+        # this allows rules to be redefined by the time the engine initializes
         self.parser.RULE_AND = self.RULE_AND 
         self.parser.RULE_OR  = self.RULE_OR
         self.parser.RULE_NOT = self.RULE_NOT 
@@ -199,14 +211,18 @@ class Engine(object):
         self.lazy_data = {}
 
     def update_states(self ):       
-        "Keeps track of the states"
+        """
+        Keeps track of the states
+        """
         p = self.parser       
         p.before = p.after
         p.after  = p.after.copy()                     
         p.states.append( p.after )
 
     def save_states(self, fname='states.txt'):
-        "Saves the states into a file"
+        """
+        Saves the states into a file
+        """
         if self.states:
             fp = open(fname, 'wt')
             first = self.states[0]
@@ -230,12 +246,18 @@ class Engine(object):
 
     @property
     def last(self):
+        """
+        Returns the last element
+        """
         assert self.states, 'States are empty'
         return self.states[-1]
 
     @property
     def data(self):
-        # this is an expensive operation
+        """
+        Allows access to states via a dictionary keyed by the nodes
+        """
+        # this is an expensive operation so it loads lazily
         assert self.states, 'States are empty'
         if not self.lazy_data:
             nodes = self.start.keys()
@@ -249,8 +271,10 @@ class Engine(object):
         Initializes the parser. 
         """
         
+        # initializes the engine
         self.init_engine()
 
+        # parser the ules
         map( self.local_parse, self.init_lines )
 
         # deal with unintialized variables
@@ -311,7 +335,9 @@ class Engine(object):
         return None, None  
 
     def report_cycles(self):
-        "Convenience function that reports on steady states"
+        """
+        Convenience function that reports on steady states
+        """
         size, index = self.detect_cycles()
         
         if size == None:

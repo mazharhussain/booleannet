@@ -69,16 +69,16 @@ def run_mutations( text, repeat, steps ):
     return data
 
 if __name__ == '__main__':
-
     
-    REPEAT = 100
+    # more repeats - better curve
+    REPEAT = 300
     STEPS  = 10
     FULLT  = 10
 
-    text = util.read( 'aba.txt')
+    text = util.read( 'ABA.txt')
 
     data = find_stdev( text=text, node='Closure', repeat=REPEAT, steps=STEPS)
-    muts = run_mutations( text, repeat=100, steps=STEPS )
+    muts = run_mutations( text, repeat=REPEAT, steps=STEPS )
 
     obj  = dict( data=data, muts=muts )
     

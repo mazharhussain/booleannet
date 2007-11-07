@@ -6,6 +6,8 @@ Bordetella Bronchiseptica  simulation
 """
 import math
 from boolean import helper
+
+# the localdefs module contains reusable function definitions
 from localdefs import *
 
 def override( node, indexer, tokens, param ):

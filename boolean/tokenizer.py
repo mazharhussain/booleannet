@@ -90,16 +90,15 @@ def token_filter( tokenlist, tokentype, func ):
     """
     Filters lists tokenlists by the type of the first element
     """
-    # unwinds the generator because it typically needs to be reused.
     def condition( token ):
         return token[0].type == tokentype 
+    # unwinds the generator into a list because it typically needs to be reused
     return list( func( condition, tokenlist ) )
 
 def init_tokens( tokenlist, func=ifilter ):
     """
     Keeps list elements where the first token is ID
     """
-    # itching to use partial but that is python2.5 only
     return token_filter( tokenlist, tokentype='ID', func=func)
 
 def rank_tokens( tokenlist, func=ifilter ):
