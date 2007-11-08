@@ -10,7 +10,7 @@ We work on windows and unix-type systems and can advise on installation on these
 
 ==External Dependencies==
 
-  * To run the examples and the piecewise differential equations the library requires [http://matplotlib.sourceforge.net/ Matplotlib] to be installed. (in turn Matplotlib requires [http://numpy.scipy.org/ Numpy] to be installed). On Windows the installation of both of these is very straigthforward as long as one selects the right version of the software. In the download area of each of these packages you'll need to locate the executable (.exe or .msi extensions) that matches the version of Python that you have installed. For example for python 2.5 locate and dowload the `matplotlib-0.90.1.win32-py2.5.exe` and    `numpy-1.0.4.win32-py2.5.msi` package respectively. Once downloaded doubleclikc and install each. 
+  * To run the examples and the piecewise differential equations the library requires [http://matplotlib.sourceforge.net/ Matplotlib] to be installed. (in turn Matplotlib requires [http://numpy.scipy.org/ Numpy] to be installed). On Windows the installation of both of these is very straightforward as long as one selects the right version of the software. In the download area of each of these packages you'll need to locate the executable (.exe or .msi extensions) that matches the version of Python that you have installed. For example for python 2.5 locate and dowload the *matplotlib-0.90.1.win32-py2.5.exe* and    *numpy-1.0.4.win32-py2.5.msi* package respectively. Once downloaded double click and install each. 
 
   * Unix users should use their package manager to install the `numpy` and `matplotlib` packages.
 
