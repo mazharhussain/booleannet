@@ -1,5 +1,8 @@
 #summary Installation Instructions
 
+*Quick Install:* if have already installed the software before head to the 
+[http://code.google.com/p/booleannet/downloads/list Download Area] (also accesible by the link above) and download the newest version.
+
 = Installation =
 
 We work on windows and unix-type systems and can advise on installation on these platforms. The software runs on Macintosh computers as well but we don't have experience with installation on this platform.
