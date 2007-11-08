@@ -1,8 +1,23 @@
-#summary One-sentence summary of this page.
+#summary Installation Instructions
 
 = Installation =
 
+We work on windows and unix-type systems and can advise on installation on these platforms. The software runs on Macintosh computers as well but we don't have experience with installation on this platform.
 
-Library installation:
+==Main Requirement==
+ 
+  * Install the [http://www.python.org Python Programming Language]
 
- - Windows users should download the latest windows installer. Once downloaded open the executable and follow the on screen instructions. This
+==External Dependencies==
+
+  * To run the examples and the piecewise differential equations the library requires [http://matplotlib.sourceforge.net/ Matplotlib] to be installed. (in turn Matplotlib requires [http://numpy.scipy.org/ Numpy] to be installed). On Windows the installation of both of these is very straigthforward as long as one selects the right version of the software. In the download area of each of these packages you'll need to locate the executable (.exe or .msi extensions) that matches the version of Python that you have installed. For example for python 2.5 locate and dowload the `matplotlib-0.90.1.win32-py2.5.exe` and    `numpy-1.0.4.win32-py2.5.msi` package respectively. Once downloaded doubleclikc and install each. 
+
+  * Unix users should use their package manager to install the `numpy` and `matplotlib` packages.
+
+==BooleanNet Library Installation==
+
+  * Windows users should download the latest windows installer from the [http://code.google.com/p/booleannet/downloads/list download area]. Once downloaded open the executable and follow the on screen instructions. This will install the library system wide. 
+
+  * Windows users should also download the source distribution (.zip) and unpack it to access the examples.
+
+  * Unix users should download the source (.zip) distribution and run the python setup.py install command with sufficient privileges. This package also contains the examples folder.
