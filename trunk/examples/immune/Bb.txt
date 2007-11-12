@@ -1,7 +1,7 @@
 #I:  I/ Lungs
 #II: compartment II/ Lymph
 
-1: Bb* = Bb and not PH #MyFunc(PH, Bb)
+1: Bb* = Bb and not PH 
 1: TTSSI* = Bb and not (Cab or Oab) 
 1: TTSSII* = TTSSI
 1: Oag* = Bb
