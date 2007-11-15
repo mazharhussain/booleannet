@@ -11,7 +11,7 @@ import overrides
 
 # setting up simulation parameters
 FULLT = 50
-STEPS = FULLT*5
+STEPS = FULLT*50
 
 #
 # the helper functions allow for easy parameter extraction from a csv files
