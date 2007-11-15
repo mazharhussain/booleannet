@@ -42,7 +42,7 @@ def override( node, indexer, tokens, param ):
         newval = helper.newval(node, indexer)
         hill = helper.hill_func( 'MPI', indexer, param)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        expr = '%s = positive(%s - %s) ' % (newval, piece, hill)
+        expr = '%s = %s - %s' % (newval, piece, hill)
         return expr
         
     elif node == 'DCII':
@@ -56,7 +56,7 @@ def override( node, indexer, tokens, param ):
         newval = helper.newval(node, indexer)
         hill = helper.hill_func( 'DCI', indexer, param)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        expr = '%s = positive (%s - %s) ' % (newval, piece, hill)
+        expr = '%s = %s - %s' % (newval, piece, hill)
         return expr
         
     elif node == 'Th1I':
@@ -70,7 +70,7 @@ def override( node, indexer, tokens, param ):
         newval = helper.newval(node, indexer)
         hill = helper.hill_func( 'Th1II', indexer, param)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        expr = '%s = positive(%s - %s) ' % (newval, piece, hill)
+        expr = '%s = %s - %s' % (newval, piece, hill)
         return expr        
     
     elif node == 'Th2I':
@@ -84,7 +84,7 @@ def override( node, indexer, tokens, param ):
         newval = helper.newval(node, indexer)
         hill = helper.hill_func( 'Th2II', indexer, param)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        expr = '%s = positive(%s - %s) ' % (newval, piece, hill)
+        expr = '%s = %s - %s' % (newval, piece, hill)
         return expr        
     
     elif node == 'TrI':
@@ -98,7 +98,7 @@ def override( node, indexer, tokens, param ):
         newval = helper.newval(node, indexer)
         hill = helper.hill_func( 'TrII', indexer, param)
         piece  = helper.piecewise( tokens=tokens, indexer=indexer )
-        expr = '%s = positive(%s - %s) ' % (newval, piece, hill)
+        expr = '%s = %s - %s' % (newval, piece, hill)
         return expr        
                                                 
     elif node == 'IL10I':
