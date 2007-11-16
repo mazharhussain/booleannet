@@ -28,8 +28,25 @@ engine.iterate( steps=5 )
 }}}
 
 The input data is a text (that can be read from a file) that lists the 
-inital conditions for the nodes and the updating rules that affect these nodes. 
-Here is an example for what a file might look like::
+inital conditions for the nodes and the updating rules that affect these nodes. The updating rules must be specified in the following form::
+
+{{{
+rank: target* = rule
+}}}
+    
+For example:
+
+{{{
+1: A* = B and C
+}}}
+
+Meaning that the new value of A (specified as `A*`) will be equal to the values of `B` and `C` and that the rank of the update order is 1.
+
+The rank is an integer value that represents the order of update (only used in _asynchronous_ mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star indicates that this is an update rule rather than
+an initialization rule. For synchronous updates the order of updates will follow the order 
+in which the rules are listed. 
+
+Here is a more realistic example for what this text (file) might look like::
 
 {{{
 #
@@ -56,7 +73,7 @@ this latter being a random choice between `True/False`. Multiple assignments
 of the form `A = B = Random` are allowed  (note that this example will set `A` and `B` 
 to the same random value). It is also possible to set all uninitialized values to
 `Random` or any other desired value. This can simplify the files, see later sections (Advanced Usage) 
-for how to accomplish this. When run in LPDE mode (Linear Piecewise Differential Equations) we have
+for how to accomplish this. When run in PLDE mode (Piecewise Linear Differential Equations) we have
 the option of specifying other parameters during initialization. In that case each node of the network
 may be characterized by an a triplet of values that correspoind to the 
 _inital concentration_, a _decay_ and a _threshold_ (see [HybridAPI] for what these parameters mean).
@@ -72,15 +89,7 @@ the mode (pure boolean or hybrid) the value will be converted the appropriate on
 `True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)` whereas 
 value triplets will be converted to the truth value of _concentration > threshold_.
 
-The updating rules must be specified in the following form::
-
-{{{
-rank: target* = rule
-}}}
-    
-The rank is an integer value that represents the order of update (only used in _asynchronous_ mode). Lower ranks will get updated before higher ranks, but within ranks the update order is randomized. The star indicates that this is an update rule rather than
-an initialization rule. For synchronous updates the order of updates will follow the order 
-in which the rules are listed. During the simulation the engine collects all the states 
+During the simulation the engine collects all the states 
 that the system has visited. To view the states use:
 
 {{{
