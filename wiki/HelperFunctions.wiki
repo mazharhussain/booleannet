@@ -18,7 +18,7 @@ from boolean import helper
 lines = helper.read_parameters('parameter-data.csv')
 }}}
 
-The `lines` object returned by the helper method is a list that contains a nested _dictionary-like_ object for every row. In practice this means that the data in the table can be accessed by row, the by using the node name and the node type as indices. 
+The `lines` object returned by the helper method is a list that contains a nested _dictionary-like_ object for every row. In practice this means that the data in the table can be accessed by row, using the node name and the node type as indices. 
 
 {{{
 
