@@ -38,7 +38,7 @@ def make_plot():
     title( ' Changes in Apoptosis' )
     xlabel( 'Time Steps' )
     ylabel( 'Percent (%)' )
-    
+    ylim( (-0.1, 1.1) ) 
     #
     # Plotting FasL and Ras
     #
