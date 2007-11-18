@@ -2,35 +2,34 @@
 Absicis Acid Signaling - simulation
 
 """
-
+import sys
+sys.path.append('../..')
 from boolean import Engine, util
 import numpy
 
-def find_stdev( text, node, repeat, steps ):
+def find_stdev( text, node, knockouts, repeat, steps ):
     "Finds the standard deviation of a node with two modes"
-
     coll = {}
-    
     fullt  = 10
-    modes  = ('async', 'plde')
-    asteps = ( steps, fullt*10)
-    
-    for mode, step in zip( modes, asteps ):
-        print '- start run, %s' % mode
-        engine = Engine( mode=mode, text=text )
-        results = []
+    mode  = 'plde'
+    step = fullt*10
+    print '- start run, %s' % mode
+    engine = Engine( mode=mode, text=text )
+    results = {}
+    values=[]
+    coll={}
+    for gene in knockouts:
         for i in xrange( repeat ):
-            engine.initialize( missing=util.randomize )
-            # boolean modes will ignore extra parameters
+            engine.initialize( missing=util.randomize , defaults = {gene:(0.0,1.0,step*10)})
             engine.iterate( steps=step, fullt=fullt ) 
             values = map( float,  engine.data[node] )
-            results.append( values )
+            results.setdefault(gene,[]).append( values )
         
-        resmat = numpy.array( results )  
-        means  = numpy.mean( resmat,0 )
+        resmat = numpy.array( results[gene] )  
+        means  = numpy.mean( resmat , 0 )
         stdev  = numpy.std( resmat,0 )
-        coll[mode]= (means, stdev)
-    
+        coll[gene]= [means, stdev]
+
     return coll
     
 def run_plde( text, repeat, fullt ):
@@ -69,17 +68,14 @@ def run_mutations( text, repeat, steps ):
     return data
 
 if __name__ == '__main__':
-    
     # more repeats - better curve
     REPEAT = 300
     STEPS  = 10
     FULLT  = 10
-
     text = util.read( 'ABA.txt')
-
-    data = find_stdev( text=text, node='Closure', repeat=REPEAT, steps=STEPS)
-    muts = run_mutations( text, repeat=REPEAT, steps=STEPS )
-
-    obj  = dict( data=data, muts=muts )
+    data = find_stdev( text=text, node='Closure',knockouts='WT pHc PA'.split(), repeat=REPEAT, steps=STEPS)
     
+    muts = run_mutations( text, repeat=REPEAT, steps=STEPS )
+    obj  = dict( data=data, muts=muts )
     util.bsave( obj=obj, fname='ABA-run.bin' )
+    print 'finished simulation'
