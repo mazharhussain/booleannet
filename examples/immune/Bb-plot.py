@@ -61,6 +61,7 @@ def make_plot():
     legend( [p3, p4, p5, p6, p9, p10, p11, p12], 'DEl-C DEL-PH DEL-IL10I DEL-IL10II WT-C WT-PH WT-IL10I WT-IL10II'.split(), loc='best')
     
 if __name__ == '__main__':
-#    figure(num = None, figsize=(14, 6), dpi=80, facecolor='w', edgecolor='k')
+    figure(num = None, figsize=(14, 7), dpi=80, facecolor='w', edgecolor='k')
     make_plot()
+    savefig('Figure3.png')
     show()

@@ -59,8 +59,8 @@ if __name__ == '__main__':
     # raise this for better curves (will take about 2 seconds per repeat)
     # plots were made for repeat = 1000
     #
-    REPEAT = 10
-    STEPS  = 100
+    REPEAT = 1000
+    STEPS  = 150
 
     data = []
     
@@ -71,7 +71,15 @@ if __name__ == '__main__':
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
 
-    # multiple overexpressed nodes
+    # multiple overexrpessed nodes
+    mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1'] )
+    avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
+    data.append( avgs )
+
+    mtext = util.modify_states( text=text, turnon=['Stimuli','sFas'] )
+    avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
+    data.append( avgs )
+
     mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1','sFas'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
