@@ -20,10 +20,10 @@ def make_plot():
     data = util.bload( 'LGL-final.bin' )
 
     # each of these is a dictionary keyed by nodes
-    run1, run2 = data 
+    run1, run2, run3, run4 = data 
 
     # applies smoothing to all values
-    for run in (run1, run2):
+    for run in (run1, run2, run3, run4):
         for key, values in run.items():
             run[key] = smooth( values, w=10 )
     
@@ -31,10 +31,10 @@ def make_plot():
     # Plotting Apoptosis
     #
     subplot(121)
-    apop1, apop2 = run1['Apoptosis'], run2['Apoptosis']
+    apop1, apop2, apop3, apop4 = run1['Apoptosis'], run2['Apoptosis'],run3['Apoptosis'],run4['Apoptosis']
 
-    ps = [ plot( apop1, 'bs-' ), plot( apop2, 'rs-' ) ]
-    legend( ps, ['WT-Apop', 'Over-Apop' ], loc='best' )
+    ps = [ plot( apop1, 'bo-' ), plot( apop2, 'ro-' ),plot(apop3,'b^-'),plot(apop4,'r^-') ]
+    legend( ps, ['Normal-Apop', 'MCL1-over-Apop','sFas-over-Apop','LGL-like-Apop' ], loc='best' )
     title( ' Changes in Apoptosis' )
     xlabel( 'Time Steps' )
     ylabel( 'Percent (%)' )
@@ -43,19 +43,20 @@ def make_plot():
     # Plotting FasL and Ras
     #
     subplot(122)
-    fasL1, fasL2 = run1['FasL'], run2['FasL']
-    ras1, ras2 = run1['Ras'], run2['Ras']
+    fasL1, fasL2 = run1['FasL'], run4['FasL']
+    ras1, ras2 = run1['Ras'], run4['Ras']
 
     ps = [ plot( fasL1, 'bo-' ), plot( fasL2, 'ro-' ), plot( ras1, 'b^-' ), plot( ras2, 'r^-' ) ]
-    legend( ps, 'WT-FasL Over-FasL WT-Ras Over-Ras'.split() , loc='best' )
+    legend( ps, 'Normal-FasL LGL-like-FasL Normal-Ras LGL-like-Ras'.split() , loc='lower left' )
     title( ' Changes in FasL and Ras' )
     xlabel( 'Time Steps' )
 
 if __name__ == '__main__':
     
     # resize this to change figure size
-    figure(num = None, figsize=(14, 6), dpi=80, facecolor='w', edgecolor='k')
+    figure(num = None, figsize=(14, 7), dpi=80, facecolor='w', edgecolor='k')
     make_plot( )
+    savefig('Figure2.png')
     show()
     
    

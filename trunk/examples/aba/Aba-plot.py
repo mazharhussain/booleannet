@@ -10,8 +10,8 @@ from pylab import *
 from boolean import util
 import numpy
 
-def make_plot():
-    obj  = util.bload( fname='ABA-run.bin' )
+def make_plot( fname ):
+    obj  = util.bload( fname )
     data = obj['data']
     muts = obj['muts']
     genes=['WT','pHc','PA']
@@ -58,7 +58,10 @@ def make_plot():
     ylim( (0, 1.1) )
 
 if __name__ == '__main__':
-    figure(num = None, figsize=(14, 6), dpi=80, facecolor='w', edgecolor='k')
-    make_plot( )
-    savefig('ABA.png')
+    figure(num = None, figsize=(14, 7), dpi=80, facecolor='w', edgecolor='k')
+
+    fname='ABA-final.bin'
+    make_plot( fname )
+    
+    savefig('Figure1.png')
     show()
