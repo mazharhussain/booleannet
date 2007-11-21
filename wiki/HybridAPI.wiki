@@ -27,10 +27,11 @@ This means that in time we may have either an exponential type increase (to a ma
 The engine can operate on the same syntax files as the [BooleanAPI boolean mode], although one most likely will need to change the initialization parameters from `True/False` values to triplets like `(1.0, 2.0, 0.5)` corresponding to the actual _concentration_, _decay_ and _threshold_. An automatic conversion will take place if the initialization values correspond to the boolean mode:`True/False` values will be converted to `(1, 1, 0,5)/(0, 1, 0.5)`. Here is a typical use case:
 
 {{{
-import boolean
+import boolean, pylab
 
 text = """
-A = B = True 
+A = True
+B = True 
 C = False
 1: A* = not C 
 2: B* = A and B
@@ -41,11 +42,10 @@ engine = boolean.Engine( text=text, mode='plde' )
 engine.initialize()
 engine.iterate( fullt=8, steps=100 )
 
-import pylab
-
-p1 = pylab.plot( engine.data['A'] , 'o-' )
-p2 = pylab.plot( engine.data['B'] , 'o-' )
-p3 = pylab.plot( engine.data['C'] , 'o-' )
+p1 = pylab.plot( engine.data['A'] , 'ob-' )
+p2 = pylab.plot( engine.data['B'] , 'sr-' )
+p3 = pylab.plot( engine.data['C'] , '^g-' )
+pylab.legend( [p1,p2,p3], "A B C".split(), loc="best")
 
 pylab.show()
 }}}
