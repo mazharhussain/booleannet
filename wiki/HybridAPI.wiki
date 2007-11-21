@@ -37,7 +37,6 @@ C = False
 3: C* = B
 """
 
-
 engine = boolean.Engine( text=text, mode='plde' )
 engine.initialize()
 engine.iterate( fullt=8, steps=100 )
