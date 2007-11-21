@@ -41,7 +41,7 @@ def make_plot():
     xlabel( 'Time' )
     ylabel( 'Concentration' )
     title ( 'Innate Immune Response' )
-    legend( [p1, p2, p7, p8], 'DEl-EC DEL-PIC WT-EC WT-PIC'.split(), loc='best')
+    legend( [p1, p2, p7, p8], 'DEL-EC DEL-PIC WT-EC WT-PIC'.split(), loc='best')
     
     subplot(122)
    
@@ -58,7 +58,7 @@ def make_plot():
     xlabel( 'Time' )
     ylabel( 'Concentration' )
     title ( 'Adaptive Immune Response' )
-    legend( [p3, p4, p5, p6, p9, p10, p11, p12], 'DEl-C DEL-PH DEL-IL10I DEL-IL10II WT-C WT-PH WT-IL10I WT-IL10II'.split(), loc='best')
+    legend( [p3, p4, p5, p6, p9, p10, p11, p12], 'DEL-C DEL-PH DEL-IL10I DEL-IL10II WT-C WT-PH WT-IL10I WT-IL10II'.split(), loc='best')
     
 if __name__ == '__main__':
     figure(num = None, figsize=(14, 7), dpi=80, facecolor='w', edgecolor='k')
