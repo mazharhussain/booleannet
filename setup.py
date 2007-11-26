@@ -7,7 +7,7 @@
 from distutils.core import setup
 
 setup( name='BooleanNet',
-       version='0.9.6',
+       version='0.9.7',
        description='Boolean Network Simulation Toolbox',
        author='Istvan Albert',
        author_email='istvan.albert@gmail.com',
