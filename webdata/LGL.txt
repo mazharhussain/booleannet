@@ -1,8 +1,30 @@
+
+# lines starting with the # symbol are comments
+
+
 #
-# set the rest to False in the program
+# T-cell large granular lymphocyte leukemia model
 #
+# Node initialization below, 
+# ( all other nodes are set to false inside the program)
+#
+
 Stimuli = IAP = Mcl1 = BclxL = PIAS = True
 
+#
+# Model specification syntax
+#
+# rank: new-node1 *=  node1 and node2 or node3  ... etc
+#
+# the first number is the rank (all are set to 1 here)
+#
+# 1: A *= A or B
+#
+# means that the new value of A is equal to the old values 
+# of A and B combined with the operator 'or'
+#
+# model starts below
+#
 1: TCR *= Stimuli and not (CTLA4 or Apoptosis)
 1: Fyn *= IL2RL and not Apoptosis
 1: Migration *= Fyn and not Apoptosis
