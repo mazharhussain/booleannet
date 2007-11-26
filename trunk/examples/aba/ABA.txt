@@ -1,14 +1,31 @@
 
+# lines starting with the # symbol are comments
+
+
 #
-# upon runtime set missing values to random!
+# Abscisic Acid signaling model
+#
+# Node initialization below, 
+# ( all other nodes are set to random values in the program)
 #
 
 Closure = False
 ABA = ABH1 = ERA1 = AGB1 = True
 
+
 #
-# the first number is the rank order
-# lower ranks get executed before higher ranks
+# Model specification syntax
+#
+# rank: node1 *=  node1 and node2 or node3  ... etc
+#
+# The first number is the rank (all are set to 1 here)
+#
+# 1: A *= A or B
+#
+# means that the new value of A is equal to the old values 
+# of A and B combined with the operator 'or'
+#
+# model starts below
 #
 
 1: SphK* = ABA

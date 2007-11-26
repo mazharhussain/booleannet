@@ -24,3 +24,6 @@ include examples/immune/Bb-final.bin
 include examples/immune/Bb.txt
 
 recursive-include test test_*.py
+
+recursive-include examples/demos *.py
+recursive-include examples/demos *.txt
