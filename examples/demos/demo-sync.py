@@ -23,8 +23,7 @@ text = util.read('demo-rules.txt')
 #
 eng = Engine( mode='sync', text=text )
 eng.initialize()
-eng.RULE_START_ITERATION = start_iteration
-
+#eng.RULE_START_ITERATION = start_iteration
 eng.iterate( steps=5 )
 
 # all the states are now computed and stored internally
