@@ -1,4 +1,5 @@
 #summary How to use the programming interface in boolean mode (API)
+#labels Featured
 =Introduction=
 
 A Boolean Network is a set of boolean variables (nodes) that are updated 
