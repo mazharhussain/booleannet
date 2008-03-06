@@ -42,7 +42,7 @@ DAMAGE.
 <link rel='alternate' type='application/rss+xml' title='RSS' href='index.xml'/>
 <!--}}}-->
 <!--PRE-HEAD-END-->
-<title> Hawk - a theme for TiddlyWiki </title>
+<title> BooleanNet - boolean network simulations for life science research </title>
 <style type="text/css">
 #saveTest {display:none;}
 #messageArea {display:none;}
@@ -526,6 +526,21 @@ Subtle: #ccc
 SubtleLight: #ddd
 SubtleSuperLight: #eee</pre>
 </div>
+<div title="Copyright" modifier="Istvan Albert" modified="200803061408" created="200803061407" changecount="3">
+<pre>The MIT License
+
+Copyright (c) &lt;2008&gt; Istvan Albert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</pre>
+</div>
+<div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803061410" created="200803061402" changecount="3">
+<pre>Introduction</pre>
+</div>
 <div title="EditTemplate" modifier="TiddlyThemes" modified="200709061231" created="200709061156" tags="HawkTheme">
 <pre>&lt;!--{{{--&gt;
 &lt;div class='title' macro='view title'&gt;&lt;/div&gt;
@@ -543,6 +558,13 @@ SubtleSuperLight: #eee</pre>
 
 &lt;&lt;slider chkSliderOptionsPanel OptionsPanel &quot;options »&quot; &quot;Change TiddlyWiki advanced options&quot;&gt;&gt;</pre>
 </div>
+<div title="Introduction" modifier="Istvan Albert" created="200803061413" changecount="1">
+<pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of Stuart Kauffman and Rene Thomas.
+
+In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. In general, a Boolean or logical function is written as a statement acting on the inputs using the logical operators and, or and not and its output is ON(OFF) if the statement is true (false).
+
+In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by Leon Glass and collaborators. </pre>
+</div>
 <div title="LorumIpsum" modifier="Saq" modified="200709061234" created="200709061232" tags="Tag1 Tag2 Tag3" changecount="2">
 <pre>Aenean eros arcu, condimentum nec, dapibus ut, tincidunt sit amet, urna. Quisque viverra, eros sed imperdiet iaculis, est risus facilisis quam, id malesuada arcu nulla luctus urna. Nullam et est. Vestibulum velit sem, faucibus cursus, dapibus vestibulum, pellentesque et, urna. Donec luctus. Donec lectus. Aliquam eget eros facilisis tortor feugiat sollicitudin. Integer lobortis vulputate sapien. Sed iaculis erat ac nunc. Etiam eu enim. Mauris ipsum urna, rhoncus at, bibendum sit amet, euismod eget, dolor. Mauris fermentum quam vitae ligula. Vestibulum in libero feugiat justo dictum consectetuer. Vestibulum euismod purus eget elit. Nunc sed massa porta elit bibendum posuere. Nunc pulvinar justo sit amet odio. In sed est. Phasellus ornare elementum nulla. Nulla ipsum neque, cursus a, viverra a, imperdiet at, enim. Quisque facilisis, diam sed accumsan suscipit, odio arcu hendrerit dolor, quis aliquet massa nulla nec sem.
 !heading 1
@@ -556,13 +578,11 @@ This is a link to a [[StyleSheet]] tiddler.
 &gt; This is a blockquote
 &gt; This is a blockquote</pre>
 </div>
-<div title="MainMenu" modifier="TiddlyThemes" modified="200709061231" created="200709061217" tags="HawkTheme">
-<pre>* PageTemplate
-* StyleSheet
-* ColorPalette
-* ViewTemplate
-* EditTemplate
-
+<div title="MainMenu" modifier="Istvan Albert" modified="200803061410" created="200709061217" tags="HawkTheme" changecount="4">
+<pre>* [[Introduction]]
+* [[Tutorials]]
+* [[Advanced Use]]
+* [[API Interface]]
 
 
 &lt;&lt;search&gt;&gt;
@@ -606,6 +626,12 @@ Also see AdvancedOptions
 <div title="SiteMap" modifier="TiddlyThemes" modified="200709061231" created="200709061215" tags="HawkTheme">
 <pre>&lt;&lt;tabs txtMainTab &quot;Timeline&quot; &quot;Timeline&quot; TabTimeline &quot;All&quot; &quot;All tiddlers&quot; TabAll &quot;Tags&quot; &quot;All tags&quot; TabTags &quot;More&quot; &quot;More lists&quot; TabMore&gt;&gt;
 </pre>
+</div>
+<div title="SiteSubtitle" modifier="Istvan Albert" created="200803061405" changecount="1">
+<pre>boolean network simulations for life science research</pre>
+</div>
+<div title="SiteTitle" modifier="Istvan Albert" created="200803061404" changecount="3">
+<pre>~BooleanNet</pre>
 </div>
 <div title="StyleSheet" modifier="Saq" modified="200709061234" created="200709061216" tags="HawkTheme" changecount="1">
 <pre>/*{{{*/
@@ -838,10 +864,9 @@ width:100%; height:100px;}
 .backstageVisible .whenBackstage {display:block;}
 /*}}}*/</pre>
 </div>
-<div title="TopMenu" modifier="TiddlyThemes" modified="200709061231" created="200709061215" tags="HawkTheme">
-<pre>* [[TopMenu]]
-* [[MainMenu]]
-* [[DefaultTiddlers]]
+<div title="TopMenu" modifier="Istvan Albert" modified="200803061412" created="200709061215" tags="HawkTheme" changecount="2">
+<pre>* [[About]]
+* [[Research]]
 &lt;&lt;closeAll&gt;&gt;&lt;&lt;permaview&gt;&gt;&lt;&lt;saveChanges&gt;&gt;</pre>
 </div>
 <div title="ViewTemplate" modifier="TiddlyThemes" modified="200709061231" created="200709061215" tags="HawkTheme">
