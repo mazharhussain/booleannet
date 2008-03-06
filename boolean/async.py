@@ -356,7 +356,7 @@ if __name__ == '__main__':
     C = False
     1: A* = not C 
     2: B* = A and B
-    3: C* = B
+    C* = B
     """
 
     engine = Engine( mode='sync', text=text )
