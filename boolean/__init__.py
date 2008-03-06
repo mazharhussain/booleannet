@@ -72,7 +72,7 @@ def test():
     C = False
     A* = not C 
     B* = A and B
-    C* = B
+    C* = B or D
     """
 
     engine = Engine( mode='sync', text=text )
@@ -88,4 +88,7 @@ def test():
 
     engine.report_cycles()
 if __name__ == '__main__':
-    test()
+    try:
+        test()
+    except Exception, e:
+        print e

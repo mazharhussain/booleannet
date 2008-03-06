@@ -106,11 +106,16 @@ def p_expression_not(p):
 
 def p_error(p):
     hdr = "Syntax error while parsing -> '%s'" % LAST_LINE
-    try:
-        msg = "Syntax error at '%s'" % p.value 
-    except:
-        msg = "Syntax error at '%s'" % p
-    text = '%s\n%s' % (hdr, msg)
+    
+    if hasattr(p, 'value'):
+        msg = p.value
+    else:
+        msg = p
+    
+    if msg is None:
+        text = '%s' % hdr
+    else:
+        text = "%s -> at '%s'" % (hdr, msg)
     util.error( text )
     
 class Engine(object):
@@ -239,7 +244,7 @@ class Engine(object):
         """
         Passing around the last line for debugging
         """
-        # could not find a better way...
+        # suboptimal but it works...
         global LAST_LINE
         LAST_LINE = line
         return self.parser.parse( line )
@@ -356,7 +361,7 @@ if __name__ == '__main__':
     C = False
     1: A* = not C 
     2: B* = A and B
-    C* = B
+    1: C* = B
     """
 
     engine = Engine( mode='sync', text=text )

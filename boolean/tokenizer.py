@@ -152,18 +152,32 @@ def _test():
     import doctest
     doctest.testmod( optionflags=doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE )
 
+def verify_text( text ):
+    "Upon parsing error it returns the line where the error occured"
+    lexer = Lexer()
+    lexer.build()
+    lines = [ line.strip() for line in text.splitlines() ]
+    for index, line in enumerate(lines):
+        try:
+            lexer.tokenize( line )    
+        except Exception, exc:
+            return index+1, str(exc)
+    
+    return True
+
 if __name__ == '__main__':
     _test()
    
     lexer = Lexer()
     # initialize the lexer
     lexer.build()
-    text = "A = ( 0.5 )"
-    tokens = lexer.tokenize( text )
+    text = """
+        A = ( 0.5 sssss 83883
 
-    tok = tokens[0]
+        BBB
 
-    for tok in tokens:
-        print tok.type, tok.value
-    
-    #print dir(tok)
+        VVV
+    """
+    status = verify_text( text )
+    if status != True:
+        print status
