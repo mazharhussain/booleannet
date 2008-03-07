@@ -1,29 +1,5 @@
 include COPYRIGHT.txt
 include INSTALL.txt
 
-include examples/README.txt
-include examples/aba/ABA.txt
-include examples/aba/Aba-simulation.py
-include examples/aba/Aba-plot.py
-include examples/aba/ABA-final.png
-include examples/aba/ABA-final.bin
-
-include examples/LGL/LGL.txt
-include examples/LGL/LGL-final.bin
-include examples/LGL/LGL-final.png
-include examples/LGL/LGL-plot.py
-include examples/LGL/LGL-simulation.py
-
-include examples/immune/Bb-plot.py
-include examples/immune/Bb-simulation.py
-include examples/immune/localdefs.py
-include examples/immune/overrides.py
-include examples/immune/Bb-compartmental.csv
-include examples/immune/Bb-concentration.csv
-include examples/immune/Bb-final.bin
-include examples/immune/Bb.txt
-
-recursive-include test test_*.py
-
-recursive-include examples/demos *.py
-recursive-include examples/demos *.txt
+recursive-include examples *.py *.txt *.png
+recursive-include tests *.py *.csv *.txt

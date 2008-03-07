@@ -496,9 +496,18 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="API Interface" modifier="Istvan Albert" modified="200803070008" created="200803070005" changecount="5">
-<pre>Type the text for 'API Interface'
-</pre>
+<div title="API Interface" modifier="Istvan Albert" modified="200803071553" created="200803070005" changecount="12">
+<pre>A brief reference for  the Application Programming Interface.
+{{{
+import boolean
+sim = Engine(text, mode='sync')
+}}}
+Mode may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
+{{{
+def missing( node ):
+    return True
+sim.initialize( misssing=missing )
+}}}</pre>
 </div>
 <div title="About" modifier="Istvan Albert" modified="200803071537" created="200803062357" changecount="2">
 <pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/]] using previous work, ideas and contributions from Song Li, Juilee Thakar and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].</pre>
@@ -610,7 +619,7 @@ This is a link to a [[StyleSheet]] tiddler.
 <div title="SiteTitle" modifier="Istvan Albert" created="200803062349" changecount="2">
 <pre>~BooleanNet </pre>
 </div>
-<div title="StyleSheet" modifier="Istvan Albert" modified="200803062345" created="200709121208" tags="MochaTheme" changecount="7">
+<div title="StyleSheet" modifier="Istvan Albert" modified="200803071553" created="200709121208" tags="MochaTheme" changecount="10">
 <pre> #contentWrapper{
 margin: 0 3.4em;
 
@@ -2985,7 +2994,8 @@ config.macros.timeline.handler = function(place,macroName,params)
 	var tiddlers = store.reverseLookup("tags","excludeLists",false,field);
 	var lastDay = "";
 	var last = params[1] ? tiddlers.length-Math.min(tiddlers.length,parseInt(params[1])) : 0;
-	for(var t=tiddlers.length-1; t>=last; t--) {
+	var size = tiddlers.length-1;
+	for(var t=size-5; t>=last; t--) {
 		var tiddler = tiddlers[t];
 		var theDay = tiddler[field].convertToLocalYYYYMMDDHHMM().substr(0,8);
 		if(theDay != lastDay) {
