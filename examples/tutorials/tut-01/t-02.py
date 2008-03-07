@@ -19,7 +19,7 @@ model.initialize()
 model.iterate( steps=8 )
 
 for state in model.states:
-    print state.A, state.B, state.C
+    print state.A, state.B, state.C, state.D
     
 model.report_cycles()    
 
