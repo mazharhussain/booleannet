@@ -496,18 +496,37 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="API Interface" modifier="Istvan Albert" modified="200803071553" created="200803070005" changecount="12">
+<div title="API Interface" modifier="Istvan Albert" modified="200803071633" created="200803070005" changecount="24">
 <pre>A brief reference for  the Application Programming Interface.
 {{{
 import boolean
-sim = Engine(text, mode='sync')
+model = boolean.Model(text, mode='sync')
 }}}
 Mode may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
 {{{
-def missing( node ):
+def missing( node_name ):
     return True
-sim.initialize( misssing=missing )
-}}}</pre>
+model.initialize( misssing=missing )
+}}}
+Initializes unintialized nodes to a value, this case ''True''. The ''node_name'' parameter is a string. Required when not all nodes get initial values from the text.
+{{{
+data = dict( A=False )
+model.initialize( default=data )
+}}}
+The optional default parameter takes a dictionary that main contain nodes mapped to values. The value of the node will override all other values set either via the text or via the missing parameter. Main use case is to temporarily override settings with ease.
+{{{
+from boolean import util
+on = [&quot;A&quot;, &quot;B&quot;]
+off = [&quot;C&quot;, &quot;D&quot;]
+text = util.modify_states(text, turnon=on, turnoff=off)
+}}}
+A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the &quot;text&quot; variable to see how the rules are altered.
+{{{
+model = Model( text, mode='sync')
+model.initialize()
+model.iterate( steps=5 )
+}}}
+</pre>
 </div>
 <div title="About" modifier="Istvan Albert" modified="200803071537" created="200803062357" changecount="2">
 <pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/]] using previous work, ideas and contributions from Song Li, Juilee Thakar and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].</pre>
@@ -619,14 +638,13 @@ This is a link to a [[StyleSheet]] tiddler.
 <div title="SiteTitle" modifier="Istvan Albert" created="200803062349" changecount="2">
 <pre>~BooleanNet </pre>
 </div>
-<div title="StyleSheet" modifier="Istvan Albert" modified="200803071553" created="200709121208" tags="MochaTheme" changecount="10">
-<pre> #contentWrapper{
-margin: 0 3.4em;
-
-font-family: Lucida Grande, Tahoma, Arial, Helvetica, sans-serif; /* Lucida Grande for the Macs, Tahoma for the PCs */
-font-size: 14px;
-			line-height: 1.6em;
-			color: #666;
+<div title="StyleSheet" modifier="Istvan Albert" modified="200803071629" created="200709121208" tags="MochaTheme" changecount="14">
+<pre> #contentWrapper{ 
+    margin: 0 3.4em;
+    font-family: Lucida Grande, Tahoma, Arial, Helvetica, sans-serif; /* Lucida Grande for the Macs, Tahoma for the PCs */
+    font-size: 14px;
+    line-height: 1.6em;
+    color: #666;
 }
 
 .header {
@@ -979,23 +997,25 @@ Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk
 
 </pre>
 </div>
-<div title="Using the library" modifier="Istvan Albert" modified="200803071507" created="200803062351" tags="Setup" changecount="14">
+<div title="Using the library" modifier="Istvan Albert" modified="200803071639" created="200803062351" tags="Setup" changecount="15">
 <pre>''~BooleanNet'' is a software library, and therefore is used within simple python programs. Similarly to the way on uses ''Matlab'' or ''R'', in order to use ''~BooleanNet'' one writes a separate script that invokes certain functions offered by the library.  Here is an example:
 {{{
+import boolean
+
 text = &quot;&quot;&quot;
 A = B = C = True
 A* = A and C
 B* = A and B
 C* = not A
 &quot;&quot;&quot;
-from boolean import Engine
-simulation = Engine( text, mode='sync')
-simulation.initialize()
-simulation.iterate( steps=5 )
+from boolean import Model
 
-for state in simulation.states:
+model = boolean.Model( text, mode='sync')
+model.initialize()
+model.iterate( steps=5 )
+
+for state in model.states:
     print state.A, state.B, state.C
-
 }}}
 place the content above in a file called ''simulation.py'' then execute it from the command line like so:
 {{{
