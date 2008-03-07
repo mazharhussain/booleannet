@@ -496,20 +496,43 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
+<div title="API Interface" modifier="Istvan Albert" modified="200803070008" created="200803070005" changecount="5">
+<pre>Type the text for 'API Interface'
+</pre>
+</div>
 <div title="About" modifier="Istvan Albert" created="200803062357" changecount="1">
 <pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/|]] using previous work, ideas and contributions from Song Li, Juilee Thakar and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].</pre>
 </div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
 </div>
-<div title="Installation" modifier="Istvan Albert" created="200803062350" changecount="2">
+<div title="Editor Setup" modifier="Istvan Albert" modified="200803071507" created="200803071443" tags="Setup" changecount="13">
+<pre>The goal is to set up an environment that allows the user to run external tools on text that is being edited, without having to leave the editor. In a typical workflow to run a tutorial one would simply open the file then press ''Ctrl+1'' (holding Ctrl while pressing 1) to execute it, then watch the results in a lower window pane. Here is a screenshot:
+
+[img[png/crimson-1.png]]
+
+The upper window holds the tutorial while the lower window shows the result of running the tutorial. Here is how to get there.
+
+First follow the instructions on the [[Installation]] page to install ''Python'' and all other libraries. Next install the [[Crimson Editor|http://www.crimsoneditor.com/]]. (If, for whatever reason the link does not work use our copy [[crimson-editor.zip (1.2 MB)|http://atlas.bx.psu.edu/booleannet/crimson-quickstart.zip]]). Once installed, open ''Crimson Editor'' and find the ''Tools-&gt;Conf. Tools'' menu and click it. A window will pop up that will need be filled as follows:
+
+[img[png/crimson-2.png]]
+
+You may type in the values or use the little widgets at the end of each entry box to select the appropriate values. '
+
+''And You're Done!''
+
+Load a tutorial and press Ctrl-1 to verify that it works. The steps laid out above can be applied to set up any other environment, be that ''R'', ''Matlab'' etc. specific. We also note that there are many other editors and setups that would allow an identical behavior.</pre>
+</div>
+<div title="Installation" modifier="Istvan Albert" modified="200803071415" created="200803062350" tags="Setup" changecount="15">
 <pre>!!!Requirements
 The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|http://matplotlib.sourceforge.net]] and [[NumPy|http://numpy.scipy.org/]] to be installed. 
-* On Windows the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extensions) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the two libraries above into a single download [[quickstart.zip (12Mb)|http://atlas.bx.psu.edu/booleannet/quickstart.zip]]. Unpack the archive then double click each of the programs to install them.
-* Linux/Unix users should use their package manager to install {{{python, numpy}}} and the {{{matplotlib}}} packages.
+* On ''Windows'' the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extension) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the all necessary libraries into a single download [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]]. Unpack the archive, read the included ''readme.txt'' then double click each of the programs to install them.
+* ''Linux/Unix'' users should use their package manager to install {{{python, numpy}}} and the {{{matplotlib}}} packages.
 !!!~BooleanNet Library Installation
-* Windows users should download the latest windows installer from the [[download area|http://code.google.com/p/booleannet/downloads/list]]. Once downloaded open the executable and follow the on screen instructions. This will install the library system wide. Windows users should also download the source distribution (.zip) and unpack it to access the tutorials and the examples.
-* Unix users should download the source (.zip) distribution and run the {{{python setup.py install}}} command with sufficient privileges. This package also contains the examples folder.</pre>
+* If you downloaded the [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]] file as described above no other action is necessary, all files are included in this download. To get a different version, ''Windows'' users should download the latest windows installer from the [[download area|http://code.google.com/p/booleannet/downloads/list]]. Once downloaded open the executable and follow the on screen instructions. This will install the library system wide. Windows users should also download the source distribution (.zip) and unpack it to access the tutorials and the examples.
+* ''Linux/Unix'' users should download the source (.zip) distribution and run the {{{python setup.py install}}} command with sufficient privileges. This package also contains the examples folder.
+
+Once the installation is finished please read the [[Using the library]] pages</pre>
 </div>
 <div title="Introduction" modifier="Istvan Albert" modified="200803062357" created="200803062342" changecount="3">
 <pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of Stuart Kauffman and Rene Thomas. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
@@ -936,10 +959,10 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="Istvan Albert" created="200803062351" changecount="1">
-<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] pages</pre>
+<div title="Tutorials" modifier="Istvan Albert" modified="200803071458" created="200803062351" changecount="2">
+<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages</pre>
 </div>
-<div title="Using the library" modifier="Istvan Albert" modified="200803062356" created="200803062351" changecount="7">
+<div title="Using the library" modifier="Istvan Albert" modified="200803071507" created="200803062351" tags="Setup" changecount="14">
 <pre>''~BooleanNet'' is a software library, and therefore is used within simple python programs. Similarly to the way on uses ''Matlab'' or ''R'', in order to use ''~BooleanNet'' one writes a separate script that invokes certain functions offered by the library.  Here is an example:
 {{{
 text = &quot;&quot;&quot;
@@ -955,6 +978,7 @@ simulation.iterate( steps=5 )
 
 for state in simulation.states:
     print state.A, state.B, state.C
+
 }}}
 place the content above in a file called ''simulation.py'' then execute it from the command line like so:
 {{{
@@ -962,10 +986,17 @@ python simulation.py
 }}}
 it will print the following:
 {{{
-...
-...
-...
-}}}</pre>
+True True True
+True True False
+False True False
+False False True
+False False True
+False False True
+}}}
+This works as described provided that you know what a command line (command shell) is and how to use one to navigate to the location of the file that you have placed your simulation in. Windows users often have less familiarity with this concept as the operating system is mostly interacted with via the mouse.
+
+To facilitate the use of the library on windows we are recommending the use of a simple but powerful freeware text editor called [[Crimson Editor|http://www.crimsoneditor.com/]] that allows users to run python programs from the editor itself. On more details on how to use the ''Crimson Editor'' with ''~BooleanNet'' read the [[Editor Setup]] page.
+</pre>
 </div>
 <div title="contentFooter" modifier="Istvan Albert" modified="200803070000" created="200701130013" tags="MochaTheme" changecount="3">
 <pre>Copyright © 2008 | Penn State University
