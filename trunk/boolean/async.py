@@ -331,7 +331,8 @@ class Model(object):
         # each state is characterized by its hash id
         nums = [ hash( str(x) ) for x in self.states ]        
         size = len(nums)
-        for step in range(1, 4):            
+        maxchunk = min( (size, 100) )
+        for step in range(1, maxchunk):            
             sub = [ nums[i:i+step] for i in range(0, size, step) ] 
             for count, elem in enumerate( zip(sub, sub[1:]) ):
                 x, y = elem
@@ -351,30 +352,29 @@ class Model(object):
             print 'Steady state starting at index %s -> %s' % (index, self.states[index] )
         else:
             states = self.states[index: index+size]
-            print 'Cycle of lenght %s starting at index %s -> %s' % (size, index, states )
+            print 'Cycle of length %s starting at index %s' % (size, index)
 
 if __name__ == '__main__':
     
 
     text = """
-    A = B = True 
-    C = False
-    1: A* = not C 
-    2: B* = A and B
-    1: C* = B
+    A = True
+    B = C = D = True
+
+    1: B* = A or C
+    1: C* = A and not D
+    1: D* = B and C
     """
 
     engine = Model( mode='sync', text=text )
 
     engine.initialize( )
 
-    engine.iterate( steps=6 )
+    engine.iterate( steps=9 )
     
     for state in engine.states:
         print state
     
-    print engine.data
-
     engine.report_cycles()
     
           

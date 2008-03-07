@@ -496,7 +496,7 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="API Interface" modifier="Istvan Albert" modified="200803071633" created="200803070005" changecount="24">
+<div title="API Interface" modifier="Istvan Albert" modified="200803071643" created="200803070005" changecount="25">
 <pre>A brief reference for  the Application Programming Interface.
 {{{
 import boolean
@@ -520,7 +520,7 @@ on = [&quot;A&quot;, &quot;B&quot;]
 off = [&quot;C&quot;, &quot;D&quot;]
 text = util.modify_states(text, turnon=on, turnoff=off)
 }}}
-A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the &quot;text&quot; variable to see how the rules are altered.
+A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the ''text'' variable before and after the modifications to see how the rules are altered.
 {{{
 model = Model( text, mode='sync')
 model.initialize()
@@ -528,8 +528,13 @@ model.iterate( steps=5 )
 }}}
 </pre>
 </div>
-<div title="About" modifier="Istvan Albert" modified="200803071537" created="200803062357" changecount="2">
-<pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/]] using previous work, ideas and contributions from Song Li, Juilee Thakar and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].</pre>
+<div title="About" modifier="Istvan Albert" modified="200803071649" created="200803062357" changecount="7">
+<pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/]] using previous work, ideas and contributions from Song Li, [[Juilee Thakar|http://www.phys.psu.edu/~jthakar/]] and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].
+
+Software the we distribute with ''~BooleanNet'':
+* [[PLY|http://www.dabeaz.com/ply/]] by David Beazley
+* [[functional.py|http://oakwinter.com/code/functional/]] by Colin Winters 
+We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
