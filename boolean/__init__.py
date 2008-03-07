@@ -73,25 +73,23 @@ def Engine( text, mode):
 def test():
     
     text = """
-    A = B = True 
-    C = False
-    A* = not C 
-    B* = A and B
-    C* = B or D
+    A = True
+    B = C = D = True
+
+    B* = A or C
+    C* = A and not D
+    D* = B and C
     """
 
-    engine = Engine( mode='sync', text=text )
+    model = Model( text, mode='sync')
+    model.initialize()
+    model.iterate( steps=8 )
 
-    engine.initialize( )
+    for state in model.states:
+        print state.A, state.B, state.C, state.D
+        
+    model.report_cycles()    
 
-    engine.iterate( steps=6 )
-    
-    for state in engine.states:
-        print state
-    
-    print engine.data
-
-    engine.report_cycles()
 if __name__ == '__main__':
     try:
         test()

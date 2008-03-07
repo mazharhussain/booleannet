@@ -27,7 +27,7 @@ class State(object):
         "Default string format"
         keys = self.keys()
         values = [ self.__dict__[key] for key in keys ]
-        items = [ '%s=%s' % (k, v) for k,v in zip(keys, values) ]
+        items  = [ '%s=%s' % (k, v) for k,v in zip(keys, values) ]
         return ', '.join(items)
     
     def keys(self):
@@ -56,6 +56,9 @@ class State(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
+    def hash(self):
+        return hash( str(self) )
+        
 class Collector(object):
     """
     Collects data over a run

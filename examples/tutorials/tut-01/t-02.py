@@ -6,7 +6,9 @@ import boolean
 # 
 text = """
 A = True
-B = C = D = True
+B = Random
+C = Random
+D = Random
 
 B* = A or C
 C* = A and not D
@@ -16,11 +18,12 @@ from boolean import Model
 
 model = boolean.Model( text, mode='sync')
 model.initialize()
-model.iterate( steps=8 )
+model.iterate( steps=20 )
 
 for state in model.states:
     print state.A, state.B, state.C, state.D
-    
+
+print model.detect_cycles()    
 model.report_cycles()    
 
 
