@@ -10,6 +10,10 @@ def warn(message):
 class Problem(Exception):
     pass
 
+# provides a user friendly ID to each state
+STATE_MAPPER  = {} 
+STATE_COUNTER = 0
+
 class State(object):
     """
     Maintains the node state as attributes.
@@ -56,9 +60,18 @@ class State(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def hash(self):
-        return hash( str(self) )
+    def short(self):
+        "Returns a unique user friendly state definition"
+        global STATE_MAPPER, STATE_COUNTER
+        value = hash( str(self) )
         
+        if value in STATE_MAPPER:
+            return STATE_MAPPER[value]
+        else:
+            STATE_COUNTER += 1
+            STATE_MAPPER[value] = 'S%d' % STATE_COUNTER
+            return STATE_MAPPER[value]
+
 class Collector(object):
     """
     Collects data over a run
