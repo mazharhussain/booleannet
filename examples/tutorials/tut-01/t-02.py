@@ -1,6 +1,6 @@
 import boolean
 
-# This initial condition leads to a cycle of period 2.
+# This initial condition leads to a cycle of period 4.
 # If A is set to False, a steady state is obtained.
 #
 # 
