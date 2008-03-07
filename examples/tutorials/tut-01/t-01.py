@@ -6,13 +6,13 @@ A* = A and C
 B* = A and B
 C* = not A
 """
-from boolean import Engine
+from boolean import Model
 
-simulation = Engine( text, mode='sync')
-simulation.initialize()
-simulation.iterate( steps=5 )
+model = boolean.Model( text, mode='sync')
+model.initialize()
+model.iterate( steps=5 )
 
-for state in simulation.states:
+for state in model.states:
     print state.A, state.B, state.C
 
 

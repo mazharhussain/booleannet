@@ -56,14 +56,19 @@ def add_ranks( text ):
     return '\n'.join( lines )
 
 # class factory function 
-def Engine(text, mode):
+def Model(text, mode):
     # the enigne will add ranks if these are missing
     text = add_ranks( text )
 
     if mode in ('plde', 'lpde'): 
-        return plde.Engine(text=text, mode=mode)
+        return plde.Model(text=text, mode=mode)
     else:
-        return async.Engine(text=text, mode=mode)
+        return async.Model(text=text, mode=mode)
+
+# to keep backwards compatibility
+def Engine( text, mode):
+    print '*** boolean.Engine is now deprecated, used boolean.Model instead ***'
+    return Model( text, mode)
 
 def test():
     

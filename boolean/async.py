@@ -118,7 +118,7 @@ def p_error(p):
         text = "%s -> at '%s'" % (hdr, msg)
     util.error( text )
     
-class Engine(object):
+class Model(object):
     "Represents a boolean parser"
     def __init__(self, mode, text ):
         """
@@ -364,7 +364,7 @@ if __name__ == '__main__':
     1: C* = B
     """
 
-    engine = Engine( mode='sync', text=text )
+    engine = Model( mode='sync', text=text )
 
     engine.initialize( )
 

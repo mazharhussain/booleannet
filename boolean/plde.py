@@ -21,7 +21,7 @@ def default_equation( tokens, indexer ):
     text = helper.change(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
     return text
 
-class Engine( async.Engine ):
+class Model( async.Model ):
     """
     This class generates python code that will be executed inside 
     the Runge-Kutta integrator.
@@ -29,7 +29,7 @@ class Engine( async.Engine ):
     def __init__(self, text, mode):
         
         # run the regular boolen engine for one step to detect syntax errors
-        eng = async.Engine(text=text, mode='sync')
+        eng = async.Model(text=text, mode='sync')
         eng.initialize( missing=util.randomize )
         eng.iterate( steps=1 )
 
@@ -40,7 +40,7 @@ class Engine( async.Engine ):
         self.EXTRA_INIT = ''
 
         # setting up this engine
-        async.Engine.__init__(self, text=text, mode=mode)
+        async.Model.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
         self.lazy_data = {}
     
@@ -51,7 +51,7 @@ class Engine( async.Engine ):
 
     def initialize(self, missing=None, defaults={} ):
         "Custom initializer"
-        async.Engine.initialize( self, missing=missing, defaults=defaults )
+        async.Model.initialize( self, missing=missing, defaults=defaults )
         
         # will also maintain the order of insertion
         self.mapper  = odict.odict() 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     3: C* = C
     """
 
-    engine = Engine( text=stext, mode='plde' )
+    engine = Model( text=stext, mode='plde' )
     engine.initialize()
     engine.iterate( fullt=1, steps=10 )
     
