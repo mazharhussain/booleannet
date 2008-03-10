@@ -338,7 +338,7 @@ class Model(object):
                 x, y = elem
                 if x == y:                    
                     return step, count
-        return None, None  
+        return 0, 0  
 
     def report_cycles(self):
         """
@@ -346,7 +346,7 @@ class Model(object):
         """
         size, index = self.detect_cycles()
         
-        if size == None:
+        if size == 0:
             print "No cycle or steady state could be detected from the %d states" % len(self.states)
         elif size==1:
             print 'Steady state starting at index %s -> %s' % (index, self.states[index] )

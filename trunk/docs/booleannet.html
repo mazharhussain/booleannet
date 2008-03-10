@@ -507,8 +507,8 @@ We'd like to express our thanks and gratitude to the authors of these outstandin
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
 </div>
-<div title="Editor Setup" modifier="Istvan Albert" modified="200803101846" created="200803071443" tags="Setup" changecount="14">
-<pre>The goal is to set up an environment that allows the user to run external tools on text that is being edited, without having to leave the editor. In a typical workflow to run a tutorial one would simply open the file then press ''Ctrl+1'' (holding Ctrl while pressing 1) to execute it, then watch the results in a lower window pane. Here is a screenshot:
+<div title="Editor Setup" modifier="Istvan Albert" modified="200803101951" created="200803071443" tags="Setup" changecount="15">
+<pre>The goal is to set up an environment that allows the user to run external tools on text that is being edited, without having to leave the editor. In a typical workflow to run a tutorial, one would simply open the file then press ''Ctrl+1'' (holding Ctrl while pressing 1) to execute it, then watch the results in a lower window pane. Here is a screenshot:
 
 [img[png/crimson-1.png]]
 
@@ -524,10 +524,10 @@ You may type in the values or use the little widgets at the end of each entry bo
 
 Load a tutorial and press Ctrl-1 to verify that it works. The steps laid out above can be applied to set up any other environment, be that ''R'', ''Matlab'' etc. specific. We also note that there are many other editors and setups that would allow an identical behavior.</pre>
 </div>
-<div title="Installation" modifier="Istvan Albert" modified="200803101855" created="200803062350" tags="Setup" changecount="18">
+<div title="Installation" modifier="Istvan Albert" modified="200803101951" created="200803062350" tags="Setup" changecount="19">
 <pre>!!!Requirements
 The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|http://matplotlib.sourceforge.net]] and [[NumPy|http://numpy.scipy.org/]] to be installed. 
-* On ''Windows'' the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extension) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the all necessary libraries into a single download [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]]. Unpack the archive, read the included ''readme.txt'' then double click each of the programs to install them. 
+* On ''Windows'' the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extension) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the all necessary libraries into a single download [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]]. Unpack the archive, read the included ''readme.txt'' then double click each of the programs to install them. We also recommend reading the [[Editor Setup]] page.
 * ''Linux/Unix'' users should use their package manager to install {{{python, numpy}}} and the {{{matplotlib}}} packages.
 !!!~BooleanNet Library Installation
 * If you downloaded the [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]] file as described above no other action is necessary, all files are included in this download. To get a different version, ''Windows'' users should download the latest windows installer from the [[download area|http://code.google.com/p/booleannet/downloads/list]]. Once downloaded open the executable and follow the on screen instructions. This will install the library system wide. Windows users should also download the source distribution (.zip) and unpack it to access the tutorials and the examples.
@@ -605,7 +605,7 @@ This is a link to a [[StyleSheet]] tiddler.
 &lt;div id='contentFooter' refresh='content' tiddler='contentFooter'&gt;&lt;/div&gt;
 &lt;!--}}}--&gt;</pre>
 </div>
-<div title="Quick Reference" modifier="Istvan Albert" modified="200803101930" created="200803101840" changecount="14">
+<div title="Quick Reference" modifier="Istvan Albert" modified="200803101949" created="200803101840" changecount="27">
 <pre>A brief reference of the main routines. More details can be found in the [[Tutorials]] and [[Advanced Use]] pages. 
 !Specifying rules
 The word ''text'' will be used to describe the rules as defined either in the program as a string or when read from a file. Multi line strings  may be created with triple quotes like so:  
@@ -655,14 +655,25 @@ model.iterate( steps=5 )
 for state in model.states:
     print state
 }}}
-This will run the model specified in the ''text'' for ''5'' iterations. The variable ''state'' refers to an object that may be accessed by attribute i.e. {{{ state.A }}} if it has a node named {{{A}}}. See the [[Tutorials]] for more.
+This will run the model specified in the ''text'' for ''5'' iterations. The variable ''state'' refers to an object that may be accessed by attribute i.e. {{{ state.A }}} if it has a node named {{{A}}}. See the [[Tutorials]] for more examples on accessing states.
 !Cycle detection
 {{{
-model = Model( text, mode='sync')
-model.initialize()
-model.iterate( steps=5 )
+size, index = model.detect_cycles()    
+print &quot;Size =%s, Index %s&quot; % (size, index)
 }}}
-</pre>
+The {{{ detect_cycles() }}} method returns a tuple (two values) where the first value indicates the length of the cycle, the second number indicates the iteration at which the cycle starts. A cycle of size=1 is a steady state. If no cycles can be detected the method will return (0, 0). For convenience there is a second method that prints the results of the cycle detection:
+{{{
+model.report_cycles()
+# example output: Cycle of length 4 starting at index 0
+}}}
+!Column access
+Data may be accessed as a column. The {{{ model.data }}} attribute is a dictionary that   is keyed by node names  with values being a list with the states for each iteration. Assuming a node named ''A'':
+{{{
+print model.data['A']
+}}}
+will returns a list of values {{{[True, False .... ]}}}.
+!Data collectors
+A data collector is a utility function used in asynchronous modeling used to average the values of multiple runs.</pre>
 </div>
 <div title="SiteSubtitle" modifier="Istvan Albert" modified="200803071541" created="200803062349" changecount="2">
 <pre>boolean network modeling for life science research</pre>

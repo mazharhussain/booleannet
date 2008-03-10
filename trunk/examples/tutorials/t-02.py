@@ -23,6 +23,8 @@ model.iterate( steps=20 )
 for state in model.states:
     print state.A, state.B, state.C, state.D
 
+print model.data
+
 print model.detect_cycles()    
 model.report_cycles()    
 
