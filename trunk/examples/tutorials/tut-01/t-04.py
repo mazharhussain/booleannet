@@ -1,11 +1,11 @@
 import boolean
 
 # All initial conditions are sampled. 
-# If A is set to False, a steady state is obtained.
+# Result: they all converge into the same steady state.
 #
 # 
 text = """
-A = True
+A = False
 B = Random
 C = Random
 D = Random
