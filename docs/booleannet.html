@@ -496,13 +496,15 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="API Interface" modifier="Istvan Albert" modified="200803071643" created="200803070005" changecount="25">
+<div title="API Interface" modifier="Istvan Albert" modified="200803091343" created="200803070005" changecount="29">
 <pre>A brief reference for  the Application Programming Interface.
+!!!Model Creation
 {{{
 import boolean
 model = boolean.Model(text, mode='sync')
 }}}
-Mode may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
+the ''mode'' parameter may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
+!!!Model Initialization
 {{{
 def missing( node_name ):
     return True
@@ -514,6 +516,7 @@ data = dict( A=False )
 model.initialize( default=data )
 }}}
 The optional default parameter takes a dictionary that main contain nodes mapped to values. The value of the node will override all other values set either via the text or via the missing parameter. Main use case is to temporarily override settings with ease.
+!!!State Modification
 {{{
 from boolean import util
 on = [&quot;A&quot;, &quot;B&quot;]
@@ -521,6 +524,7 @@ off = [&quot;C&quot;, &quot;D&quot;]
 text = util.modify_states(text, turnon=on, turnoff=off)
 }}}
 A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the ''text'' variable before and after the modifications to see how the rules are altered.
+!!!Cycle detection
 {{{
 model = Model( text, mode='sync')
 model.initialize()

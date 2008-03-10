@@ -27,19 +27,19 @@ def get_states( mode, text, steps, missing=None):
     eng.iterate( steps=steps )
     return eng.states
             
-class EngineTest( unittest.TestCase ):
+class ModelTest( unittest.TestCase ):
     
     def test_plde_engine( self ):
-        "Testing PLDE"
+        "Testing PLDE (no ranks)"
         
         EQ = self.assertEqual
 
         text = """
         A = B = True
         C = False
-        1: A* = A
-        2: B* = A and B
-        3: C* = not C
+        A* = A
+        B* = A and B
+        C* = not C
         """
         eng  = boolean.Model( mode='plde', text=text )
         eng.initialize()
@@ -49,15 +49,15 @@ class EngineTest( unittest.TestCase ):
 
     
     def test_initializer( self ):
-        "Testing initializer"
+        "Testing initializer (no ranks)"
         
         EQ = self.assertEqual
 
         text = """
         A = False
-        1: A* = A
-        2: B* = A and B
-        3: C* = not C
+        A* = A
+        B* = A and B
+        C* = not C
         """
         eng  = boolean.Model( mode='sync', text=text )
         eng.initialize( missing= boolean.util.allfalse, defaults=dict(A=True, B=True) )
@@ -67,7 +67,7 @@ class EngineTest( unittest.TestCase ):
         EQ( eng.start.C, False )
         EQ( len(eng.states), 11)
 
-    def test_engine( self ):
+    def test_model( self ):
         "Basic operation"
         
         EQ = self.assertEqual
@@ -75,9 +75,9 @@ class EngineTest( unittest.TestCase ):
         text = """
         A = B = True
         C = False
-        1: A* = A
-        2: B* = A and B
-        3: C* = not C
+        A* = A
+        B* = A and B
+        C* = not C
         """
         eng  = boolean.Model( mode='sync', text=text )
         eng.initialize()
@@ -92,16 +92,16 @@ class EngineTest( unittest.TestCase ):
         EQ( eng.last.C, True )
 
     def test_eninge_modes( self ):
-        "Testing engine modes"
+        "Testing engine modes (no ranks)"
 
         EQ = self.assertEqual
 
         text = """
         A = B = True
         C = False
-        1: A* = A
-        2: B* = A and B
-        3: C* = not C
+        A* = A
+        B* = A and B
+        C* = not C
         """
 
         for mode in ( 'sync', 'async' ):
@@ -130,7 +130,7 @@ class EngineTest( unittest.TestCase ):
             EQ( len(C), 3)
         
     def test_rules( self ):
-        """Testing rules (stress test)
+        """Testing rules (stress test, no ranks)
         
         Generates lots of random rules and then compares the results 
         when executed in python and with the engine
@@ -196,7 +196,7 @@ class EngineTest( unittest.TestCase ):
         newts = [ 'n%s' % node for node in nodes ]
         for line, newt, node in zip(body, newts, nodes):
             py_text.append( '%s = %s' % (newt, line) )    
-            bool_text.append( '1: %s* = %s' % (node, line) )    
+            bool_text.append( '%s* = %s' % (node, line) )    
 
         # needs this to emulate synchronous updating
         py_text.append( join(nodes, sep=', ') + ' = ' + join( newts, sep=', ') )
@@ -230,7 +230,7 @@ class EngineTest( unittest.TestCase ):
             EQ( oldval, newval )
 
 def get_suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase( EngineTest )
+    suite = unittest.TestLoader().loadTestsFromTestCase( ModelTest )
     return suite
 
 if __name__ == '__main__':
