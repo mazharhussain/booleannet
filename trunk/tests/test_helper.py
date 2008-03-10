@@ -3,7 +3,7 @@ import sys
 sys.path.append( '..' )
 
 import unittest
-from boolean import Engine, helper, util
+from boolean import Model, helper, util
 
 class HelperTest( unittest.TestCase ):
     
@@ -15,9 +15,9 @@ class HelperTest( unittest.TestCase ):
 
         before = """
         A = B = C 1
-        1: A* = A
+        A* = A
         2: B* = B
-        3: C* = C
+        3:C* = C
         4: D* = D
         """
 
@@ -77,7 +77,7 @@ class HelperTest( unittest.TestCase ):
         1: MP* = PIC and MP
         """
         data = self.params[1]
-        eng  = Engine( mode='plde', text=text )
+        eng  = Model( mode='plde', text=text )
         eng.initialize( missing=helper.initializer( data ) )
 
         for node in 'PIC'.split():
@@ -92,7 +92,7 @@ class HelperTest( unittest.TestCase ):
         1: ABC2* = ABC1 and ABC2
         """
         data = self.params[1]
-        eng  = Engine( mode='plde', text=text )
+        eng  = Model( mode='plde', text=text )
         eng.initialize( missing=helper.initializer( data, default=(1,1,1) ) )
 
         for node in 'ABC1 ABC2'.split():

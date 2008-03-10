@@ -32,33 +32,15 @@ if stop:
     # stopping on any dependency problem
     sys.exit()
 
-import async, plde
+import async, plde, util
 
 from util import Problem
 
-def add_ranks( text ):
-    """
-    A convenience function that adds the rank 1: to each line that does not have a rank
-    
-    """
-    lines = text.splitlines()
-    
-    patt1 = re.compile('\*\W*=')
-    patt2 = re.compile('\W*\d+:')
-    
-    def rank_adder (line):
-        line = line.strip()
-        if patt1.search(line) and not patt2.match(line):
-            line = '1: ' + line
-        return line
-    
-    lines = map( rank_adder, lines)
-    return '\n'.join( lines )
 
 # class factory function 
 def Model(text, mode):
     # the enigne will add ranks if these are missing
-    text = add_ranks( text )
+    text = util.add_ranks( text )
 
     if mode in ('plde', 'lpde'): 
         return plde.Model(text=text, mode=mode)

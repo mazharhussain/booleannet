@@ -1,5 +1,5 @@
 import boolean
-
+import sys
 # 
 #
 # 
@@ -19,6 +19,10 @@ from boolean import util
 on = ["B"]
 off = ["C", "D"]
 text = util.modify_states(text, turnon=on, turnoff=off)
+
+print text
+
+sys.exit()
 
 from boolean import Model
 

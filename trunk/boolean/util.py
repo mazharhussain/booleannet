@@ -111,6 +111,25 @@ class Collector(object):
             out[node] = values
         return out
 
+def add_ranks( text ):
+    """
+    A convenience function that adds the rank 1: to each line that does not have a rank
+    
+    """
+    lines = text.splitlines()
+    
+    patt1 = re.compile('\*\W*=')
+    patt2 = re.compile('\W*\d+:')
+    
+    def rank_adder (line):
+        line = line.strip()
+        if patt1.search(line) and not patt2.match(line):
+            line = '1: ' + line
+        return line
+    
+    lines = map( rank_adder, lines)
+    return '\n'.join( lines )
+
 def as_set( nodes ):
     """
     Wraps input into a set if needed. Allows single input or
@@ -128,6 +147,7 @@ def modify_states( text, turnon=[], turnoff=[] ):
     
     Will use the main lexer.
     """
+    text = add_ranks( text )        
     turnon  = as_set( turnon )
     turnoff = as_set( turnoff )
     tokens = tokenize( text )
