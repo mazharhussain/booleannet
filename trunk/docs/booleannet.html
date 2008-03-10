@@ -504,6 +504,9 @@ Software the we distribute with ''~BooleanNet'':
 * [[functional.py|http://oakwinter.com/code/functional/]] by Colin Winters 
 We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
+<div title="Advanced Usage" modifier="Istvan Albert" created="200803102228" changecount="1">
+<pre>State and operation overriding</pre>
+</div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
 </div>
@@ -535,10 +538,12 @@ The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|
 
 Once the installation is finished please read the [[Using the library]] pages</pre>
 </div>
-<div title="Introduction" modifier="Istvan Albert" modified="200803062357" created="200803062342" changecount="3">
-<pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of Stuart Kauffman and Rene Thomas. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
+<div title="Introduction" modifier="Istvan Albert" modified="200803102233" created="200803062342" changecount="9">
+<pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of ''Stuart Kauffman'' and ''Rene Thomas''. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
 
-In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by Leon Glass and collaborators.</pre>
+In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by ''Leon Glass'' and collaborators.
+
+We may think of ''~BooleanNet'' as a ''mini'' programming language particularly well suited for modeling biological systems. It provides functionality that facilitates various important steps of the modeling, as well as helper functions that provide the means of interpreting the results. Here are links to various other modeling software [[Similar Software]] with some comments on the ways ''~BooleanNet'' is different from them.</pre>
 </div>
 <div title="LorumIpsum" modifier="Istvan Albert" created="200803062339" changecount="1">
 <pre>Aenean eros arcu, condimentum nec, dapibus ut, tincidunt sit amet, urna. Quisque viverra, eros sed imperdiet iaculis, est risus facilisis quam, id malesuada arcu nulla luctus urna. Nullam et est. Vestibulum velit sem, faucibus cursus, dapibus vestibulum, pellentesque et, urna. Donec luctus. Donec lectus. Aliquam eget eros facilisis tortor feugiat sollicitudin. Integer lobortis vulputate sapien. Sed iaculis erat ac nunc. Etiam eu enim. Mauris ipsum urna, rhoncus at, bibendum sit amet, euismod eget, dolor. Mauris fermentum quam vitae ligula. Vestibulum in libero feugiat justo dictum consectetuer. Vestibulum euismod purus eget elit. Nunc sed massa porta elit bibendum posuere. Nunc pulvinar justo sit amet odio. In sed est. Phasellus ornare elementum nulla. Nulla ipsum neque, cursus a, viverra a, imperdiet at, enim. Quisque facilisis, diam sed accumsan suscipit, odio arcu hendrerit dolor, quis aliquet massa nulla nec sem.
@@ -564,12 +569,12 @@ This is a link to a [[StyleSheet]] tiddler.
 |column1|column2|column3|
 |row2| row2 |row2|</pre>
 </div>
-<div title="MainMenu" modifier="Istvan Albert" modified="200803101841" created="200803062342" changecount="11">
+<div title="MainMenu" modifier="Istvan Albert" modified="200803102228" created="200803062342" changecount="13">
 <pre>[[Introduction]]
 [[Installation]]
 [[Quick Reference]]
+[[Advanced Usage]]
 [[Tutorials]]
-[[Advanced Use]]
 [[About]]</pre>
 </div>
 <div title="MochaSideBarOptions" modifier="Istvan Albert" modified="200803062348" created="200701130013" tags="MochaTheme" changecount="1">
@@ -605,8 +610,8 @@ This is a link to a [[StyleSheet]] tiddler.
 &lt;div id='contentFooter' refresh='content' tiddler='contentFooter'&gt;&lt;/div&gt;
 &lt;!--}}}--&gt;</pre>
 </div>
-<div title="Quick Reference" modifier="Istvan Albert" modified="200803101949" created="200803101840" changecount="27">
-<pre>A brief reference of the main routines. More details can be found in the [[Tutorials]] and [[Advanced Use]] pages. 
+<div title="Quick Reference" modifier="Istvan Albert" modified="200803102228" created="200803101840" changecount="35">
+<pre>A brief reference of the main routines. More details can be found in the [[Tutorials]] and [[Advanced Usage]] pages. 
 !Specifying rules
 The word ''text'' will be used to describe the rules as defined either in the program as a string or when read from a file. Multi line strings  may be created with triple quotes like so:  
 {{{
@@ -616,7 +621,7 @@ A* = B
 B* = not A
 &quot;&quot;&quot;
 }}}
-Th ''*'' symbol specifies an updating rule. {{{ A* = B }}} states that the new value of ''A'' will be equal to the old value of ''B''. Here is how we read ''text'' from a file:
+The ''A = B = True'' line is an initialization line that gets executed only once. The allowable values are ''True, False'' and ''Random''. Note that assigning values on the same line will yield the same value, after a ''A = B = Random'', ''A'' and ''B'' will have the same random value ''True'' or ''False''. The ''*'' symbol specifies an updating rule. ''A* = B'' states that the new value of ''A'' will be equal to the old value of ''B''. Here is how we read ''text'' from a file:
 {{{
 text = file('my-rules.txt').read()
 }}}
@@ -672,8 +677,54 @@ Data may be accessed as a column. The {{{ model.data }}} attribute is a dictiona
 print model.data['A']
 }}}
 will returns a list of values {{{[True, False .... ]}}}.
+!State fingerprints
+Often it is desirable to be able to easily identify certain states (a set of True, False states mapped to a set of nodes). For example to trace the evolution of states from different starting configurations. The state and model ''fingerprints'' generate a simple unique name like so:
+{{{
+for state in model.states:
+    print state.fp()
+}}}
+will print a the a short name corresponding to each state, in this case a cycle of lenght 2 starting from the beginning:
+{{{
+S1
+S2
+S1
+S2
+}}}
+Entire modeling runs can have fingerprints as well, for example:
+{{{
+for i in range(10):
+    model = boolean.Model( text, mode='sync')
+    model.initialize()
+    model.iterate( steps=5 )
+    print model.fp()
+}}}
+will print:
+{{{
+('S1', 'S2', 'S3', 'S4', 'S1', 'S2')
+('S2', 'S3', 'S4', 'S1', 'S2', 'S3')
+('S6', 'S4', 'S1', 'S2', 'S3', 'S4')
+....
+}}}
+In the runs above some of the nodes were given {{{Random}}} initial states, this allowed for variations in the outcomes.
 !Data collectors
-A data collector is a utility function used in asynchronous modeling used to average the values of multiple runs.</pre>
+A data collector is a utility function used in asynchronous modeling to average the values of multiple runs. Here is an example run:
+{{{
+from boolean import util
+
+coll  = util.Collector()
+for i in range(3):
+    model = boolean.Model( text, mode='async')
+    model.initialize()
+    model.iterate( steps=5 ) 
+
+    # takes all nodes
+    nodes = model.nodes()
+    coll.collect( states=model.states, nodes=nodes )
+
+avgs = coll.get_averages( normalize=True )
+print avgs
+}}}
+The ''avg'' variable is a dictionary that is mapped by nodes and contains as values the normalized counts (percentages) for the state of the variable at a given timestep. There is a detailed example on using the collectors in the [[Tutorials]]</pre>
 </div>
 <div title="SiteSubtitle" modifier="Istvan Albert" modified="200803071541" created="200803062349" changecount="2">
 <pre>boolean network modeling for life science research</pre>

@@ -18,7 +18,7 @@ from boolean import Model
 
 seen = {}
 
-for i in range(100):
+for i in range(10):
     model = boolean.Model( text, mode='sync')
     model.initialize()
     model.iterate( steps=20 )
@@ -29,7 +29,7 @@ for i in range(100):
     size, index = model.detect_cycles() 
     
     
-    seen [ model.first.short() ] = (index, size, [x.short() for x in model.states[:4]] )
+    seen [ model.first.fp() ] = (index, size, [x.fp() for x in model.states[:4]] )
     
     #model.report_cycles()    
 

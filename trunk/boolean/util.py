@@ -60,7 +60,7 @@ class State(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def short(self):
+    def fp(self):
         "Returns a unique user friendly state definition"
         global STATE_MAPPER, STATE_COUNTER
         value = hash( str(self) )

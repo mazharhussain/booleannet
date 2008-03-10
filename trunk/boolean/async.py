@@ -177,6 +177,10 @@ class Model(object):
         self.RULE_GETVALUE = util.default_get_value
         self.RULE_START_ITERATION = lambda index, engine: index
 
+    def nodes(self):
+        "Returns the nodes in the model"
+        return self.all_nodes
+
     def elapsed(self, repeat=1):
         """
         Helper function to benchmark performance
@@ -354,6 +358,15 @@ class Model(object):
             states = self.states[index: index+size]
             print 'Cycle of length %s starting at index %s' % (size, index)
 
+    def fp(self, minimal=False):
+        "A state fingerprint"
+        states = self.states
+        if minimal:
+            size, index = self.detect_cycles()
+            if size > 0:
+                states = states[:size+index]
+        return tuple( [state.fp() for state in states ] )
+    
 if __name__ == '__main__':
     
 
@@ -366,15 +379,15 @@ if __name__ == '__main__':
     1: D* = B and C
     """
 
-    engine = Model( mode='sync', text=text )
+    model = Model( mode='sync', text=text )
 
-    engine.initialize( )
+    model.initialize( )
 
-    engine.iterate( steps=9 )
+    model.iterate( steps=9 )
     
-    for state in engine.states:
+    for state in model.states:
         print state
     
-    engine.report_cycles()
-    
+    model.report_cycles()
+    print model.fp()
           
