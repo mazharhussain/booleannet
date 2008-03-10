@@ -1,9 +1,9 @@
 import boolean
 
-# All initial conditions are sampled. 
-# If A is set to False, a steady state is obtained.
+# 
 #
 # 
+
 text = """
 A = True
 B = Random
@@ -14,17 +14,23 @@ B* = A or C
 C* = A and not D
 D* = B and C
 """
+
+from boolean import util
+on = ["B"]
+off = ["C", "D"]
+text = util.modify_states(text, turnon=on, turnoff=off)
+
 from boolean import Model
 
 seen = {}
 
-for i in range(100):
+for i in range(1):
     model = boolean.Model( text, mode='sync')
     model.initialize()
     model.iterate( steps=20 )
 
-    #for state in model.states:
-    #    print state.A, state.B, state.C, state.D
+    for state in model.states:
+       print state.A, state.B, state.C, state.D
 
     size, index = model.detect_cycles() 
     
