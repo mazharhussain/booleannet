@@ -496,42 +496,6 @@ Also see AdvancedOptions</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="API Interface" modifier="Istvan Albert" modified="200803091343" created="200803070005" changecount="29">
-<pre>A brief reference for  the Application Programming Interface.
-!!!Model Creation
-{{{
-import boolean
-model = boolean.Model(text, mode='sync')
-}}}
-the ''mode'' parameter may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
-!!!Model Initialization
-{{{
-def missing( node_name ):
-    return True
-model.initialize( misssing=missing )
-}}}
-Initializes unintialized nodes to a value, this case ''True''. The ''node_name'' parameter is a string. Required when not all nodes get initial values from the text.
-{{{
-data = dict( A=False )
-model.initialize( default=data )
-}}}
-The optional default parameter takes a dictionary that main contain nodes mapped to values. The value of the node will override all other values set either via the text or via the missing parameter. Main use case is to temporarily override settings with ease.
-!!!State Modification
-{{{
-from boolean import util
-on = [&quot;A&quot;, &quot;B&quot;]
-off = [&quot;C&quot;, &quot;D&quot;]
-text = util.modify_states(text, turnon=on, turnoff=off)
-}}}
-A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the ''text'' variable before and after the modifications to see how the rules are altered.
-!!!Cycle detection
-{{{
-model = Model( text, mode='sync')
-model.initialize()
-model.iterate( steps=5 )
-}}}
-</pre>
-</div>
 <div title="About" modifier="Istvan Albert" modified="200803071649" created="200803062357" changecount="7">
 <pre>The library has been conceived and programmed by [[István Albert|http://www.personal.psu.edu/iua1/]] using previous work, ideas and contributions from Song Li, [[Juilee Thakar|http://www.phys.psu.edu/~jthakar/]] and Ranran Zhang. None of us would be thinking about Boolean Networks if it weren't for [[Réka Albert|http://www.phys.psu.edu/~ralbert/]].
 
@@ -543,14 +507,14 @@ We'd like to express our thanks and gratitude to the authors of these outstandin
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
 </div>
-<div title="Editor Setup" modifier="Istvan Albert" modified="200803071507" created="200803071443" tags="Setup" changecount="13">
+<div title="Editor Setup" modifier="Istvan Albert" modified="200803101846" created="200803071443" tags="Setup" changecount="14">
 <pre>The goal is to set up an environment that allows the user to run external tools on text that is being edited, without having to leave the editor. In a typical workflow to run a tutorial one would simply open the file then press ''Ctrl+1'' (holding Ctrl while pressing 1) to execute it, then watch the results in a lower window pane. Here is a screenshot:
 
 [img[png/crimson-1.png]]
 
 The upper window holds the tutorial while the lower window shows the result of running the tutorial. Here is how to get there.
 
-First follow the instructions on the [[Installation]] page to install ''Python'' and all other libraries. Next install the [[Crimson Editor|http://www.crimsoneditor.com/]]. (If, for whatever reason the link does not work use our copy [[crimson-editor.zip (1.2 MB)|http://atlas.bx.psu.edu/booleannet/crimson-quickstart.zip]]). Once installed, open ''Crimson Editor'' and find the ''Tools-&gt;Conf. Tools'' menu and click it. A window will pop up that will need be filled as follows:
+First follow the instructions on the [[Installation]] page to install ''Python'' and all other libraries. Next install the [[Crimson Editor|http://www.crimsoneditor.com/]]. (the editor is also included in the [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]] download that we distribute). Once installed, open ''Crimson Editor'' and find the ''Tools-&gt;Conf. Tools'' menu and click it. A window will pop up that will need be filled as follows:
 
 [img[png/crimson-2.png]]
 
@@ -560,10 +524,10 @@ You may type in the values or use the little widgets at the end of each entry bo
 
 Load a tutorial and press Ctrl-1 to verify that it works. The steps laid out above can be applied to set up any other environment, be that ''R'', ''Matlab'' etc. specific. We also note that there are many other editors and setups that would allow an identical behavior.</pre>
 </div>
-<div title="Installation" modifier="Istvan Albert" modified="200803071415" created="200803062350" tags="Setup" changecount="15">
+<div title="Installation" modifier="Istvan Albert" modified="200803101855" created="200803062350" tags="Setup" changecount="18">
 <pre>!!!Requirements
 The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|http://matplotlib.sourceforge.net]] and [[NumPy|http://numpy.scipy.org/]] to be installed. 
-* On ''Windows'' the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extension) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the all necessary libraries into a single download [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]]. Unpack the archive, read the included ''readme.txt'' then double click each of the programs to install them.
+* On ''Windows'' the installation of these is very straightforward. The only important detail is to select the executable (.exe or .msi extension) that matches the version of Python that is installed. For convenience, we have packaged Python 2.5 and the all necessary libraries into a single download [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]]. Unpack the archive, read the included ''readme.txt'' then double click each of the programs to install them. 
 * ''Linux/Unix'' users should use their package manager to install {{{python, numpy}}} and the {{{matplotlib}}} packages.
 !!!~BooleanNet Library Installation
 * If you downloaded the [[windows-quickstart.zip (17 MB)|http://atlas.bx.psu.edu/booleannet/windows-quickstart.zip]] file as described above no other action is necessary, all files are included in this download. To get a different version, ''Windows'' users should download the latest windows installer from the [[download area|http://code.google.com/p/booleannet/downloads/list]]. Once downloaded open the executable and follow the on screen instructions. This will install the library system wide. Windows users should also download the source distribution (.zip) and unpack it to access the tutorials and the examples.
@@ -600,12 +564,12 @@ This is a link to a [[StyleSheet]] tiddler.
 |column1|column2|column3|
 |row2| row2 |row2|</pre>
 </div>
-<div title="MainMenu" modifier="Istvan Albert" modified="200803062357" created="200803062342" changecount="7">
+<div title="MainMenu" modifier="Istvan Albert" modified="200803101841" created="200803062342" changecount="11">
 <pre>[[Introduction]]
 [[Installation]]
+[[Quick Reference]]
 [[Tutorials]]
 [[Advanced Use]]
-[[API Interface]]
 [[About]]</pre>
 </div>
 <div title="MochaSideBarOptions" modifier="Istvan Albert" modified="200803062348" created="200701130013" tags="MochaTheme" changecount="1">
@@ -640,6 +604,65 @@ This is a link to a [[StyleSheet]] tiddler.
 &lt;/div&gt;
 &lt;div id='contentFooter' refresh='content' tiddler='contentFooter'&gt;&lt;/div&gt;
 &lt;!--}}}--&gt;</pre>
+</div>
+<div title="Quick Reference" modifier="Istvan Albert" modified="200803101930" created="200803101840" changecount="14">
+<pre>A brief reference of the main routines. More details can be found in the [[Tutorials]] and [[Advanced Use]] pages. 
+!Specifying rules
+The word ''text'' will be used to describe the rules as defined either in the program as a string or when read from a file. Multi line strings  may be created with triple quotes like so:  
+{{{
+text = &quot;&quot;&quot;
+A = B = True
+A* = B
+B* = not A
+&quot;&quot;&quot;
+}}}
+Th ''*'' symbol specifies an updating rule. {{{ A* = B }}} states that the new value of ''A'' will be equal to the old value of ''B''. Here is how we read ''text'' from a file:
+{{{
+text = file('my-rules.txt').read()
+}}}
+!Model Creation
+{{{
+import boolean
+model = boolean.Model(text, mode='sync')
+}}}
+the ''mode'' parameter may be: ''sync'', ''async'' or ''plde'' corresponding to synchronous, asycnhronous and piece-wise linear differential equations.
+!Model Initialization
+If not all nodes are intialized in the text then one must use an initializer function.
+{{{
+def missing( node_name ):
+    return True
+model.initialize( misssing=missing )
+}}}
+Initializes unintialized nodes to a value, this case ''True''. The ''node_name'' parameter is a string. 
+{{{
+data = dict( A=False )
+model.initialize( default=data )
+}}}
+The optional default parameter takes a dictionary that main contain nodes mapped to values. The value of the node will override all other values set either via the text or via the missing parameter. Main use case is to temporarily override settings with ease.
+!State Modification
+{{{
+from boolean import util
+on = [&quot;A&quot;, &quot;B&quot;]
+off = [&quot;C&quot;, &quot;D&quot;]
+new_text = util.modify_states(old_text, turnon=on, turnoff=off)
+}}}
+A convenience function that modifies the input rules, to generate knockout or overexpressed mutants. Note that it operates on the input text. The example above will set nodes ''A'' and ''B'' to ''True'' and nodes ''C'' and ''D'' to ''False'' over the entire simulation. It will also remove the updating rules for all these nodes. You can print the ''text'' variable before and after the modifications to see how the rules are altered.
+!Evolving the model
+{{{
+model = Model( text, mode='sync')
+model.initialize()
+model.iterate( steps=5 )
+for state in model.states:
+    print state
+}}}
+This will run the model specified in the ''text'' for ''5'' iterations. The variable ''state'' refers to an object that may be accessed by attribute i.e. {{{ state.A }}} if it has a node named {{{A}}}. See the [[Tutorials]] for more.
+!Cycle detection
+{{{
+model = Model( text, mode='sync')
+model.initialize()
+model.iterate( steps=5 )
+}}}
+</pre>
 </div>
 <div title="SiteSubtitle" modifier="Istvan Albert" modified="200803071541" created="200803062349" changecount="2">
 <pre>boolean network modeling for life science research</pre>
@@ -995,13 +1018,13 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="Istvan Albert" modified="200803071534" created="200803062351" changecount="8">
+<div title="Tutorials" modifier="Istvan Albert" modified="200803101931" created="200803062351" changecount="9">
 <pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder.
 
 !!!Tutorial 1: A Simple System.
-Link to [[t-01.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/tut-01/t-01.py]]
+Link to [[t-01.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-01.py]]
 !!!Tutorial 2: Computing Steady States.
-Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/tut-02/t-02.py]]
+Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-02.py]]
 
 
 </pre>
