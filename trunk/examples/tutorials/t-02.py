@@ -6,7 +6,7 @@ import boolean,pylab
 # 
 text = """
 A = True
-B = True
+B = False
 C = False
 D = True
 
@@ -18,7 +18,7 @@ from boolean import Model
 
 model = boolean.Model( text, mode='sync')
 model.initialize()
-model.iterate( steps=10 )
+model.iterate( steps=15 )
 
 for state in model.states:
     print state.A, state.B, state.C, state.D
