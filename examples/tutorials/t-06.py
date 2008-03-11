@@ -19,7 +19,7 @@ D* = B and C
 
 
 coll  = util.Collector()
-for i in range(3):
+for i in range(10):
     model = boolean.Model( text, mode='async')
     model.initialize()
     model.iterate( steps=5 ) 
