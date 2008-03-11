@@ -1,7 +1,7 @@
 import boolean
 
+# A is set to False.
 # All initial conditions are sampled. 
-# Result: they all converge into the same steady state.
 #
 # 
 text = """

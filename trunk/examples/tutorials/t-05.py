@@ -1,10 +1,8 @@
-''' 
-Collector example
-
-''' 
-
 import boolean
-from boolean import util
+
+# B is knocked out.
+# Instead of a cycle, now a steady state is observed.
+# 
 
 text = """
 A = True
@@ -17,16 +15,32 @@ C* = A and not D
 D* = B and C
 """
 
+from boolean import util
+on = []
+off = ["B"]
+text = util.modify_states(text, turnon=on, turnoff=off)
 
-coll  = util.Collector()
-for i in range(3):
-    model = boolean.Model( text, mode='async')
+from boolean import Model
+
+seen = {}
+
+for i in range(10):
+    model = boolean.Model( text, mode='sync')
     model.initialize()
-    model.iterate( steps=5 ) 
+    model.iterate( steps=20 )
 
-    # takes all nodes
-    nodes = model.nodes()
-    coll.collect( states=model.states, nodes=nodes )
+    #for state in model.states:
+    #   print state.A, state.B, state.C, state.D
 
-avgs = coll.get_averages( normalize=True )
-print avgs
+    size, index = model.detect_cycles() 
+    
+    
+    seen [ model.first.fp() ] = (index, size, [x.fp() for x in model.states[:4]] )
+    
+    #model.report_cycles()    
+
+values = seen.values()
+values.sort()
+
+for value in values:
+    print value
