@@ -1,7 +1,7 @@
 """
 Boolean Network Library
 """
-__VERSION__ = '0.9.6'
+__VERSION__ = '0.9.7'
 
 import sys, re
 
@@ -12,30 +12,26 @@ pyversion = sys.version[0:3]
 
 if pyversion < "2.4":
     print "*** requires python 2.4 or higher, install it from: http://www.python.org/"
-    stop = True
-else:
-    stop = False
+    sys.exit()
+
+import async, util
 
 try:
     import pylab
 except ImportError:
     print "*** matplotlib is missing, install it from: http://matplotlib.sourceforge.net/"
-    stop = True
 
 try:
     import numpy
 except ImportError:
     print "*** numpy is missing, install it from: http://numpy.scipy.org/"
-    stop = True
 
-if stop:
-    # stopping on any dependency problem
-    sys.exit()
-
-import async, plde, util
+try:
+    import plde
+except ImportError:
+    print "*** plde mode not available "
 
 from util import Problem
-
 
 # class factory function 
 def Model(text, mode):
@@ -49,7 +45,7 @@ def Model(text, mode):
 
 # to keep backwards compatibility
 def Engine( text, mode):
-    print '*** boolean.Engine is now deprecated, used boolean.Model instead ***'
+    print '*** boolean.Engine is now deprecated, use boolean.Model instead ***'
     return Model( text, mode)
 
 def test():
