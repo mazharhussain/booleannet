@@ -1,8 +1,22 @@
-import boolean
+#
+#
+# The collector helper function
+#
+# Asynchronous updating rules are non deterministic and
+# need to be averaged over many runs
+#
+# The collector class makes this averaging very easy. It takes
+# a states and nodes to build a data strucutre that 
+# can compute the average the state of each node over all simulation and each timestep.
+#
+# The output of averaging (in the normalized mode) is a value between
+# 0 and 1 representing the fraction of simulation (multiply by 100 to get percent) 
+# that had the node in state True. 
+#
+#
 
-# B is knocked out.
-# Instead of a cycle, now a steady state is observed.
-# 
+import boolean, pylab
+from boolean import util
 
 text = """
 A = True
@@ -15,32 +29,41 @@ C* = A and not D
 D* = B and C
 """
 
-from boolean import util
-on = []
-off = ["B"]
-text = util.modify_states(text, turnon=on, turnoff=off)
-
-from boolean import Model
-
-seen = {}
-
-for i in range(10):
-    model = boolean.Model( text, mode='sync')
+coll  = util.Collector()
+for i in range(50):
+    model = boolean.Model( text, mode='async')
     model.initialize()
-    model.iterate( steps=20 )
+    model.iterate( steps=15 ) 
 
-    #for state in model.states:
-    #   print state.A, state.B, state.C, state.D
+    #
+    # this case take all nodes
+    # one cold just list a few nodes such as [ 'A', 'B', 'C' ]
+    #
+    nodes = model.nodes()
 
-    size, index = model.detect_cycles() 
-    
-    
-    seen [ model.first.fp() ] = (index, size, [x.fp() for x in model.states[:4]] )
-    
-    #model.report_cycles()    
+    #
+    # this collects states for each run
+    #
+    coll.collect( states=model.states, nodes=nodes )
 
-values = seen.values()
-values.sort()
+#
+# this step averages the values for each node
+# returns a dictionary keyed by nodes and a list of values
+# with the average state for in each timestep
+#
+avgs = coll.get_averages( normalize=True )
 
-for value in values:
-    print value
+# make some shortcut to data to for easier plotting
+valueB = avgs["B"]
+valueC = avgs["C"]
+valueD = avgs["D"]
+
+#
+# plot the state of the nodes
+#
+p1 = pylab.plot( valueB , 'ob-' )
+p2 = pylab.plot( valueC , 'sr-' )
+p3 = pylab.plot( valueD , '^g-' )
+pylab.legend( [p1,p2,p3], ["B","C","D"])
+
+pylab.show()  

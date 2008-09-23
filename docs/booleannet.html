@@ -1080,8 +1080,8 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="YourName" modified="200809231303" created="200803062351" tags="Usage" changecount="19">
-<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials.
+<div title="Tutorials" modifier="YourName" modified="200809231410" created="200803062351" tags="Usage" changecount="31">
+<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials. All tutorials will generate the plots that are displayed next to their description.
 
 !!!Tutorial 1: Testing the installation.
 
@@ -1090,7 +1090,7 @@ Use this tutorial to test that the installation has been succesfull. The code wi
 Link to [[t-01.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-01.py]]
 
 !!!Tutorial 2: Computing Steady States.
-This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state.
+[&gt;img[Tutorial 2|t-02.png]]This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state. Note in the plot how node {{{B}}} is in a steady state while node {{{A}}} oscillates between the on and off positions.
 
 Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-02.py]]
 
@@ -1099,10 +1099,25 @@ Tutorial 3 demonstrates the use of fingerprints to describe the start and subseq
 
 Link to [[t-03.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-03.py]]
 
-!!!Tutorial 4: Computing Steady States.
-This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state.
+!!!Tutorial 4: Modifying rules: knockouts and overexpression.
+Most simulations require the modification of the states/rules to describe //knockout// or //overexpressed// states. From a technical point of view this can be done by setting the corresponding nodes to either {{{False}}} or {{{True}}} and then removing the corresponding updating rules for these nodes. Doing it manually can be tedious and error prone and can lead to having too many rule files. The {{{modify_states}}} function takes to parameters {{{turnon}}} and {{{turnoff}}} that may be used to modify the original rules from the program itself.
 
 Link to [[t-04.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-04.py]]
+
+!!!Tutorial 5: Helper function: the Collector
+[&gt;img[Tutorial 5|t-05.png]]Asynchronous updating rules are non deterministic and need to be averaged over many runs. The {{{Collector}}} class makes this averaging easy. It allows one to determine the fraction of the simulations that had a certain node set as {{{True}}} at a given timestep. The plot produced by this tutorial shows that  node {{{A}}} always reaches the state of {{{True}}} within one simulation step and it stays as such.  For nodes {{{B}}} and {{{C}}} the states are {{{True}}} about 50% of the time for all timesteps.
+
+Link to [[t-05.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-05.py]]
+
+!!Tutorial 6: Using piecewise linear differential equations
+[&gt;img[Tutorial 6|t-06.png]] One of the unique features of ''~BooleanNet'' is the ease of switching to a completely different simulation methodology without changing the rules. using a different parameter in the model constructor {{{Model(mode='plde')}}} we can simulate the same rules as piecewise linear differential equations.
+
+Link to [[t-06.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-06.py]]
+
+!!Tutorial 7: ???
+
+Link to [[t-07.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-07.py]]
+
 
 </pre>
 </div>

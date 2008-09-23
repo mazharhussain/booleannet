@@ -5,7 +5,7 @@ import boolean, pylab
 #
 # 
 text = """
-A = True
+A = Random
 B = False
 C = False
 D = True

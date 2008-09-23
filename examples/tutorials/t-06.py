@@ -1,42 +1,32 @@
-''' 
-Collector example
-
-''' 
-
 import boolean, pylab
-from boolean import util
 
+# This initial condition leads to a cycle of period 4.
+# If A is set to False, a steady state is obtained.
+ 
 text = """
 A = True
-B = Random
-C = Random
-D = Random
+B = False
+C = False
+D = True
 
 B* = A or C
 C* = A and not D
 D* = B and C
 """
+from boolean import Model
 
-coll  = util.Collector()
-for i in range(10):
-    model = boolean.Model( text, mode='async')
-    model.initialize()
-    model.iterate( steps=5 ) 
+model = boolean.Model( text, mode='plde')
+model.initialize()
+model.iterate( fullt=7, steps=150 )
 
-    # takes all nodes
-    nodes = model.nodes()
-    coll.collect( states=model.states, nodes=nodes )
-
-avgs = coll.get_averages( normalize=True )
-print avgs
-
-valueB = avgs["B"]
-valueC = avgs["C"]
-valueD = avgs["D"]
-
-p1 = pylab.plot( valueB , 'ob-' )
-p2 = pylab.plot( valueC , 'sr-' )
-p3 = pylab.plot( valueD , '^g-' )
+#
+# generate the plot
+#
+p1 = pylab.plot( model.data["B"] , 'ob-' )
+p2 = pylab.plot( model.data["C"] , 'sr-' )
+p3 = pylab.plot( model.data["D"] , '^g-' )
 pylab.legend( [p1,p2,p3], ["B","C","D"])
 
 pylab.show()  
+
+
