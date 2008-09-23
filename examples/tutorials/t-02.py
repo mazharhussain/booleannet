@@ -25,7 +25,7 @@ model.iterate( steps=15 )
 for node in model.data:
     print node, model.data[node]
 
-# this is a helper function that reports the cycle lenghts 
+# this is a helper function that reports the cycle lengths 
 # and the  index at wich the cycle started
 model.report_cycles()
 
