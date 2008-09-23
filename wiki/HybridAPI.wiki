@@ -1,5 +1,9 @@
 #summary Using the library in a hybrid mode.
 
+= Note =
+A newer version of the documentation is now maintained at: a [http://atlas.bx.psu.edu/booleannet/booleannet.html detailed documentation]  See the [http://atlas.bx.psu.edu/booleannet/booleannet.html#Tutorials Tutorials] for a quick overview on how the library works.   
+
+
 = Introduction =
 
 The hybrid model solves the boolean rules via _piecewise linear differential equations_. 
