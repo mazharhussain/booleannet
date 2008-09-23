@@ -1,11 +1,17 @@
 import boolean
 
-# A is set to False.
-# All initial conditions are sampled. 
 #
+# Modifying states within a program
+#
+# Knocking node B out.
+#
+# Instead of a cycle, now a steady state is observed.
 # 
+# Code is identical to tutorial 3 after the state modification steps
+#
+
 text = """
-A = False
+A = True
 B = Random
 C = Random
 D = Random
@@ -14,6 +20,28 @@ B* = A or C
 C* = A and not D
 D* = B and C
 """
+
+from boolean import util
+
+#
+# these nodes will be overexpressed (initialized to True)
+#
+on  = []
+
+#
+# these nodes will be set to false and their corresponding updating 
+# rules will be  removed
+#
+off = ["B"]
+
+#
+# this modifies the original states to apply to overexpressed and knockouts
+#
+text = util.modify_states(text, turnon=on, turnoff=off)
+
+#
+# see tutorial 3 for more details on what happens below
+#
 from boolean import Model
 
 seen = {}
@@ -23,18 +51,17 @@ for i in range(10):
     model.initialize()
     model.iterate( steps=20 )
 
-    #for state in model.states:
-    #    print state.A, state.B, state.C, state.D
-
     size, index = model.detect_cycles() 
     
-    
-    seen [ model.first.fp() ] = (index, size, [x.fp() for x in model.states[:4]] )
-    
-    #model.report_cycles()    
+    # fingerprint of the first state
+    key = model.first.fp()
 
-values = seen.values()
-values.sort()
+    # keep only the first 10 states out of the 20
+    values = [ x.fp() for x in model.states[:10] ]
 
-for value in values:
-    print value
+    # store the fingerprinted values for each initial state
+    seen [ key ] = (index, size, values )   
+
+# print out the observed states
+for first, values in seen.items():
+    print 'Start: %s -> %s' % (first, values)

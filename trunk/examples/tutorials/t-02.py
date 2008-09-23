@@ -41,8 +41,8 @@ print model.detect_cycles()
 #
 p1 = pylab.plot( model.data["B"] , 'ob-' )
 p2 = pylab.plot( model.data["C"] , 'sr-' )
-p3 = pylab.plot( model.data["D"] , '^g-' )
-pylab.legend( [p1,p2,p3], ["B","C","D"])
+pylab.legend( [p1,p2], ["B","C"])
+pylab.ylim((-0.1,1.1))
 pylab.show()    
 
 
