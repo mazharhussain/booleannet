@@ -1080,14 +1080,29 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="Istvan Albert" modified="200803102236" created="200803062351" tags="Usage" changecount="10">
-<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder.
+<div title="Tutorials" modifier="YourName" modified="200809231303" created="200803062351" tags="Usage" changecount="19">
+<pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials.
 
-!!!Tutorial 1: A Simple System.
+!!!Tutorial 1: Testing the installation.
+
+Use this tutorial to test that the installation has been succesfull. The code will print the states for the nodes for 6 steps (1 initial condition and 5 iteration steps) 
+
 Link to [[t-01.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-01.py]]
+
 !!!Tutorial 2: Computing Steady States.
+This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state.
+
 Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-02.py]]
 
+!!!Tutorial 3: Random sampling and fingerprinting.
+Tutorial 3 demonstrates the use of fingerprints to describe the start and subsequent transitions. Nodes assigned to {{{Random}}} initial conditions will be randomly initialized to {{{True}}} or {{{False}}} during each run. The model is then simulated for 20 iterations and the cycle detection method is used to find the length of the cycle and position at which it occurred. A //fingerprint// is a short text word that uniquely identifies a set of values for the nodes. For example the {{{S1}}} could be the fingerprint for the state in which {{{A=True, B=True, C=False}}}. Note that the states are unique within a certain run but may not be compared across separate invocations of the entire program. This is to allow to keep the states short and readable. Fingerprinting allows us to describe transitions between states in a simpler manner. 
+
+Link to [[t-03.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-03.py]]
+
+!!!Tutorial 4: Computing Steady States.
+This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state.
+
+Link to [[t-04.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-04.py]]
 
 </pre>
 </div>
