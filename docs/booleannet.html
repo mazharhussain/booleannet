@@ -504,7 +504,7 @@ Software the we distribute with ''~BooleanNet'':
 * [[functional.py|http://oakwinter.com/code/functional/]] by Colin Winters 
 We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
-<div title="Advanced Usage" modifier="YourName" modified="200809231444" created="200803102228" changecount="5">
+<div title="Advanced Usage" modifier="YourName" modified="200809231500" created="200803102228" changecount="6">
 <pre>The hybrid model solves the boolean rules via piecewise linear differential equations. In this mode every node in the system will have three continuous variables associated with it a concentration, a decay, and a threshold . Each node is considered ON when its concentration is greater than the threshold. Practically this means that a rule written as:
 {{{
 A = B and C 
@@ -653,7 +653,7 @@ def choose( p1, p2, t):
         return p1
 }}}
 This achieves what we wanted, the B node in our system is now executing a different behavior every ten seconds producing the following output: 
-[img[hybrid-example.png]]</pre>
+[img[png/hybrid-example.png]]</pre>
 </div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
@@ -686,11 +686,11 @@ The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|
 
 Once the installation is finished please read the [[Using the library]] pages</pre>
 </div>
-<div title="Introduction" modifier="YourName" modified="200809231455" created="200803062342" changecount="10">
+<div title="Introduction" modifier="YourName" modified="200809231459" created="200803062342" changecount="11">
 <pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of ''Stuart Kauffman'' and ''Rene Thomas''. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
 
 In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by ''Leon Glass'' and collaborators.
-[img[hybrid-example.png]]
+[img[png/hybrid-example.png]]
 We may think of ''~BooleanNet'' as a ''mini'' programming language particularly well suited for modeling biological systems. It provides functionality that facilitates various important steps of the modeling, as well as helper functions that provide the means of interpreting the results. Here are links to various other modeling software [[Similar Software]] with some comments on the ways ''~BooleanNet'' is different from them.</pre>
 </div>
 <div title="LorumIpsum" modifier="Istvan Albert" created="200803062339" changecount="1">
@@ -1228,7 +1228,7 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="YourName" modified="200809231454" created="200803062351" tags="Usage, Tutorials" changecount="37">
+<div title="Tutorials" modifier="YourName" modified="200809231459" created="200803062351" tags="Usage, Tutorials" changecount="38">
 <pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials. All tutorials will generate the plots that are displayed next to their description.
 
 !!!Tutorial 1: Testing the installation.
@@ -1238,7 +1238,7 @@ Use this tutorial to test that the installation has been succesfull. The code wi
 Link to [[t-01.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-01.py]]
 
 !!!Tutorial 2: Computing Steady States.
-[&gt;img[Tutorial 2|t-02.png]]This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state. Note in the plot how node {{{B}}} is in a steady state while node {{{A}}} oscillates between the on and off positions.
+[&gt;img[Tutorial 2|png/t-02.png]]This tutorial demonstrates the cycle and steady state detection functions. Changing one initial parameter will turn a cycle of lenght 4 into a steady state. Note in the plot how node {{{B}}} is in a steady state while node {{{A}}} oscillates between the on and off positions.
 
 Link to [[t-02.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-02.py]]
 
@@ -1253,12 +1253,12 @@ Most simulations require the modification of the states/rules to describe //knoc
 Link to [[t-04.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-04.py]]
 
 !!!Tutorial 5: Helper function: the Collector
-[&gt;img[Tutorial 5|t-05.png]]Asynchronous updating rules are non deterministic and need to be averaged over many runs. The {{{Collector}}} class makes this averaging easy. It allows one to determine the fraction of the simulations that had a certain node set as {{{True}}} at a given timestep. The plot produced by this tutorial shows that  node {{{A}}} always reaches the state of {{{True}}} within one simulation step and it stays as such.  For nodes {{{B}}} and {{{C}}} the states are {{{True}}} about 50% of the time for all timesteps.
+[&gt;img[Tutorial 5|png/t-05.png]]Asynchronous updating rules are non deterministic and need to be averaged over many runs. The {{{Collector}}} class makes this averaging easy. It allows one to determine the fraction of the simulations that had a certain node set as {{{True}}} at a given timestep. The plot produced by this tutorial shows that  node {{{A}}} always reaches the state of {{{True}}} within one simulation step and it stays as such.  For nodes {{{B}}} and {{{C}}} the states are {{{True}}} about 50% of the time for all timesteps.
 
 Link to [[t-05.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-05.py]]
 
 !!Tutorial 6: Using piecewise linear differential equations
-[&gt;img[Tutorial 6|t-06.png]] One of the unique features of ''~BooleanNet'' is the ease of switching to a completely different simulation methodology without changing the rules. using a different parameter in the model constructor {{{Model(mode='plde')}}} we can simulate the same rules as piecewise linear differential equations. Note that changing 
+[&gt;img[Tutorial 6|png/t-06.png]] One of the unique features of ''~BooleanNet'' is the ease of switching to a completely different simulation methodology without changing the rules. using a different parameter in the model constructor {{{Model(mode='plde')}}} we can simulate the same rules as piecewise linear differential equations. Note that changing 
 
 Link to [[t-06.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-06.py]]
 
