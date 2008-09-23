@@ -28,8 +28,8 @@ except ImportError:
 
 try:
     import plde
-except ImportError:
-    print "*** plde mode not available "
+except Exception, exc:
+    print "*** plde mode not available %s" % exc
 
 from util import Problem
 

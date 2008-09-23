@@ -1,5 +1,6 @@
 import boolean,pylab
 
+#
 # This initial condition leads to a cycle of period 4.
 # If A is set to False, a steady state is obtained.
 #
@@ -20,19 +21,28 @@ model = boolean.Model( text, mode='sync')
 model.initialize()
 model.iterate( steps=15 )
 
-for state in model.states:
-    print state.A, state.B, state.C, state.D
+# the model data attribute holds the states keyed by nodes
+for node in model.data:
+    print node, model.data[node]
 
-print model.data
-
-print model.detect_cycles()    
+# this is a helper function that reports the cycle lenghts 
+# and the  index at wich the cycle started
 model.report_cycles()
 
+#
+# the same thing as above but
+# will not print only return the two parameters
+#
+print model.detect_cycles()    
+
+#
+# this is how one plots the values, delete this below
+# if matplotlib is not installed
+#
 p1 = pylab.plot( model.data["B"] , 'ob-' )
 p2 = pylab.plot( model.data["C"] , 'sr-' )
 p3 = pylab.plot( model.data["D"] , '^g-' )
 pylab.legend( [p1,p2,p3], ["B","C","D"])
-
 pylab.show()    
 
 
