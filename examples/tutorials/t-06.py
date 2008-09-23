@@ -1,8 +1,12 @@
 import boolean, pylab
 
+#
+# Using Partial linear differential equations
+#
 # This initial condition leads to a cycle of period 4.
 # If A is set to False, a steady state is obtained.
- 
+#
+
 text = """
 A = True
 B = False

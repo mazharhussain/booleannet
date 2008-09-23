@@ -504,8 +504,156 @@ Software the we distribute with ''~BooleanNet'':
 * [[functional.py|http://oakwinter.com/code/functional/]] by Colin Winters 
 We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
-<div title="Advanced Usage" modifier="Istvan Albert" created="200803102228" changecount="1">
-<pre>State and operation overriding</pre>
+<div title="Advanced Usage" modifier="YourName" modified="200809231444" created="200803102228" changecount="5">
+<pre>The hybrid model solves the boolean rules via piecewise linear differential equations. In this mode every node in the system will have three continuous variables associated with it a concentration, a decay, and a threshold . Each node is considered ON when its concentration is greater than the threshold. Practically this means that a rule written as:
+{{{
+A = B and C 
+}}}
+will be solved as a differential equation of the form:
+{{{
+dA/dt = (( conc(B) &gt; threshold(B)) and (conc(C) &gt; threshold(C)) - decay(A) * conc(A) 
+}}}
+Here the boolean (first) term corresponds to the regulated synthesis while the decay (second) term corresponds to free (unregulated) dissociation. The equation leads to the following dynamics for each node:
+* when the boolean term is True the equation is of the form {{{dA/dt = 1 - decay * A}}}
+* when the boolean term is False the equation is of the form {{{dA/dt = - decay * A}}} 
+
+This means that in time we may have either an exponential type increase (to a maximal value of 1/decay) or an exponential type decrease (to zero) of the concentrations.
+Usage
+
+The engine can operate on the same syntax files as the boolean mode, although one most likely will need to change the initialization parameters from True/False values to triplets like (1.0, 2.0, 0.5) corresponding to the actual concentration, decay and threshold. An automatic conversion will take place if the initialization values correspond to the boolean mode:True/False values will be converted to (1, 1, 0,5)/(0, 1, 0.5). Here is a typical use case:
+{{{
+import boolean, pylab
+
+text = &quot;&quot;&quot;
+A = True
+B = True 
+C = False
+1: A* = not C 
+2: B* = A and B
+3: C* = B
+&quot;&quot;&quot;
+
+engine = boolean.Engine( text=text, mode='plde' )
+engine.initialize()
+engine.iterate( fullt=8, steps=100 )
+
+p1 = pylab.plot( engine.data['A'] , 'ob-' )
+p2 = pylab.plot( engine.data['B'] , 'sr-' )
+p3 = pylab.plot( engine.data['C'] , '^g-' )
+pylab.legend( [p1,p2,p3], &quot;A B C&quot;.split(), loc=&quot;best&quot;)
+pylab.show()
+}}}
+
+Please note how simple these equations are. Could you predict what the shape of the curves for A, B and C will be like? That is what is the steady state values for each node and how does the system reach it? See the image at the bottom image for the answer. 
+
+There are common circumstances where the default behaviors need to be augmented to account for certain biological knowledge. The software provides great flexibility allowing one to alter all aspects of the process.
+
+First some background on what takes place. Internally the software will dynamically generate a Python module that contains the time dependent component of the differential equations. It then numerically integrates this generated function with a fourth order Runge-Kutta method. To modify the behavior we will need to modify this dynamically generated code.
+
+By default the dynamically generated module will be located in the autogen.py file. For the example above the file will look something like this:
+{{{
+## dynamically generated code
+# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue
+# [(0, 'A', (1.0, 1.0, 0.5)), (1, 'B', (1.0, 1.0, 0.5)), (2, 'C', (0.0, 1.0, 0.5))]
+c0, d0, t0 = 1.000000, 1.000000, 0.500000 # A
+c1, d1, t1 = 1.000000, 1.000000, 0.500000 # B
+c2, d2, t2 = 0.000000, 1.000000, 0.500000 # C
+dt = 0.1
+x0 = c0, c1, c2
+def derivs( x, t):
+    c0, c1, c2 = x
+    n0, n1, n2 = 0.0, 0.0, 0.0
+    
+    #1: A * = not C
+    n0 = float( not  ( c2 &gt; t2 )  ) - d0 * c0
+    
+    #2: B * = A and B
+    n1 = float(  ( c0 &gt; t0 )  and  ( c1 &gt; t1 )  ) - d1 * c1
+    
+    #3: C * = B
+    n2 = float(  ( c1 &gt; t1 )  ) - d2 * c2
+
+    return ( n0, n1, n2 ) 
+}}}
+Compare this file to the original text input. The code above can be understood in the following way. Each node is associated an index, for example the B node has the index of 1. The c, d, and t variables stand for the concentration, decay and threshold for the node index that follows the variable, this makes say t1 is the threshold for node B. The n variable stands for the change in the value of the node. To make it easier to keep track of what is going on each line is also displayed in a commented out form (with the # sign, these lines are not executed, are there only to allow one to keep track of what was the original line was).
+
+Code generation can be interacted with in a manner similar to the BooleanAPI. The most important of these is the OVERRIDE function that gets called at every node generation. Here is how one starts out overriding. First create an empty function that is assigned to the engine:
+{{{
+def override( node, indexer, tokens ):
+    return None
+
+engine = Engine( text=text, mode='plde' )
+engine.OVERRIDE = override
+engine.initialize( )
+engine.iterate( fullt=FULLT, steps=STEPS )
+}}}
+then slowly build up the function, while watching how the code is being altered. In this example we notice that the levels of A and C return to initial values. But the levels for B change from a concentration of 1 (True) to a concentration of 0 (False). What if we wished to simulate a system where the levels of node B are periodically replenished, e.g. repeatedly set to an exponential increase between 7 and 9th second of every 10 second interval. The override function above would need to take the following form:
+{{{
+from boolean import helper
+
+def override( node, indexer, tokens ):
+
+    if node == 'B':
+        
+        changeB = helper.change( 'B', indexer)
+        concB   = helper.conc( 'B', indexer)
+        decayB  = helper.decay( 'B', indexer)
+        pieceB  = helper.piecewise( indexer=indexer, tokens=tokens )
+        
+        expr1 = &quot;p1 = %s&quot; % pieceB
+        expr2 = &quot;p2 = 1 - %s * %s&quot; % (decayB, concB)
+        expr3 = &quot;%s = choose( p1, p2, t )&quot; % changeB 
+        
+        return [ expr1, expr2, expr3 ]
+    
+    return None
+}}}
+While you could directly write the node indices to produce {{{p2 = 1 - d1 * c1}}} for expression expr2 it is highly advisable to rely on the helper functions {{{change, conc, decay}}} because these will produce the right values for the node even after inserting new nodes into the system.
+
+This override function produces two kinds of potential changes for node B. One with the default piecewise differential equation and stored in p1 the other is an exponential increase and stored in p2. In the third step it invokes the choose function to pick between the two. It is a good habit to put functions in a separate module and we can instruct the system load all functions from a module into the autogenerated code. To load all functions from a module called 'myfunctions.py' we would need to write:
+
+{{{
+engine.iterate( fullt=FULLT, steps=STEPS, localdefs='myfunctions' )
+}}}
+
+The override and this line above will now produce the following internal code (compare it to the original one)
+
+{{{
+from myfunctions import *
+def derivs( x, t):
+    c0, c1, c2 = x
+    n0, n1, n2 = 0.0, 0.0, 0.0
+    
+    #1: A * = not C
+    n0  = float( not  ( c2 &gt; t2 )  ) - d0 * c0
+    
+    #2: B * = A and B
+    p1 = float(  ( c0 &gt; t0 )  and  ( c1 &gt; t1 )  ) - d1 * c1
+    p2 = 1 -  d1  *  c1
+    n1  = choose( p1, p2, t )
+    
+    #3: C * = B
+    n2  = float(  ( c1 &gt; t1 )  ) - d2 * c2
+
+    return ( n0, n1, n2 ) 
+}}}
+We still need to specify what the choose function is so in myfunctions.py we will insert:
+{{{
+import math
+
+def choose( p1, p2, t):
+    &quot;Every ten seconds chooses p2&quot;
+    
+    mult = math.floor( t / 10.0)
+    t = t - 10 * mult 
+
+    if 7 &lt; t &lt; 9:
+        return p2
+    else:
+        return p1
+}}}
+This achieves what we wanted, the B node in our system is now executing a different behavior every ten seconds producing the following output: 
+[img[hybrid-example.png]]</pre>
 </div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
@@ -538,11 +686,11 @@ The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|
 
 Once the installation is finished please read the [[Using the library]] pages</pre>
 </div>
-<div title="Introduction" modifier="Istvan Albert" modified="200803102233" created="200803062342" changecount="9">
+<div title="Introduction" modifier="YourName" modified="200809231455" created="200803062342" changecount="10">
 <pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of ''Stuart Kauffman'' and ''Rene Thomas''. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
 
 In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by ''Leon Glass'' and collaborators.
-
+[img[hybrid-example.png]]
 We may think of ''~BooleanNet'' as a ''mini'' programming language particularly well suited for modeling biological systems. It provides functionality that facilitates various important steps of the modeling, as well as helper functions that provide the means of interpreting the results. Here are links to various other modeling software [[Similar Software]] with some comments on the ways ''~BooleanNet'' is different from them.</pre>
 </div>
 <div title="LorumIpsum" modifier="Istvan Albert" created="200803062339" changecount="1">
@@ -1080,7 +1228,7 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="YourName" modified="200809231410" created="200803062351" tags="Usage" changecount="31">
+<div title="Tutorials" modifier="YourName" modified="200809231454" created="200803062351" tags="Usage, Tutorials" changecount="37">
 <pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials. All tutorials will generate the plots that are displayed next to their description.
 
 !!!Tutorial 1: Testing the installation.
@@ -1110,16 +1258,15 @@ Link to [[t-04.py source|http://code.google.com/p/booleannet/source/browse/trunk
 Link to [[t-05.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-05.py]]
 
 !!Tutorial 6: Using piecewise linear differential equations
-[&gt;img[Tutorial 6|t-06.png]] One of the unique features of ''~BooleanNet'' is the ease of switching to a completely different simulation methodology without changing the rules. using a different parameter in the model constructor {{{Model(mode='plde')}}} we can simulate the same rules as piecewise linear differential equations.
+[&gt;img[Tutorial 6|t-06.png]] One of the unique features of ''~BooleanNet'' is the ease of switching to a completely different simulation methodology without changing the rules. using a different parameter in the model constructor {{{Model(mode='plde')}}} we can simulate the same rules as piecewise linear differential equations. Note that changing 
 
 Link to [[t-06.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-06.py]]
 
-!!Tutorial 7: ???
+The simulation code for more realistic research projects gets more complex. We include in the source distribution both the simulations and plot generation code for three fairly complicated tasks that have each been independently published:
 
-Link to [[t-07.py source|http://code.google.com/p/booleannet/source/browse/trunk/examples/tutorials/t-07.py]]
-
-
-</pre>
+* ''samples/aba'' includes the model published under the title //Predicting essential components of signal transduction networks: dynamic model of guard cell abscisic acid signaling// in ''~PLoS Biology 4 (10): e312, 2006 ''
+* ''samples/immune'' includes the model published under the title //Modeling Systems Level Regulation of Host Immune Responses// in ''~PLoS Computational Biology 6, e109, 2007''
+* ''samples/LGL'' includes the model published under the title //Network Model of Survival Signaling in LGL Leukemia// in ''PNAS, 2008 (to appear)''</pre>
 </div>
 <div title="Using the library" modifier="Istvan Albert" modified="200803071639" created="200803062351" tags="Setup" changecount="15">
 <pre>''~BooleanNet'' is a software library, and therefore is used within simple python programs. Similarly to the way on uses ''Matlab'' or ''R'', in order to use ''~BooleanNet'' one writes a separate script that invokes certain functions offered by the library.  Here is an example:
