@@ -6,7 +6,7 @@
 # need to be averaged over many runs
 #
 # The collector class makes this averaging very easy. It takes
-# a states and nodes to build a data strucutre that 
+# a list of states and nodes to build a data structure that 
 # can compute the average the state of each node over all simulation and each timestep.
 #
 # The output of averaging (in the normalized mode) is a value between
@@ -36,8 +36,8 @@ for i in range(50):
     model.iterate( steps=15 ) 
 
     #
-    # this case take all nodes
-    # one cold just list a few nodes such as [ 'A', 'B', 'C' ]
+    # in this case we take all nodes
+    # one could just list a few nodes such as [ 'A', 'B', 'C' ]
     #
     nodes = model.nodes()
 

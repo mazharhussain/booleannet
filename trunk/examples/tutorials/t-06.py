@@ -1,9 +1,9 @@
 import boolean, pylab
 
 #
-# Using Partial linear differential equations
+# Using Piecewise linear differential equations
 #
-# This initial condition leads to a cycle of period 4.
+# This initial condition leads to damped oscillations
 # If A is set to False, a steady state is obtained.
 #
 
