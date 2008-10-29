@@ -111,6 +111,17 @@ class Collector(object):
             out[node] = values
         return out
 
+def default_shuffler( alist ):
+    "Default shuffler"
+    temp = alist[:]
+    random.shuffle( temp )
+    return temp
+
+def random_pick( alist ):
+    "Picks a random line"
+    line = random.choice( alist )
+    return [ line ]
+
 def add_ranks( text ):
     """
     A convenience function that adds the rank 1: to each line that does not have a rank
@@ -308,7 +319,6 @@ def _test():
     # runs the local suite
     import doctest
     doctest.testmod( optionflags=doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE )
-
 
 if __name__ == '__main__':
     _test()

@@ -310,7 +310,7 @@ class Model(object):
             self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
             self.parser.RULE_SETVALUE( self.parser.after, node, value, None)    
     
-    def iterate( self, steps, **kwds ):
+    def iterate( self, steps, shuffler=util.default_shuffler, **kwds ):
         """
         Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
         """
@@ -318,9 +318,8 @@ class Model(object):
             self.RULE_START_ITERATION( index, self )
             self.update_states()
             for lines in self.body:
-                # randomize in async mode
-                if not self.parser.sync_mode:
-                    random.shuffle( lines )
+                # shuffle lines
+                lines = shuffler( lines )
                 map( self.local_parse, lines ) 
 
     def detect_cycles(self):
@@ -379,13 +378,13 @@ if __name__ == '__main__':
     1: D* = B and C
     """
 
-    model = Model( mode='sync', text=text )
+    model = Model( mode='async', text=text )
 
     model.initialize( )
 
-    model.iterate( steps=9 )
+    model.iterate( steps=10, shuffler=util.random_pick)
     
-    for state in model.states:
+    for state in model.states[:10]:
         print state
     
     model.report_cycles()
