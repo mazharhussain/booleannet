@@ -382,7 +382,8 @@ if __name__ == '__main__':
 
     model.initialize( )
 
-    model.iterate( steps=10, shuffler=util.random_pick)
+    shuffler = lambda x: []
+    model.iterate( steps=10, shuffler=shuffler)
     
     for state in model.states[:10]:
         print state
