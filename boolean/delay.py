@@ -61,10 +61,8 @@ class DelayShuffler(object):
 
     def shuffler(self, *args, **kwds):
         "Returns the next line"
-        while 1:
-            value = self.next()
-            if len(value)>1:
-                return value[1:]
+        value = self.next()            
+        return value[1:]
 
 def delay_shuffler( fname ):
     pass    
@@ -72,17 +70,17 @@ def delay_shuffler( fname ):
 if __name__ == '__main__':
 
     text = """
-    A = True
-    B = C = D = True
+    A = Random
+    B = Random
+    C = Random
 
-    1: A* = A
-    1: B* = A or C
-    1: C* = A and not D
-    1: D* = B and C
+    1: A* = B
+    1: B* = A and not C
+    1: C* = B
     """
 
     delay = DelayShuffler( text=text, dname='delay-test.txt' )
     
     for i in range(20):
-        print delay.shuffler() 
+        print delay.next() 
 
