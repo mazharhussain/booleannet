@@ -3,10 +3,12 @@ import sys, random
 #
 # handy shortcuts
 #
-true  = lambda x: x
-strip = lambda x: x.strip()
-upper = lambda x: x.upper()
-join  = lambda x: ' '.join(map(str, x))
+true   = lambda x: True
+false  = lambda x: False
+itself = lambda x: x
+strip  = lambda x: x.strip()
+upper  = lambda x: x.upper()
+join   = lambda x: ' '.join(map(str, x))
 
 def error(msg):
     "Prints an error message and stops"
@@ -43,12 +45,12 @@ def split( text ):
     """
     Strips lines and returns nonempty lines
     """
-    return filter(true, map(strip, text.splitlines()))
+    return filter(itself, map(strip, text.splitlines()))
 
-def default_shuffler( alist ):
+def default_shuffler( lines ):
     "Default shuffler"
-    temp = alist[:]
-    random.shuffle( temp )
+    temp = lines[:]
+    random.shuffle( lines )
     return temp
 
 def test():

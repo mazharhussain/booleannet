@@ -2,16 +2,20 @@
 Grammar file for a boolean parser based on PLY
 """
 import random, time, sys
-import tokenizer, util
+import tokenizer, util, state
 from ply import yacc
 from itertools import *
 
-PLDE, SYNC, ASYNC, TIME = 'plde sync async time'.split()
+# a list of all valid modes
+PLDE, SYNC, ASYNC, RANK, TIME = 'plde sync async rank time'.split()
 
-MODES = [ PLDE, SYNC, ASYNC, TIME ] 
+# valid modes of operation
+VALID_MODES = [ PLDE, SYNC, ASYNC, RANK, TIME ] 
 
+# the labels will be set to 1 for these
+NOLABEL_MODE = [ PLDE, SYNC, ASYNC] 
 
-# this is used to allow better error reporting (not thread safe)
+# will contain the last parsed line,  used to improve error reporting
 LAST_LINE = ''
 
 tokens = tokenizer.Lexer.tokens
@@ -22,19 +26,20 @@ precedence = (
     ('right', 'NOT'),
 )
 
+# YACC style grammar rules below
 
 def p_stmt_init(p):
     'stmt : ID EQUAL stmt '    
 
     # this will only be executed during initialization
-    p.parser.RULE_SETVALUE( p.parser.before, p[1], p[3], p)
-    p.parser.RULE_SETVALUE( p.parser.after , p[1], p[3], p)       
+    p.parser.RULE_SETVALUE( p.parser.old, p[1], p[3], p)
+    p.parser.RULE_SETVALUE( p.parser.new , p[1], p[3], p)       
     p[0] = p[3]
 
 def p_stmt_assign(p):
-    'stmt : RANK ID ASSIGN "=" stmt '
-    p.parser.RULE_SETVALUE( p.parser.after, p[2], p[5], p)    
-    p[0] = p[5]
+    'stmt : ID ASSIGN EQUAL stmt '
+    p.parser.RULE_SETVALUE( p.parser.new, p[1], p[4], p)    
+    p[0] = p[4]
 
 def p_stmt_expression(p):
     'stmt : expression'    
@@ -42,7 +47,12 @@ def p_stmt_expression(p):
  
 def p_expression_id(p):
     "expression : ID"
-    p[0] = p.parser.RULE_GETVALUE( p.parser.before, p[1], p)
+
+    # this is the only distinction bewtween synchronous and asynchronous updating
+    if p.parser.sync:
+        p[0] = p.parser.RULE_GETVALUE( p.parser.old, p[1], p)
+    else:                        
+        p[0] = p.parser.RULE_GETVALUE( p.parser.new, p[1], p)
 
 def p_expression_state(p):
     "expression : STATE"
@@ -84,7 +94,16 @@ def p_expression_not(p):
     "expression : NOT expression "
     p[0] = p.parser.RULE_NOT( p[2], p )
 
+def p_label_init(p):
+    'stmt : LABEL '    
+
+    # this is for silencing unused token warnings, 
+    # labels are not used in the grammar
+    util.error('invalid construct')
+
 def p_error(p):
+    if hasattr(p, 'value'):
+        util.warn( 'at %s' % p.value )
     msg = "Syntax error in -> '%s'" % LAST_LINE
     util.error( msg )
 
@@ -94,9 +113,19 @@ class Parser(object):
         """
         Main parser baseclass for all models
         """
-       
+
+        # check the validity of modes
+        if mode not in VALID_MODES:
+            util.error( 'mode parameter must be one of %s' % VALID_MODES)
+
         # initialize the parsers
         self.parser = yacc.yacc( write_tables=0, debug=0 )
+        
+        # set the mode
+        self.parser.mode  = mode
+
+        # optimization: this check is used very often 
+        self.parser.sync =  self.parser.mode == SYNC
 
         # define default functions
         def get_value(state, name, p):
@@ -109,171 +138,150 @@ class Parser(object):
         #
         # setting the default rules
         #
-        self.RULE_AND = lambda a, b, p: a and b
-        self.RULE_OR  = lambda a, b, p: a or b
-        self.RULE_NOT = lambda a, p: not a
-        self.RULE_SETVALUE = set_value
-        self.RULE_GETVALUE = get_value
-        self.RULE_START_ITERATION = lambda index, model: index
+        self.parser.RULE_AND = lambda a, b, p: a and b
+        self.parser.RULE_OR  = lambda a, b, p: a or b
+        self.parser.RULE_NOT = lambda a, p: not a
+        self.parser.RULE_SETVALUE = set_value
+        self.parser.RULE_GETVALUE = get_value
+        self.parser.RULE_START_ITERATION = lambda index, model: index
 
-    def nodes(self):
-        "Returns the nodes in the model"
-        return self.all_nodes
+        #
+        # internally we'll maintain a full list of tokens 
+        #
+        self.tokens = tokenizer.tokenize( text )
+        self.init_tokens   = tokenizer.init_tokens( self.tokens )
+        self.update_tokens = tokenizer.update_tokens( self.tokens )
+        self.label_tokens  = tokenizer.label_tokens( self.update_tokens ) 
+        self.async_tokens  = tokenizer.async_tokens( self.update_tokens ) 
+      
+        # finding the initial and update nodes
+        self.init_nodes   = tokenizer.get_nodes( self.init_tokens )
+        self.update_nodes = tokenizer.get_nodes( self.update_tokens )
 
-    def elapsed(self, repeat=1):
-        """
-        Helper function to benchmark performance
-        """
-        total = (time.time() - self.time_start)
-        persec = repeat/total
-        return '%1.1f runs/sec, %d iterations in %4.2f sec' % (persec, repeat, total) 
+        # find uninizitalized nodes        
+        self.uninit_nodes = self.update_nodes - self.init_nodes
 
-    def init_engine(self ):
-        """
-        Initializes the parser
-        """
+        # populate the initializer lines
+        self.init_lines = map( tokenizer.tok2line, self.init_tokens )
+
+        # populate the body by the ranks            
+        labelmap = {} 
+        for tokens in self.async_tokens:
+            labelmap.setdefault( 1, []).append( tokens )            
+
+        # overwrite the label token's value in nolabel modes
+        if self.parser.mode in NOLABEL_MODE:
+            for token in self.label_tokens:
+                token[0].value = 1
         
-        # create the lexer
-        tok = tokenizer.Lexer()
-        tok.build()
+        # for all PLDE, SYNC and ASYNC modes all ranks will be set to 1
+        for tokens in self.label_tokens:
+            rank  = tokens[0].value
+            short = tokens[1:]
+            labelmap.setdefault( rank, []).append( short )            
         
-        self.lexer = tok.lexer
+        # will iterate over the ranks in order
+        self.ranks = list(sorted(labelmap.keys()))
+
+        # build another parseable text, as lines stored for rank keys
+        # by shuffling, sorting or reorganizing this body we can
+        # implement various updating rule selection strategies
+        self.update_lines = {}
+        for key, values in labelmap.items():
+            self.update_lines.setdefault(key, []).extend( map(tokenizer.tok2line, values))
+
+class Model(Parser):
+    """
+    Maintains the functionality for all models
+    """
+
+    def initialize(self, missing=None, defaults={} ):
+        """
+        Initializes the model, needs to be called to reset the simulation 
+        """
+
+        # create a new lexer                
+        self.lexer = tokenizer.Lexer().lexer
         
-        # build the parser
-        self.parser.sync_mode = ( self.mode == 'sync' )
-        self.parser.plde_mode = ( self.mode == 'plde' )
-        
-        # this will store the parser states 
-        # some objects must also be referenced by the parser class
-        # so that to be visible during parsing
-        self.first  = self.start  = self.parser.before = State() # backward compatibility
-        self.states = self.parser.states = [ self.parser.before ]
-        self.parser.after  = State()
-
-        # this allows rules to be redefined by the time the engine initializes
-        self.parser.RULE_AND = self.RULE_AND 
-        self.parser.RULE_OR  = self.RULE_OR
-        self.parser.RULE_NOT = self.RULE_NOT 
-        self.parser.RULE_SETVALUE = self.RULE_SETVALUE
-        self.parser.RULE_GETVALUE = self.RULE_GETVALUE
-        self.lazy_data = {}
-
-    def update_states(self ):       
-        """
-        Keeps track of the states
-        """
-        p = self.parser       
-        p.before = p.after
-        p.after  = p.after.copy()                     
-        p.states.append( p.after )
-
-    def save_states(self, fname='states.txt'):
-        """
-        Saves the states into a file
-        """
-        if self.states:
-            fp = open(fname, 'wt')
-            first = self.states[0]
-            hdrs = util.join ( first.keys() )
-            fp.write( hdrs )
-            for state in self.states:
-                line = util.join( state.values() )
-                fp.write( line )
-            fp.close()
+        if self.parser.mode == SYNC:
+            # these two states are only needed for SYNC mode
+            self.parser.old = state.State()
+            self.parser.new = state.State()
         else:
-            log( 'no states have been created yet' )
-    
-    def local_parse(self, line):
-        """
-        Passing around the last line for debugging
-        """
-        # suboptimal but it works...
+            # in all other modes the states reflect the change immediately
+            self.parser.old = self.parser.new  = state.State()
+
+        # references must be attached to the parser class 
+        # to be visible during parsing
+        self.states = self.parser.states = [ self.parser.old ]
+
+        # parser the initial data
+        map( self.local_parse, self.init_lines )
+
+        # deal with uninitialized nodes
+        if self.uninit_nodes:
+            if missing:
+                for node in self.uninit_nodes:
+                    value = missing( node )
+                    self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
+                    self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
+            else:
+                util.error( 'uninitialized nodes: %s' % list(self.uninit_nodes))
+
+    @property
+    def first(self):
+        return self.states[0]
+
+    @property
+    def last(self):
+        return self.states[-1]
+
+    def __update(self):       
+        """Internal update function"""
+        p = self.parser       
+        p.old = p.new
+        p.new = p.new.copy()                     
+        p.states.append( p.old )
+
+    def local_parse( self, line ):
+        "Used like such only to keep track of the last parsed line"
         global LAST_LINE
         LAST_LINE = line
         return self.parser.parse( line )
 
-    @property
-    def last(self):
-        """
-        Returns the last element
-        """
-        assert self.states, 'States are empty'
-        return self.states[-1]
-
-    @property
-    def data(self):
-        """
-        Allows access to states via a dictionary keyed by the nodes
-        """
-        # this is an expensive operation so it loads lazily
-        assert self.states, 'States are empty'
-        if not self.lazy_data:
-            nodes = self.start.keys()
-            for state in self.states:
-                for node in nodes:
-                    self.lazy_data.setdefault( node, []).append( state[node] )
-        return self.lazy_data
-
-    def initialize( self, missing=None, defaults={},  ):
-        """
-        Initializes the parser. 
-        """
-        
-        # initializes the engine
-        self.init_engine()
-
-        # parser the ules
-        map( self.local_parse, self.init_lines )
-
-        # deal with unintialized variables
-        if missing:
-            for node in self.missing_nodes:
-                value = missing( node )
-
-                # this allow one to use other randomizers
-                if self.parser.plde_mode and ( type(value) != tuple ):
-                    value = truth_to_tuple(value)
-                
-                if not self.parser.plde_mode and ( type(value) == tuple ):
-                    value = tuple_to_truth(value)
-
-                self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
-                self.parser.RULE_SETVALUE( self.parser.after, node, value, None)
-
-        else:
-            if self.missing_nodes:
-                util.error('Not initialized nodes %s' % ', '.join(self.missing_nodes) )
-
-        # final override
-        for node, value in defaults.items():
-            self.parser.RULE_SETVALUE( self.parser.before, node, value, None)
-            self.parser.RULE_SETVALUE( self.parser.after, node, value, None)    
-    
     def iterate( self, steps, shuffler=util.default_shuffler, **kwds ):
         """
         Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
         """
         for index in xrange(steps):
-            self.RULE_START_ITERATION( index, self )
-            self.update_states()
-            for lines in self.body:
-                # shuffle lines
+            self.parser.RULE_START_ITERATION( index, self )
+            self.__update()
+            for rank in self.ranks:
+                lines = self.update_lines[rank]
                 lines = shuffler( lines )
                 map( self.local_parse, lines ) 
-    
+
 if __name__ == '__main__':
     
 
     text = """
     A = True
-    B = C = D = True
+    B = C = False
 
     1: B* = A or C
-    1: C* = A and not D
-    1: D* = B and C
+    2: C* = A and not D
+    3: D* = B and C
     """
 
-    p = Parser( mode='async', text=text )
+    model = Model( mode='sync', text=text )
+
+    model.initialize( missing=util.true )
+    
+    print model.first
+    model.iterate( steps=10 )
+    
+    for state in model.states:
+        print state
 
     '''
     model.initialize( )

@@ -13,7 +13,7 @@ class Lexer:
     literals = '=*,' 
 
     tokens = (
-        'RANK', 'ID','STATE', 'ASSIGN', 'EQUAL',
+        'LABEL', 'ID','STATE', 'ASSIGN', 'EQUAL',
         'AND', 'OR', 'NOT', 
         'NUMBER', 'LPAREN','RPAREN', 'COMMA'
     )
@@ -38,8 +38,9 @@ class Lexer:
         t.type = self.reserved.get( t.value, 'ID')    
         return t
 
-    def t_RANK (self, t):
+    def t_LABEL (self, t):
         "[0-9][0-9]*:"
+        t.value = int(t.value[:-1])
         return t
    
     def t_NUMBER(self, t):
@@ -94,23 +95,33 @@ def init_tokens( tokenlist ):
         return elem[1].type == 'EQUAL'
     return filter( cond, tokenlist)
 
-def rank_tokens( tokenlist ):
+def label_tokens( tokenlist ):
     """
-    Returns elements where the first token is RANK
+    Returns elements where the first token is a LABEL
+    (updating rules with labels)
     """
     def cond( elem ):
-        return elem[0].type == 'RANK'
+        return elem[0].type == 'LABEL'
     return filter( cond, tokenlist)
 
-def assign_tokens( tokenlist ):
+def async_tokens( tokenlist ):
     """
     Returns elements where the second token is ASSIGN
+    (updating rules with no LABELs)
     """
     def cond( elem ):
         return elem[1].type == 'ASSIGN'
     return filter( cond, tokenlist)
 
-def all_nodes( tokenlist ):
+def update_tokens( tokenlist ):
+    """
+    Returns tokens that perform updates
+    """
+    def cond( elem ):
+        return elem[1].type == 'ASSIGN' or elem[2].type == 'ASSIGN'
+    return filter( cond, tokenlist)
+
+def get_nodes( tokenlist ):
     """
     Flattens the list of tokenlist and returns the value of all ID tokens
     """
@@ -150,13 +161,13 @@ def test():
     >>> tokens[0]
     [LexToken(ID,'A',1,0), LexToken(EQUAL,'=',1,2), LexToken(ID,'B',1,4), LexToken(EQUAL,'=',1,6), LexToken(STATE,'True',1,8)]
     >>> tokens[1]
-    [LexToken(RANK,'1:',1,0), LexToken(ID,'A',1,3), LexToken(ASSIGN,'*',1,4), LexToken(EQUAL,'=',1,6), LexToken(ID,'B',1,8)]
+    [LexToken(LABEL,1,1,0), LexToken(ID,'A',1,3), LexToken(ASSIGN,'*',1,4), LexToken(EQUAL,'=',1,6), LexToken(ID,'B',1,8)]
     >>> tokens[2]
-    [LexToken(RANK,'2:',1,0), LexToken(ID,'B',1,3), LexToken(ASSIGN,'*',1,4), LexToken(EQUAL,'=',1,6), LexToken(ID,'A',1,8), LexToken(AND,'and',1,10), LexToken(ID,'B',1,14)]
+    [LexToken(LABEL,2,1,0), LexToken(ID,'B',1,3), LexToken(ASSIGN,'*',1,4), LexToken(EQUAL,'=',1,6), LexToken(ID,'A',1,8), LexToken(AND,'and',1,10), LexToken(ID,'B',1,14)]
     >>> tokens[3]
     [LexToken(ID,'C',1,0), LexToken(ASSIGN,'*',1,1), LexToken(EQUAL,'=',1,3), LexToken(NOT,'not',1,5), LexToken(ID,'C',1,9)]
     >>>
-    >>> all_nodes( tokens )
+    >>> get_nodes( tokens )
     set(['A', 'C', 'B', 'E'])
     """
     
@@ -164,8 +175,13 @@ def test():
     import doctest
     doctest.testmod( optionflags=doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE )
 
+def tokenize( text ):
+    "A one step tokenizer"
+    lexer = Lexer()
+    return lexer.tokenize_text( text )
+
 if __name__ == '__main__':
-    #test()
+    test()
     
     lexer = Lexer()
     text = """
@@ -182,8 +198,10 @@ if __name__ == '__main__':
     """
     tokens = lexer.tokenize_text( text )
     
-    for elem in init_tokens(tokens):
+    for elem in update_tokens(tokens):
         print tok2line(elem)
         print elem
         print 
+
+    print dir( lexer.lexer )
 
