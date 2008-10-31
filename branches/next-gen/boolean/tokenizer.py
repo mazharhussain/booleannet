@@ -6,9 +6,6 @@ import sys, random
 import util
 import ply.lex as lex
 
-def error (msg):
-    raise Exception( msg)
-
 class Lexer:
     """
     Lexer for boolean rules
@@ -50,8 +47,7 @@ class Lexer:
         try:
             t.value = float(t.value)
         except ValueError:
-            print "Value too large", t.value
-            t.value = 0
+            util.error( "value too large", t.value )
         return t
 
     t_LPAREN  = r'\('
@@ -134,7 +130,7 @@ def tok2line( tokens ):
     """
     Turns a list of tokens into a line that can be parsed again
     """
-    return util.join( tokens )
+    return ' '.join( str(t.value) for t in tokens )
 
 def test():
     """
@@ -181,11 +177,13 @@ if __name__ == '__main__':
         
         C* = not C
 
+        D = Random
+
     """
     tokens = lexer.tokenize_text( text )
     
-    #for elem in tokens:
-    #    print elem
+    for elem in init_tokens(tokens):
+        print tok2line(elem)
+        print elem
+        print 
 
-    print all_nodes( tokens )
-    
