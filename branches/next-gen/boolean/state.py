@@ -21,7 +21,7 @@ class State(object):
     MAPPER, COUNTER  = {}, 0
 
     def __init__(self, **kwds ):
-        self.__dict__.update( **kwds )
+        self.__dict__.update( kwds )
     
     def __getitem__(self, key):
         return self.__dict__[key]

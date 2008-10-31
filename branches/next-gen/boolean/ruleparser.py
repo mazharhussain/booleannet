@@ -203,14 +203,9 @@ class Model(Parser):
         # create a new lexer                
         self.lexer = tokenizer.Lexer().lexer
         
-        if self.parser.mode == SYNC:
-            # these two states are only needed for SYNC mode
-            self.parser.old = state.State()
-            self.parser.new = state.State()
-        else:
-            # in all other modes the states reflect the change immediately
-            self.parser.old = self.parser.new  = state.State()
-
+        self.parser.old = state.State()
+        self.parser.new = state.State()
+       
         # references must be attached to the parser class 
         # to be visible during parsing
         self.states = self.parser.states = [ self.parser.old ]
@@ -228,6 +223,11 @@ class Model(Parser):
             else:
                 util.error( 'uninitialized nodes: %s' % list(self.uninit_nodes))
 
+        # override any initalization with defaults
+        for node, value in defaults.items():
+            self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
+            self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
+
     @property
     def first(self):
         return self.states[0]
@@ -241,7 +241,7 @@ class Model(Parser):
         p = self.parser       
         p.old = p.new
         p.new = p.new.copy()                     
-        p.states.append( p.old )
+        p.states.append( p.new )
 
     def local_parse( self, line ):
         "Used like such only to keep track of the last parsed line"
@@ -260,25 +260,24 @@ class Model(Parser):
                 lines = self.update_lines[rank]
                 lines = shuffler( lines )
                 map( self.local_parse, lines ) 
-
+        
 if __name__ == '__main__':
     
 
     text = """
     A = True
-    B = C = False
 
-    1: B* = A or C
-    2: C* = A and not D
-    3: D* = B and C
+    1: A* = not A
     """
 
     model = Model( mode='sync', text=text )
 
     model.initialize( missing=util.true )
     
-    print model.first
-    model.iterate( steps=10 )
+    print model.states
+    print '>>>', model.first
+
+    model.iterate( steps=1 )
     
     for state in model.states:
         print state

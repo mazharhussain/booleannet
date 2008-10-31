@@ -22,6 +22,8 @@ try:
 except ImportError:
     util.warn("numpy not installed, see http://numpy.scipy.org/")
 
+from ruleparser import Model
+
 def test():
     pass
 
