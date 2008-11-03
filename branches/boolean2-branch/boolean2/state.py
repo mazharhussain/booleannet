@@ -1,11 +1,6 @@
 """
 Classes to represent state of the simulation
-
-Also may be used to generate initial states
 """
-
-# helps generate a user friendly ID to each state
-
 
 class State(object):
     """
@@ -16,7 +11,7 @@ class State(object):
     >>> state
     State: a=1, b=0, c=1
     >>> state.fp()
-    'S1'
+    0
     >>> state.bin()
     '101'
     """
@@ -66,8 +61,8 @@ class State(object):
         value = hash( str(self) )
         
         if value not in State.MAPPER:
+            State.MAPPER[value] = State.COUNTER
             State.COUNTER += 1
-            State.MAPPER[value] = 'S%d' % State.COUNTER
 
         return State.MAPPER[value]
     
@@ -76,21 +71,14 @@ class State(object):
         values = map(str, map(int, self.values()))
         return ''.join(values)
 
-CACHE = {}
 def bit2int(bits):
     """
     Returns the integer corresponding of a bit state. 
-    It only computes each bit once then stores the result to be faster
-
     """
-    global CACHE
-
-    if bits not in CACHE:
-        value = 0
-        for p, c in enumerate( reversed(bits) ):
-            value += c * 2 ** p
-        CACHE[bits] = value
-    return CACHE[bits]
+    value = 0
+    for p, c in enumerate( reversed(bits) ):
+        value += c * 2 ** p
+    return value
 
 def int2bit(x, w=20):
     """
@@ -120,6 +108,16 @@ def lookup_generator( nodes ):
     
     On each call to the lookup generator a different initial state 
     initializer will be produced
+
+    >>> nodes = "A B".split()
+    >>> funcs = lookup_generator(nodes)
+    >>>
+    >>> for data, func in funcs:
+    ...     map(func, nodes)
+    [False, False]
+    [False, True]
+    [True, False]
+    [True, True]
     """
     nodes = list(sorted(nodes))
     size  = len(nodes)
@@ -129,7 +127,7 @@ def lookup_generator( nodes ):
         store = dict( zip(nodes, bools) )
         def lookup( node ):
             return store[node]
-        yield lookup
+        yield store, lookup
         
 def test():
     """
@@ -144,6 +142,6 @@ if __name__ == '__main__':
     nodes = "A B C".split()
     gen = lookup_generator(nodes)
 
-    for f in gen:
-        print map(f, nodes)
+    for data, func in gen:
+        print map(func, nodes)
 
