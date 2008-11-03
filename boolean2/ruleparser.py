@@ -293,10 +293,12 @@ class Model(Parser):
         """
         if self.states:
             fp = open(fname, 'wt')
-            hdrs = util.join ( self.first.keys() )
+            cols = [ 'STATE' ] + self.first.keys() 
+            hdrs = util.join ( cols )
             fp.write( hdrs )
             for state in self.states:
-                line = util.join( state.values() )
+                cols = [ state.fp() ] + state.values()
+                line = util.join( cols )
                 fp.write( line )
             fp.close()
         else:
@@ -346,7 +348,7 @@ if __name__ == '__main__':
 
     model.report_cycles()
 
-    #model.save_states( fname='states.txt' )
+    model.save_states( fname='states.txt' )
 
     fprints = ['S1', 'S2', 'S1', 'S2', 'S1', 'S2']
 
