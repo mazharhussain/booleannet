@@ -15,22 +15,22 @@ class SyncTest( testbase.TestBase ):
     def test_cycle_detection( self):
         "Testing cycle detection"
         
-        model = boolean2.Model( mode='sync', text="" )
-
         fprints = [
+            [2, 2, 2, 2, 2],
             [1, 2, 3, 4, 5, 6, 7, 8, 9 ],
             [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3 ],
             [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2 ],
         ]
         
         results = [
+            (0, 1),
             (0, 0),
             (0, 4),
             (4, 6),
         ]
         
         for fp, res in zip(fprints, results):
-            curr = model.detect_cycles( fp )
+            curr = util.detect_cycles( fp )
             self.EQ( res, curr )
 
     def test_initializer( self ):
