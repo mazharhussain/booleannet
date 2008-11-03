@@ -8,7 +8,10 @@ false  = lambda x: False
 itself = lambda x: x
 strip  = lambda x: x.strip()
 upper  = lambda x: x.upper()
-join   = lambda x: ' '.join(map(str, x))
+
+def join( data, sep="\t", patt="%s\n"):
+    "Joins a list by sep and formats it via pattern"
+    return patt % sep.join( map(str, data))
 
 def error(msg):
     "Prints an error message and stops"

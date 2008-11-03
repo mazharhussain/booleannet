@@ -31,3 +31,9 @@ class TestBase( unittest.TestCase ):
 
     def setUp(self):
         self.EQ = self.assertEqual
+
+def test():
+    pass
+
+if __name__ == '__main__':
+    test()
