@@ -302,38 +302,15 @@ class Model(Parser):
         else:
             util.error( 'no states have been created yet' )
 
-    def detect_cycles(self, fprints=None):
-        """
-        Detects cycles after states have been populated.
+    def detect_cycles( self ):
+        "Detect the cycles in the current states of the model"
+        return util.detect_cycles( data=self.fp() )                
 
-        Returns a tuple where the first item is a number indicating 
-        the lenght of the cycle (it is 1 for a steady state) while 
-        the second is the index at wich the cycle occurs the first time
-
-        The fprints parameter may be used to pass other fingerprints
-        """
-        
-        # each state is characterized by its fingerprint
-        fprints = fprints or [ state.fp() for state in self.states ]
-    
-        fsize   = len(fprints)
-
-        # maximum size
-        for msize in xrange(1, fsize/2+1):
-            for index in xrange(fsize):
-                left  = fprints[index:index+msize]
-                right = fprints[index+msize:index+2*msize]
-                if left == right:
-                    return index, msize
-
-        return 0, 0
-                
-
-    def report_cycles(self, fprints=None):
+    def report_cycles(self ):
         """
         Convenience function that reports on steady states
         """
-        size, index = self.detect_cycles( fprints )
+        index, size = self.detect_cycles()
         
         if size == 0:
             print "No cycle or steady state could be detected from the %d states" % len(self.states)
@@ -341,6 +318,10 @@ class Model(Parser):
             print "Steady state starting at index %s -> %s" % (index, self.states[index] )
         else:
             print "Cycle of length %s starting at index %s" % (size, index)
+    
+    def fp(self):
+        "The models current fingerprint"
+        return [ s.fp() for s in self.states ]
 
 if __name__ == '__main__':
     
@@ -356,22 +337,22 @@ if __name__ == '__main__':
 
     model.initialize( missing=util.true )
     
-    print model.states
+    
     print '>>>', model.first
 
-    model.iterate( steps=5 )
+    model.iterate( steps=2 )
     
+    print model.fp()
+
+    model.report_cycles()
+
+    #model.save_states( fname='states.txt' )
+
+    fprints = ['S1', 'S2', 'S1', 'S2', 'S1', 'S2']
+
+    print util.detect_cycles( fprints )
+
     
-
-    model.save_states( fname='states.txt' )
-
-    fprints = [-1, 0 , 1, 2, 3, 1, 2, 3]
-    
-    print model.detect_cycles( fprints )
-
-
-    model.report_cycles( fprints )
-
 
 
     '''

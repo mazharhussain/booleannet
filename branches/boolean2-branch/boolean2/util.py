@@ -56,6 +56,27 @@ def default_shuffler( lines ):
     random.shuffle( lines )
     return temp
 
+def detect_cycles( data ):
+    """
+    Detects cycles in the data
+
+    Returns a tuple where the first item is the index at wich the cycle occurs 
+    the first time and the second number indicates the lenght of the cycle 
+    (it is 1 for a steady state)
+    """
+
+    fsize   = len(data)
+
+    # maximum size
+    for msize in xrange(1, fsize/2+1):
+        for index in xrange(fsize):
+            left  = data[index:index+msize]
+            right = data[index+msize:index+2*msize]
+            if left == right:
+                return index, msize
+
+    return 0, 0
+
 def test():
     pass
 
