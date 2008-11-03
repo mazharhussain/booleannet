@@ -88,7 +88,7 @@ def p_expression_binop(p):
     elif p[2] == 'or': 
         p[0] = p.parser.RULE_OR( p[1], p[3], p )
     else:
-        error( "unknown operator '%s'" % p[2] )   
+        util.error( "unknown operator '%s'" % p[2] )   
    
 def p_expression_not(p):
     "expression : NOT expression "
@@ -149,6 +149,9 @@ class Parser(object):
         # internally we'll maintain a full list of tokens 
         #
         self.tokens = tokenizer.tokenize( text )
+        self.nodes  = tokenizer.get_nodes( self.tokens )
+
+        # isolate various types of tokens
         self.init_tokens   = tokenizer.init_tokens( self.tokens )
         self.update_tokens = tokenizer.update_tokens( self.tokens )
         self.label_tokens  = tokenizer.label_tokens( self.update_tokens ) 
@@ -227,14 +230,33 @@ class Model(Parser):
         for node, value in defaults.items():
             self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
             self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
+        
+        # will be populated upon the first call
+        self.lazy_data = {}
 
     @property
     def first(self):
+        "Returns the first state"
         return self.states[0]
 
     @property
     def last(self):
+        "Returns the last state"
         return self.states[-1]
+
+    @property
+    def data(self):
+        """
+        Allows access to states via a dictionary keyed by the nodes
+        """
+        # this is an expensive operation so it loads lazily
+        assert self.states, 'States are empty'
+        if not self.lazy_data:
+            nodes = self.first.keys()
+            for state in self.states:
+                for node in nodes:
+                    self.lazy_data.setdefault( node, []).append( state[node] )
+        return self.lazy_data
 
     def __update(self):       
         """Internal update function"""
@@ -253,6 +275,10 @@ class Model(Parser):
         """
         Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
         """
+        
+        # needs to be reset in case the data changes
+        self.lazy_data = {}
+
         for index in xrange(steps):
             self.parser.RULE_START_ITERATION( index, self )
             self.__update()
@@ -260,7 +286,62 @@ class Model(Parser):
                 lines = self.update_lines[rank]
                 lines = shuffler( lines )
                 map( self.local_parse, lines ) 
+
+    def save_states(self, fname):
+        """
+        Saves the states into a file
+        """
+        if self.states:
+            fp = open(fname, 'wt')
+            hdrs = util.join ( self.first.keys() )
+            fp.write( hdrs )
+            for state in self.states:
+                line = util.join( state.values() )
+                fp.write( line )
+            fp.close()
+        else:
+            util.error( 'no states have been created yet' )
+
+    def detect_cycles(self, fprints=None):
+        """
+        Detects cycles after states have been populated.
+
+        Returns a tuple where the first item is a number indicating 
+        the lenght of the cycle (it is 1 for a steady state) while 
+        the second is the index at wich the cycle occurs the first time
+
+        The fprints parameter may be used to pass other fingerprints
+        """
         
+        # each state is characterized by its fingerprint
+        fprints = fprints or [ state.fp() for state in self.states ]
+    
+        fsize   = len(fprints)
+
+        # maximum size
+        for msize in xrange(1, fsize/2+1):
+            for index in xrange(fsize):
+                left  = fprints[index:index+msize]
+                right = fprints[index+msize:index+2*msize]
+                if left == right:
+                    return index, msize
+
+        return 0, 0
+                
+
+    def report_cycles(self, fprints=None):
+        """
+        Convenience function that reports on steady states
+        """
+        size, index = self.detect_cycles( fprints )
+        
+        if size == 0:
+            print "No cycle or steady state could be detected from the %d states" % len(self.states)
+        elif size==1:
+            print "Steady state starting at index %s -> %s" % (index, self.states[index] )
+        else:
+            print "Cycle of length %s starting at index %s" % (size, index)
+
 if __name__ == '__main__':
     
 
@@ -268,6 +349,7 @@ if __name__ == '__main__':
     A = True
 
     1: A* = not A
+    2: B* = not B
     """
 
     model = Model( mode='sync', text=text )
@@ -277,10 +359,20 @@ if __name__ == '__main__':
     print model.states
     print '>>>', model.first
 
-    model.iterate( steps=1 )
+    model.iterate( steps=5 )
     
-    for state in model.states:
-        print state
+    
+
+    model.save_states( fname='states.txt' )
+
+    fprints = [-1, 0 , 1, 2, 3, 1, 2, 3]
+    
+    print model.detect_cycles( fprints )
+
+
+    model.report_cycles( fprints )
+
+
 
     '''
     model.initialize( )
