@@ -1,115 +1,75 @@
+"""
+Testing the synchronous model
+"""
 import sys, unittest, string
 from random import randint, choice
 from itertools import *
 
-# import path fixup
-sys.path.append( '..' )
+import testbase
 
-import boolean
-from boolean.functional import *
-
-#
-# helper functions
-#
-def join( data, sep='\n', patt='%s'):
-    return patt % sep.join( map(str, data) )
-
-get     = lambda elem, attr: getattr(elem, attr)        
-istrue  = lambda x: x 
-isfalse = lambda x: not x 
-
-def get_states( mode, text, steps, missing=None):
-    """
-    Helper function to generate the states
-    """
-    eng  = boolean.Model( mode=mode, text=text )
-    eng.initialize( missing=missing )
-    eng.iterate( steps=steps )
-    return eng.states
+import boolean2
+from boolean2 import util
             
-class ModelTest( unittest.TestCase ):
+class SyncTest( testbase.TestBase ):
     
-    def test_plde_engine( self ):
-        "Testing PLDE (no ranks)"
-        
-        EQ = self.assertEqual
-
-        text = """
-        A = B = True
-        C = False
-        A* = A
-        B* = A and B
-        C* = not C
-        """
-        eng  = boolean.Model( mode='plde', text=text )
-        eng.initialize()
-        eng.iterate( fullt=1, steps=10 )
-        EQ( len(eng.data), 3)
-        EQ( len(eng.data['A']), 10)
-
     
     def test_initializer( self ):
-        "Testing initializer (no ranks)"
+        "Testing initializer"
         
-        EQ = self.assertEqual
-
         text = """
         A = False
-        A* = A
-        B* = A and B
-        C* = not C
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
         """
-        eng  = boolean.Model( mode='sync', text=text )
-        eng.initialize( missing= boolean.util.allfalse, defaults=dict(A=True, B=True) )
-        eng.iterate( steps=10 )
-        EQ( eng.start.A, True )
-        EQ( eng.start.B, True )
-        EQ( eng.start.C, False )
-        EQ( len(eng.states), 11)
+        model  = boolean.Model( mode='sync', text=text )
+        model.initialize( missing= util.false, defaults=dict(A=True, B=True) )
+        model.iterate( steps=10 )
+        self.EQ( model.first.A, True )
+        self.EQ( model.first.B, True )
+        self.EQ( model.first.C, False )
+        self.EQ( len(model.states), 11)
 
-    def test_model( self ):
+    def test_modeline( self ):
         "Basic operation"
         
-        EQ = self.assertEqual
-
         text = """
         A = B = True
         C = False
-        A* = A
-        B* = A and B
-        C* = not C
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
         """
-        eng  = boolean.Model( mode='sync', text=text )
-        eng.initialize()
-        eng.iterate( steps=5 )
-        
-        EQ( eng.start.A, True )
-        EQ( eng.start.B, True )
-        EQ( eng.start.C, False )
+        model  = boolean.Model( mode='sync', text=text )
+        model.initialize()
 
-        EQ( eng.last.A, True )
-        EQ( eng.last.B, True )
-        EQ( eng.last.C, True )
+        model.iterate( steps=5 )
+        
+        self.EQ( model.first.A, True )
+        self.EQ( model.first.B, True )
+        self.EQ( model.first.C, False )
+
+        self.EQ( model.last.A, True )
+        self.EQ( model.last.B, True )
+        self.EQ( model.last.C, True )
 
     def test_eninge_modes( self ):
-        "Testing engine modes (no ranks)"
-
-        EQ = self.assertEqual
+        "Testing modeline modes"
 
         text = """
         A = B = True
         C = False
-        A* = A
-        B* = A and B
-        C* = not C
+        1: A* = A
+        2: B* = A and B
+        3: C* = not C
         """
 
-        for mode in ( 'sync', 'async' ):
+        for mode in ( 'sync', 'rank' ):
             
             states = get_states(mode=mode, text=text, steps=5)
             
             for state in states:
-                EQ( state.A, True )
+                self.EQ( state.A, True )
 
             # create extractor functions
             funcs  = [ partial( get, attr=attr ) for attr in 'ABC' ]
@@ -124,18 +84,18 @@ class ModelTest( unittest.TestCase ):
             A, B, C = trues
             
             # this will only be the same if ranks are properly used!
-            EQ( len(states), 6)
-            EQ( len(A), 6)
-            EQ( len(B), 6)
-            EQ( len(C), 3)
+            self.EQ( len(states), 6)
+            self.EQ( len(A), 6)
+            self.EQ( len(B), 6)
+            self.EQ( len(C), 3)
         
-    def test_rules( self ):
-        """Testing rules (stress test, no ranks)
+    def Xtest_rules( self ):
+        """Testing rules (stress test)
         
         Generates lots of random rules and then compares the results 
-        when executed in python and with the engine
+        when executed in python and with the modeline
         """
-        EQ = self.assertEqual
+        self.EQ = self.assertself.EQual
 
         # valid nodes
         nodes  = string.uppercase[:]
@@ -157,7 +117,7 @@ class ModelTest( unittest.TestCase ):
         # (N or (J and B and M or not Z)) and not G
         #  
         # places nodes, operators and parentheses randomly (but syntactically correct)
-        # then executes the rules in python but also with the engine in synchronous 
+        # then executes the rules in python but also with the modeline in synchronous 
         # mode and compares the outputs
         # 
         for node in nodes:
@@ -190,13 +150,13 @@ class ModelTest( unittest.TestCase ):
 
         #
         # now that we have the expressions
-        # generate python and engine representations
+        # generate python and modeline representations
         #
         py_text, bool_text = [], []
         newts = [ 'n%s' % node for node in nodes ]
         for line, newt, node in zip(body, newts, nodes):
             py_text.append( '%s = %s' % (newt, line) )    
-            bool_text.append( '%s* = %s' % (node, line) )    
+            bool_text.append( '1: %s* = %s' % (node, line) )    
 
         # needs this to emulate synchronous updating
         py_text.append( join(nodes, sep=', ') + ' = ' + join( newts, sep=', ') )
@@ -218,19 +178,19 @@ class ModelTest( unittest.TestCase ):
         text = init_text + bool_text 
 
         # print text
-        # execute the code with the engine
+        # execute the code with the modeline
         states = get_states(mode='sync', text=text, steps=steps)
         last   = states[-1]
         
-        # checks all states for equality with both methods
+        # checks all states for self.EQuality with both methods
         for attr in nodes:
             oldval = locals()[attr]
             newval = getattr(last, attr )
             #print attr, oldval, newval
-            EQ( oldval, newval )
+            self.EQ( oldval, newval )
 
 def get_suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase( ModelTest )
+    suite = unittest.TestLoader().loadTestsFromTestCase( SyncTest )
     return suite
 
 if __name__ == '__main__':
