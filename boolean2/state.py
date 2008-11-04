@@ -1,6 +1,7 @@
 """
 Classes to represent state of the simulation
 """
+from itertools import *
 
 class State(object):
     """
@@ -101,7 +102,7 @@ def int2bit(x, w=20):
     bits.reverse()
     return tuple(bits)
 
-def lookup_generator( nodes ):
+def all_initial_states( nodes, limit=None ):
     """
     Returns a generator that produces functions 
     can be used to initialize states.
@@ -110,25 +111,28 @@ def lookup_generator( nodes ):
     initializer will be produced
 
     >>> nodes = "A B".split()
-    >>> funcs = lookup_generator(nodes)
+    >>> generator = all_initial_states(nodes)
     >>>
-    >>> for data, func in funcs:
+    >>> for data, func in generator:
     ...     map(func, nodes)
     [False, False]
     [False, True]
     [True, False]
     [True, True]
     """
-    nodes = list(sorted(nodes))
-    size  = len(nodes)
-    for index in xrange( 2 ** size ):
-        bits  = int2bit(index, w=size )
-        bools = map(bool, bits)
-        store = dict( zip(nodes, bools) )
-        def lookup( node ):
-            return store[node]
-        yield store, lookup
-        
+    def generator( nodes ):
+        nodes = list(sorted(nodes))
+        size  = len(nodes)
+        for index in xrange( 2 ** size ):
+            bits  = int2bit(index, w=size )
+            bools = map(bool, bits)
+            store = dict( zip(nodes, bools) )
+            def lookup( node ):
+                return store[node]
+            yield store, lookup
+    
+    return islice( generator(nodes), limit)
+    
 def test():
     """
     Main testrunnner
@@ -140,7 +144,7 @@ def test():
 if __name__ == '__main__':
     test()
     nodes = "A B C".split()
-    gen = lookup_generator(nodes)
+    gen = all_initial_states(nodes)
 
     for data, func in gen:
         print map(func, nodes)
