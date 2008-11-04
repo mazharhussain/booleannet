@@ -1,5 +1,6 @@
 import util
 import random
+
 try:
     import networkx
 except ImportError:
@@ -89,9 +90,6 @@ def test():
     trans = TransGraph( logfile='states.txt' ) 
     trans.add( model.states )
     trans.save( 'test.gml' )
-
-    for e in trans.graph.edges_iter():
-        print e
 
 if __name__ == '__main__':
     test()
