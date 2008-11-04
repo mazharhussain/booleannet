@@ -1,24 +1,39 @@
 import util
-
+import random
 try:
     import networkx
-    from networkx.readwrite import gml
 except ImportError:
     util.error( "networkx is missing, install it from https://networkx.lanl.gov/")
 
+def write_gml( graph, fname ):
+    "Custom gml exporter"
+    fp = open(fname, 'wt')
+    text = [ 'graph [', 'directed 1' ]
+
+    nodepatt = 'node [ id %(node)s label "%(node)s" graphics [ x %(x)s y %(y)s type "ellipse" ]]'
+    rnd = random.randint
+    for node in graph.nodes():
+        x, y = rnd(100,500), rnd(100, 500)
+        param = dict( node=node, x=x, y=y )
+        text.append(  nodepatt % param)
+    
+    edgepatt = 'edge [ source %s target %s  graphics [ targetArrow "delta" ]]'
+    for s, t, d in graph.edges():
+        text.append( edgepatt % (s, t))
+    
+    text.append( ']' )
+    fp.write( util.join( text, sep="\n" ) )
+    fp.close()
 
 class TransGraph(object):
-    "Represents a transition graph"
-    def __init__(self, logfile='states.txt'):
+    """
+    Represents a transition graph
+    """
+    def __init__(self, logfile):
         self.graph = networkx.XDiGraph( selfloops=True, multiedges=True )         
-        self.logfp = open( logfile, 'wt')
+        self.logfile = logfile
         self.seen = set()
         self.store = dict()
-
-    def write( self, msg, patt="# %s\n"):
-        "Writes into the logfile file"
-        self.logfp.write( patt % msg )
-        self.logfp.flush()
 
     def add(self, states):
         "Adds states to the transition"
@@ -36,15 +51,20 @@ class TransGraph(object):
                 self.graph.add_edge(head, tail)
                 self.seen.add(pair)
                 
-    def save_gml(self, fname):
+    def save(self, fname):
         "Saves the graph as gml"
-        gml.write_gml(self.graph, fname)
+        write_gml(self.graph, fname)
     
-    def save_info(self, fname):
-        "Saves the info"
-        first = self.store.keys[0]
-        nodes = first.keys()
-        
+        # writes the mapping
+        fp = open( self.logfile, 'wt')
+        first = self.store.values()[0]
+        header = [ 'state' ] + first.keys()
+        fp.write( util.join(header) )
+        for fprint, state in self.store.items():
+            line = [ fprint ]  + state.values()
+            fp.write( util.join(line) )
+        fp.close()
+
 def test():
     """
     Main testrunnner
@@ -66,10 +86,12 @@ def test():
     #for state in model.states:
     #    print state
 
-    trans = TransGraph() 
+    trans = TransGraph( logfile='states.txt' ) 
     trans.add( model.states )
-    trans.save_gml( 'test.gml' )
-    print trans.store
+    trans.save( 'test.gml' )
+
+    for e in trans.graph.edges_iter():
+        print e
 
 if __name__ == '__main__':
     test()
