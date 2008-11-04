@@ -14,7 +14,7 @@ def write_gml( graph, fname ):
     nodepatt = 'node [ id %(node)s label "%(node)s" graphics [ x %(x)s y %(y)s type "ellipse" ]]'
     rnd = random.randint
     for node in graph.nodes():
-        x, y = rnd(100,500), rnd(100, 500)
+        x, y = rnd(50,200), rnd(50, 200)
         param = dict( node=node, x=x, y=y )
         text.append(  nodepatt % param)
     
