@@ -56,6 +56,10 @@ def default_shuffler( lines ):
     random.shuffle( lines )
     return temp
 
+def random_choice( lines ):
+    "Default shuffler"
+    return [ random.choice( lines ) ]
+
 def detect_cycles( data ):
     """
     Detects cycles in the data
