@@ -8,6 +8,13 @@ CaATPase* = Ca
 Ca* = CIS and (not CaATPase)
 """
 
+import random
+
+def mypick( lines ):
+    data = [ random.choice( lines )]
+    print data
+    return data
+
 def simulation( trans ):
     "One simulation step will update the transition graph"
 
@@ -21,21 +28,21 @@ def simulation( trans ):
     # the data is the inital data, the func is the initializer
     for data, initfunc in initializer:
         model.initialize(missing=initfunc)
-        model.iterate(5)
+        model.iterate(5, shuffler=mypick)
         trans.add( model.states )
 
 def main():
     "This is the main code that runs the simulation many times"
 
     # this will hold the transition graph
-    trans = network.TransGraph( logfile='threenodes.log' )
+    trans = network.TransGraph( logfile='singlepick.log' )
 
     # will run the simulation this many times
     for num in range( 10 ):
         simulation ( trans )
 
     # saves the transition graph into a gml file
-    trans.save( 'threenodes.gml' )
+    trans.save( 'singlepick.gml' )
 
 main()
 
