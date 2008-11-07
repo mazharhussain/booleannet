@@ -98,7 +98,7 @@ def p_label_init(p):
     'stmt : LABEL '    
 
     # this is for silencing unused token warnings, 
-    # labels are not used in the grammar
+    # labels are not used in the grammar only in the tokenizing phase
     util.error('invalid construct')
 
 def p_error(p):
@@ -125,7 +125,7 @@ class Parser(object):
         self.parser.mode  = mode
 
         # optimization: this check is used very often 
-        self.parser.sync =  self.parser.mode == SYNC
+        self.parser.sync = self.parser.mode == SYNC
 
         # define default functions
         def get_value(state, name, p):
@@ -193,7 +193,7 @@ class Parser(object):
         for key, values in labelmap.items():
             self.update_lines.setdefault(key, []).extend( map(tokenizer.tok2line, values))
 
-class Model(Parser):
+class BoolModel(Parser):
     """
     Maintains the functionality for all models
     """
@@ -325,21 +325,65 @@ class Model(Parser):
         "The models current fingerprint"
         return [ s.fp() for s in self.states ]
 
+class TimeModel( BoolModel ):
+
+    def initialize(self, missing=None, defaults={} ):
+        "Initializes the TimeModel"
+        BoolModel.initialize( self, missing=missing, defaults=defaults )
+        
+        if not self.label_tokens:
+            util.error( 'this mode of operation requires time labels for rules' )
+
+        self.gcd  = util.list_gcd( self.ranks )
+        self.step = 0
+
+
+    def next(self):
+        "Generates the updates based on the next simulation step"
+        self.step += 1
+        timestep = self.step * self.gcd
+                        
+        lines = [ timestep ]
+        for rank in self.ranks:
+            if timestep % rank == 0:
+                line = self.update_lines[rank]
+                lines.append( line )                
+        
+        return lines
+
+    def shuffler(self, *args, **kwds):
+        "A shuffler that returns the current update rules"
+        value = self.next()            
+        return value[1:]
+
+    def iterate( self, steps, shuffler=None, **kwds ):
+        """
+        Iterates over the lines 'steps' times. 
+        """
+        shuffler = shuffler or self.shuffler
+        Model.iterate(steps=steps, shuffler=shuffler, **kwds)            
+        
+
 if __name__ == '__main__':
     
 
     text = """
     A = True
 
-    1: A* = not A
-    2: B* = not B
+    10:  A* = not A
+    15: B* = not B
+    20: C* = C
     """
 
-    model = Model( mode='sync', text=text )
+    model = TimeModel( mode='time', text=text )
 
     model.initialize( missing=util.true )
     
-    
+    for i in range(12):
+        print model.next()
+
+    """
+
     print '>>>', model.first
 
     model.iterate( steps=2 )
@@ -354,7 +398,7 @@ if __name__ == '__main__':
 
     print util.detect_cycles( fprints )
 
-    
+    """
 
 
     '''
