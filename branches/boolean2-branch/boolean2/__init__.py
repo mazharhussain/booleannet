@@ -28,6 +28,9 @@ def Model( mode, text):
     if mode == ruleparser.TIME:
         # within one timestep the rules are applied synchronously
         return ruleparser.TimeModel(mode='sync', text=text)
+    elif mode == ruleparser.PLDE:
+        import plde
+        return plde.PldeModel( mode='plde', text=text)
     else:
         return ruleparser.BoolModel( mode=mode, text=text )
 
