@@ -4,6 +4,7 @@ import sys, random
 # handy shortcuts
 #
 true   = lambda x: True
+randbool = lambda x: random.choice( (True, False) )
 false  = lambda x: False
 itself = lambda x: x
 strip  = lambda x: x.strip()
