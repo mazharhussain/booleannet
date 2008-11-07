@@ -81,6 +81,19 @@ def detect_cycles( data ):
 
     return 0, 0
 
+def pair_gcd(a,b):
+    """Return greatest common divisor using Euclid's Algorithm."""
+    while b:      
+        a, b = b, a % b
+    return a
+
+def list_gcd( data ):
+    "Recursive gcd calculation that applies for all elements of a list"
+    if len( data ) == 2:
+        return pair_gcd( *data )
+    else:
+        return pair_gcd( data[0], list_gcd( data[1:] ))
+
 def test():
     pass
 
