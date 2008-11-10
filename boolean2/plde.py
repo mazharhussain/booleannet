@@ -1,8 +1,17 @@
-from pylab import arange, rk4
+
+import util
 import sys, os
 from itertools import *
-import util, odict, tokenizer, helper
-import async
+
+try:
+    import pylab
+    from pylab import arange, rk4
+except ImportError:
+    util.error( "matplotlib is missing, install it from: http://matplotlib.sourceforge.net/")
+
+import ruleparser
+from ruleparser import BoolModel
+import util, odict, tokenizer
 
 def default_override( node, indexer, tokens ):
     """
@@ -21,16 +30,16 @@ def default_equation( tokens, indexer ):
     text = helper.change(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
     return text
 
-class Model( async.Model ):
+class PldeModel( BoolModel ):
     """
     This class generates python code that will be executed inside 
     the Runge-Kutta integrator.
     """
-    def __init__(self, text, mode):
+    def __init__(self, text, mode='plde'):
         
         # run the regular boolen engine for one step to detect syntax errors
-        eng = async.Model(text=text, mode='sync')
-        eng.initialize( missing=util.randomize )
+        eng = BoolModel(text=text, mode='sync')
+        eng.initialize( missing=util.randval )
         eng.iterate( steps=1 )
 
         # onto the main initialization
@@ -40,7 +49,7 @@ class Model( async.Model ):
         self.EXTRA_INIT = ''
 
         # setting up this engine
-        async.Model.__init__(self, text=text, mode=mode)
+        BoolModel.__init__(self, text=text, mode=mode)
         self.dynamic_code = '*** not yet generated ***'
         self.lazy_data = {}
     
@@ -51,7 +60,7 @@ class Model( async.Model ):
 
     def initialize(self, missing=None, defaults={} ):
         "Custom initializer"
-        async.Model.initialize( self, missing=missing, defaults=defaults )
+        BoolModel.initialize( self, missing=missing, defaults=defaults )
         
         # will also maintain the order of insertion
         self.mapper  = odict.odict() 
@@ -190,7 +199,7 @@ class Model( async.Model ):
             self.lazy_data[node] = [ row[index] for row in self.alldata ]
     
 if __name__ == '__main__':
-    stext = """
+    text = """
     #
     # this is a comment
     #
@@ -204,9 +213,9 @@ if __name__ == '__main__':
     3: C* = C
     """
 
-    engine = Model( text=stext, mode='plde' )
-    engine.initialize()
-    engine.iterate( fullt=1, steps=10 )
+    engine = PldeModel( text=text )
+    #engine.initialize()
+    #engine.iterate( fullt=1, steps=10 )
     
     #print engine.dynamic_code
 
