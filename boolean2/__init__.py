@@ -12,7 +12,7 @@ import util
 if sys.version_info[:2] < (2, 5):
     util.error("this program requires python 2.5 or higher" )
 
-import ruleparser
+import ruleparser, boolmodel, timemodel
 
 def Model( mode, text):
     "Factory function that returns the proper class based on the mode"
@@ -27,15 +27,30 @@ def Model( mode, text):
 
     if mode == ruleparser.TIME:
         # within one timestep the rules are applied synchronously
-        return ruleparser.TimeModel(mode='sync', text=text)
+        return timemodel.TimeModel(mode='time', text=text)
     elif mode == ruleparser.PLDE:
-        import plde
-        return plde.PldeModel( mode='plde', text=text)
+        import pldemodel
+        return pldemodel.PldeModel( mode='plde', text=text)
     else:
-        return ruleparser.BoolModel( mode=mode, text=text )
+        return boolmodel.BoolModel( mode=mode, text=text )
 
 def test():
-    pass
+    text = """
+    A  =  B =  C = False
+    D  = True
+    
+    5: A* = C and (not B)
+    10: B* = A
+    15: C* = D
+    20: D* = B 
+    """
+
+    model = Model( mode='time', text=text )
+    model.initialize(  )
+    model.iterate( steps=10)
+    
+    #for i in range(12):
+    #    print model.next()
 
 if __name__ == '__main__':
     test()

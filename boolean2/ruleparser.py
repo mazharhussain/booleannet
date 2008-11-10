@@ -125,7 +125,7 @@ class Parser(object):
         self.parser.mode  = mode
 
         # optimization: this check is used very often 
-        self.parser.sync = self.parser.mode == SYNC
+        self.parser.sync = (self.parser.mode == SYNC or self.parser.mode == TIME)
 
         # define default functions
         def get_value(state, name, p):
@@ -193,223 +193,21 @@ class Parser(object):
         for key, values in labelmap.items():
             self.update_lines.setdefault(key, []).extend( map(tokenizer.tok2line, values))
 
-class BoolModel(Parser):
-    """
-    Maintains the functionality for all models
-    """
-
-    def initialize(self, missing=None, defaults={} ):
-        """
-        Initializes the model, needs to be called to reset the simulation 
-        """
-
-        # create a new lexer                
-        self.lexer = tokenizer.Lexer().lexer
-        
-        self.parser.old = state.State()
-        self.parser.new = state.State()
-       
-        # references must be attached to the parser class 
-        # to be visible during parsing
-        self.states = self.parser.states = [ self.parser.old ]
-
-        # parser the initial data
-        map( self.local_parse, self.init_lines )
-
-        # deal with uninitialized nodes
-        if self.uninit_nodes:
-            if missing:
-                for node in self.uninit_nodes:
-                    value = missing( node )
-                    self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
-                    self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
-            else:
-                util.error( 'uninitialized nodes: %s' % list(self.uninit_nodes))
-
-        # override any initalization with defaults
-        for node, value in defaults.items():
-            self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
-            self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
-        
-        # will be populated upon the first call
-        self.lazy_data = {}
-
-    @property
-    def first(self):
-        "Returns the first state"
-        return self.states[0]
-
-    @property
-    def last(self):
-        "Returns the last state"
-        return self.states[-1]
-
-    @property
-    def data(self):
-        """
-        Allows access to states via a dictionary keyed by the nodes
-        """
-        # this is an expensive operation so it loads lazily
-        assert self.states, 'States are empty'
-        if not self.lazy_data:
-            nodes = self.first.keys()
-            for state in self.states:
-                for node in nodes:
-                    self.lazy_data.setdefault( node, []).append( state[node] )
-        return self.lazy_data
-
-    def __update(self):       
-        """Internal update function"""
-        p = self.parser       
-        p.old = p.new
-        p.new = p.new.copy()                     
-        p.states.append( p.new )
-
-    def local_parse( self, line ):
-        "Used like such only to keep track of the last parsed line"
-        global LAST_LINE
-        LAST_LINE = line
-        return self.parser.parse( line )
-
-    def iterate( self, steps, shuffler=util.default_shuffler, **kwds ):
-        """
-        Iterates over the lines 'steps' times. Allows other parameters for compatibility with the plde mode
-        """
-        
-        # needs to be reset in case the data changes
-        self.lazy_data = {}
-
-        for index in xrange(steps):
-            self.parser.RULE_START_ITERATION( index, self )
-            self.__update()
-            for rank in self.ranks:
-                lines = self.update_lines[rank]
-                lines = shuffler( lines )
-                map( self.local_parse, lines ) 
-
-    def save_states(self, fname):
-        """
-        Saves the states into a file
-        """
-        if self.states:
-            fp = open(fname, 'wt')
-            cols = [ 'STATE' ] + self.first.keys() 
-            hdrs = util.join ( cols )
-            fp.write( hdrs )
-            for state in self.states:
-                cols = [ state.fp() ] + state.values()
-                line = util.join( cols )
-                fp.write( line )
-            fp.close()
-        else:
-            util.error( 'no states have been created yet' )
-
-    def detect_cycles( self ):
-        "Detect the cycles in the current states of the model"
-        return util.detect_cycles( data=self.fp() )                
-
-    def report_cycles(self ):
-        """
-        Convenience function that reports on steady states
-        """
-        index, size = self.detect_cycles()
-        
-        if size == 0:
-            print "No cycle or steady state could be detected from the %d states" % len(self.states)
-        elif size==1:
-            print "Steady state starting at index %s -> %s" % (index, self.states[index] )
-        else:
-            print "Cycle of length %s starting at index %s" % (size, index)
-    
-    def fp(self):
-        "The models current fingerprint"
-        return [ s.fp() for s in self.states ]
-
-class TimeModel( BoolModel ):
-
-    def initialize(self, missing=None, defaults={} ):
-        "Initializes the TimeModel"
-        BoolModel.initialize( self, missing=missing, defaults=defaults )
-        
-        if not self.label_tokens:
-            util.error( 'this mode of operation requires time labels for rules' )
-
-        self.gcd  = util.list_gcd( self.ranks )
-        self.step = 0
-
-
-    def next(self):
-        "Generates the updates based on the next simulation step"
-        self.step += 1
-        timestep = self.step * self.gcd
-                        
-        lines = [ timestep ]
-        for rank in self.ranks:
-            if timestep % rank == 0:
-                line = self.update_lines[rank]
-                lines.append( line )                
-        
-        return lines
-
-    def shuffler(self, *args, **kwds):
-        "A shuffler that returns the current update rules"
-        value = self.next()            
-        return value[1:]
-
-    def iterate( self, steps, shuffler=None, **kwds ):
-        """
-        Iterates over the lines 'steps' times. 
-        """
-        shuffler = shuffler or self.shuffler
-        Model.iterate(steps=steps, shuffler=shuffler, **kwds)            
-        
-
-if __name__ == '__main__':
-    
+def test():
 
     text = """
-    A = True
-
-    10:  A* = not A
-    15: B* = not B
-    20: C* = C
+    A  =  B =  C = False
+    D  = True
+    
+    5: A* = C and (not B)
+    10: B* = A
+    15: C* = D
+    20: D* = B 
     """
 
-    model = TimeModel( mode='time', text=text )
+    model = Parser( mode='async', text=text )
 
-    model.initialize( missing=util.true )
+if __name__ == '__main__':
+    test()    
+
     
-    for i in range(12):
-        print model.next()
-
-    """
-
-    print '>>>', model.first
-
-    model.iterate( steps=2 )
-    
-    print model.fp()
-
-    model.report_cycles()
-
-    model.save_states( fname='states.txt' )
-
-    fprints = ['S1', 'S2', 'S1', 'S2', 'S1', 'S2']
-
-    print util.detect_cycles( fprints )
-
-    """
-
-
-    '''
-    model.initialize( )
-
-    shuffler = lambda x: []
-    model.iterate( steps=10, shuffler=shuffler)
-    
-    for state in model.states[:10]:
-        print state
-    
-    model.report_cycles()
-    print model.fp()
-    '''          
