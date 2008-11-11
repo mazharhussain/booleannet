@@ -3,10 +3,34 @@ import random
 
 try:
     import networkx
+    from networkx import component
 except ImportError:
     util.error( "networkx is missing, install it from https://networkx.lanl.gov/")
 
+def component_colormap(graph):
+    
+    # automatically color by components
+
+    # a list of colors in hexadecimal Red/Gree/Blue notation
+    colors = [ '#FF0000', '#00FF00', '#0000FF', '#ACDE00', '#F0F0F0' ]
+    
+    # find the strongly connected components
+    components = component.strongly_connected_components( graph )
+    
+    # make sure we have as many colors as components
+    if len(colors) < len(components):
+        util.warn( 'there are more components than colors!' )
+
+    # create the colormap
+    colormap = {}
+    for color, comp in  zip(colors, components):
+        for node in comp:
+            colormap[node] = color
+    return colormap
+
 def write_gml( graph, fname, colormap={} ):
+
+    
     "Custom gml exporter"
     fp = open(fname, 'wt')
     text = [ 'graph [', 'directed 1' ]
