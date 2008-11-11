@@ -21,12 +21,12 @@ def simulation( ):
     model = boolean2.Model( text='timemodel.txt', mode='time')
 
     
-    # here we generates all initial states
+    # here we generate all initial states
     #
     # IMPORTANT: Only uninitialized nodes will get new values,
     # to keep a node the same in all iterations initialize it in the rules
     #
-    # when the limit parameter is a number it will takes the first that 
+    # when the limit parameter is a number it will take the first that 
     # many initial values, leave it to None to use all initial values
     initializer = state.all_initial_states( model.nodes, limit=None )
 
@@ -36,7 +36,6 @@ def simulation( ):
         model.initialize( missing=initfunc )
         model.iterate( 12 )
         trans.add( model.states )
-
    
     # if you need to access the networkx graph for further processing
     # us the graph attribute of the trans object
