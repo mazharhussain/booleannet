@@ -28,7 +28,7 @@ def simulation( trans ):
     # the data is the inital data, the func is the initializer
     for data, initfunc in initializer:
         model.initialize(missing=initfunc)
-        model.iterate(5, shuffler=mypick)
+        model.iterate(15, shuffler=mypick)
         trans.add( model.states )
 
 def main():
@@ -41,8 +41,11 @@ def main():
     for num in range( 30 ):
         simulation ( trans )
 
+    # generate the colormap based on components
+    colormap = network.component_colormap( trans.graph )
+
     # saves the transition graph into a gml file
-    trans.save( 'singlepick.gml' )
+    trans.save( 'singlepick.gml', colormap=colormap )
 
 main()
 
