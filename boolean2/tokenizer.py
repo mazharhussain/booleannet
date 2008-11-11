@@ -15,7 +15,7 @@ class Lexer:
     tokens = (
         'LABEL', 'ID','STATE', 'ASSIGN', 'EQUAL',
         'AND', 'OR', 'NOT', 
-        'NUMBER', 'LPAREN','RPAREN', 'COMMA'
+        'NUMBER', 'LPAREN','RPAREN', 'COMMA',
     )
 
     reserved = { 
@@ -58,7 +58,7 @@ class Lexer:
     t_COMMA   = r','
 
     t_ignore  = ' \t'
-    t_ignore_COMMENT = r'\#.*'
+    #t_ignore_COMMENT = r'\#.*'
 
     def t_newline(self, t):
         "Newline handling"
@@ -154,6 +154,7 @@ def test():
     ... 2: B* = A and B
     ... C* = not C
     ... E = False
+    ... F = (1, 2, 3)
     ... '''
     >>>
     >>> lexer  = Lexer()
@@ -168,7 +169,7 @@ def test():
     [LexToken(ID,'C',1,0), LexToken(ASSIGN,'*',1,1), LexToken(EQUAL,'=',1,3), LexToken(NOT,'not',1,5), LexToken(ID,'C',1,9)]
     >>>
     >>> get_nodes( tokens )
-    set(['A', 'C', 'B', 'E'])
+    set(['A', 'C', 'B', 'E', 'F'])
     """
     
     # runs the local suite
@@ -193,12 +194,12 @@ if __name__ == '__main__':
         
         C* = not C
 
-        D = Random
+        D = (1,2,3)
 
     """
     tokens = lexer.tokenize_text( text )
     
-    for elem in update_tokens(tokens):
+    for elem in init_tokens(tokens):
         print tok2line(elem)
         print elem
         print 

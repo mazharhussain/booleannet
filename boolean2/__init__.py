@@ -25,10 +25,12 @@ def Model( mode, text):
     if mode not in ruleparser.VALID_MODES:
         util.error( 'mode parameter must be one of %s' % VALID_MODES)
 
+    # setup mode of operation
     if mode == ruleparser.TIME:
-        # within one timestep the rules are applied synchronously
         return timemodel.TimeModel(mode='time', text=text)
     elif mode == ruleparser.PLDE:
+        # matplotlib may not be installed 
+        # so defer import to allow other modes to be used
         import pldemodel
         return pldemodel.PldeModel( mode='plde', text=text)
     else:
