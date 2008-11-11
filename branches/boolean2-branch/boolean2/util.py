@@ -3,10 +3,11 @@ import sys, random
 #
 # handy shortcuts
 #
-true   = lambda x: True
+true     = lambda x: True
 randbool = lambda x: random.choice( (True, False) )
-false  = lambda x: False
-itself = lambda x: x
+false    = lambda x: False
+truth    = lambda x: x
+notcomment = lambda x: x and not x.startswith('#')
 strip  = lambda x: x.strip()
 upper  = lambda x: x.upper()
 
@@ -49,7 +50,7 @@ def split( text ):
     """
     Strips lines and returns nonempty lines
     """
-    return filter(itself, map(strip, text.splitlines()))
+    return filter(notcomment, map(strip, text.splitlines()))
 
 def default_shuffler( lines ):
     "Default shuffler"
@@ -94,6 +95,46 @@ def list_gcd( data ):
         return pair_gcd( *data )
     else:
         return pair_gcd( data[0], list_gcd( data[1:] ))
+
+def modify_states( text, turnon=[], turnoff=[] ):
+    """
+    Turns nodes on and off and comments out lines 
+    that contain assignment to any of the nodes 
+    
+    Will use the main lexer.
+    """
+    text    = add_ranks( text )        
+    turnon  = as_set( turnon )
+    turnoff = as_set( turnoff )
+    tokens = tokenize( text )
+    init_tokens = filter( lambda x: x[0].type == 'ID', tokens )
+    body_tokens = filter( lambda x: x[0].type == 'RANK', tokens )
+    init_lines  = map( tokenizer.tok2line, init_tokens )
+    
+    # append to the states to override other settings
+    init_lines.extend( [ '%s=False' % node for node in turnoff ] )
+    init_lines.extend( [ '%s=True' % node for node in turnon ] )
+    
+    common = list( turnon & turnoff )
+    if common:
+        error( "Nodes %s are turned both on and off" % ', '.join(common) )
+
+    nodes = turnon | turnoff
+
+    body_lines = []
+    for tokens in body_tokens:
+        
+        # a sanity check
+        values = [ t.value for t in tokens ]
+        body_line = ' '.join( map(str, values ))
+        assert len(tokens) > 4, 'Invalid line -> %s' % body_line
+        
+        # comment out certain nodes 
+        if tokens[1].value in nodes:
+            body_line = '#' + body_line
+        body_lines.append( body_line )
+
+    return '\n'.join( init_lines + body_lines )
 
 def test():
     pass

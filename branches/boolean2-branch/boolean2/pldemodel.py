@@ -9,9 +9,8 @@ try:
 except ImportError:
     util.error( "matplotlib is missing, install it from: http://matplotlib.sourceforge.net/")
 
-import ruleparser
-from ruleparser import BoolModel
-import util, odict, tokenizer
+from boolmodel import BoolModel
+import util, odict, tokenizer, pldeutil
 
 def default_override( node, indexer, tokens ):
     """
@@ -27,7 +26,7 @@ def default_equation( tokens, indexer ):
     other equations without explicit overrides
     """
     node = tokens[1].value
-    text = helper.change(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
+    text = pldeutil.change(node, indexer) + ' = ' + pldeutil.piecewise(tokens, indexer)
     return text
 
 class PldeModel( BoolModel ):
@@ -39,11 +38,11 @@ class PldeModel( BoolModel ):
         
         # run the regular boolen engine for one step to detect syntax errors
         eng = BoolModel(text=text, mode='sync')
-        eng.initialize( missing=util.randval )
+        eng.initialize( missing=util.randbool )
         eng.iterate( steps=1 )
 
         # onto the main initialization
-        self.INIT_LINE  = helper.init_line
+        self.INIT_LINE  = pldeutil.init_line
         self.OVERRIDE   = default_override
         self.DEFAULT_EQUATION = default_equation
         self.EXTRA_INIT = ''
@@ -67,10 +66,10 @@ class PldeModel( BoolModel ):
         self.indexer = {}
         
         # this will maintain the order of nodes
-        self.nodes = list(self.all_nodes)
+        self.nodes = list(self.nodes)
         self.nodes.sort()
         for index, node in enumerate(self.nodes):
-            triplet = self.start[node]
+            triplet = self.first[node]
             self.mapper [node] = ( index, node, triplet )
             self.indexer[node] = index
         
@@ -138,7 +137,7 @@ class PldeModel( BoolModel ):
          
         body.append( '    %s = x' % assign )
         body.append( '    %s = %s' % (retvals, zeros) )
-        for tokens in self.rank_tokens:
+        for tokens in self.update_tokens:
             equation = self.create_equation( tokens )
             equation = [ sep + e for e in equation ]
             body.append( '\n'.join( equation)  )
@@ -212,15 +211,14 @@ if __name__ == '__main__':
     2: B* = A and B
     3: C* = C
     """
-
-    engine = PldeModel( text=text )
-    #engine.initialize()
-    #engine.iterate( fullt=1, steps=10 )
     
-    #print engine.dynamic_code
+    model = PldeModel( text=text )
+    model.initialize()
+    model.iterate( fullt=1, steps=10 )
+    
+    print model.dynamic_code
 
-    '''
+    
     from pylab import *
     plot( engine.alldata ,'o-' )
     show()
-    '''

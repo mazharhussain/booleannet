@@ -3,7 +3,7 @@ Bordetella Bronchiseptica  simulation
 
 """
 
-from boolean import Engine, helper, util
+from boolean2 import Model, pldeutil, util
 
 
 # the overrides.py module contains all node overrides
@@ -18,10 +18,10 @@ STEPS = FULLT*50
 #
 
 # parameters for concentration, decay and treshold for various nodes
-CONC_PARAMS = helper.read_parameters( 'Bb-concentration.csv' )
+CONC_PARAMS = pldeutil.read_parameters( 'Bb-concentration.csv' )
 
 # parameters for compartment ratios and fluctuations
-COMP_PARAMS = helper.read_parameters( 'Bb-compartmental.csv' )
+COMP_PARAMS = pldeutil.read_parameters( 'Bb-compartmental.csv' )
 
 # use data from the sixth row (it is zero based counting!) in the file
 CONC = CONC_PARAMS[5]
@@ -34,7 +34,7 @@ def local_override( node, indexer, tokens ):
 #
 # there will be two engines, one for WT and the other for a BC knockout
 #
-wt_text = util.read('Bb.txt')
+wt_text = file('Bb.txt').read()
 bc_text = util.modify_states( text=wt_text, turnoff= [ "BC"  ] )
 
 engine1 = Engine( text=wt_text, mode='plde' )
