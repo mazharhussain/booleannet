@@ -7,12 +7,20 @@ try:
 except ImportError:
     util.error( "networkx is missing, install it from https://networkx.lanl.gov/")
 
+# color constants
+BLUE, RED, GREEN = "#0000DD", "#DD0000", "#00DD00"
+WHITE, PURPLE, ORANGE = "#FFFFFF", "#990066", "#FF3300"
+TEAL, CRIMSON, GOLD, NAVY, SIENNA = "#009999", "#DC143C",  "#FFD700", "#000080", "#A0522D"
+LIGHT_GREEN, SPRING_GREEN, YELLOW_GREEN = "#33FF00", "#00FF7F", "#9ACD32"
+
 def component_colormap(graph):
-    
+    """
+    Colormap by strong compoments
+    """
     # automatically color by components
 
     # a list of colors in hexadecimal Red/Gree/Blue notation
-    colors = [ '#FF0000', '#00FF00', '#0000FF', '#ACDE00', '#F0F0F0' ]
+    colors = [ ORANGE, SPRING_GREEN, GOLD, TEAL, ORANGE, TEAL, CRIMSON, BLUE, PURPLE, NAVY, SIENNA ]
     
     # find the strongly connected components
     components = component.strongly_connected_components( graph )
@@ -127,11 +135,8 @@ def test():
     trans = TransGraph( logfile='states.txt' ) 
     trans.add( model.states )
 
-    RED   = '#FF00000'
-    GREEN = '#00FF00'
-    BLUE  = '#0000FF'
-    
-    colormap = {'1':RED, '2':GREEN, '3':BLUE}
+    # generate the colormap based on components
+    colormap = component_colormap( trans.graph )
 
     trans.save( fname='test.gml', colormap=colormap )
 
