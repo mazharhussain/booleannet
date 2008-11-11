@@ -7,6 +7,7 @@
 
 import boolean2
 from boolean2 import state, network
+from networkx import component
 
 def simulation( ):
 
@@ -36,9 +37,31 @@ def simulation( ):
         model.iterate( 12 )
         trans.add( model.states )
 
-    # saves the transition graph into a gml file
-    trans.save( 'timemodel.gml' )
+   
+    # if you need to access the networkx graph for further processing
+    # us the graph attribute of the trans object
+    
+    # a list of colors in hexadecimal Red/Gree/Blue notation
+    colors = [ '#FF0000', '#00FF00', '#0000FF', '#ACDE00', '#F0F0F0' ]
+    
+    # find the strongly connected components
+    components = component.strongly_connected_components( trans.graph)
 
+    # make sure we have as many colors as components
+    if len(colors) < len(components):
+        print 'NOTE: there are more components than colors!'
+    
+    # need to set up a colormap, a dictionary that contains a node -> color
+    # or edge -> color values
+    colormap = {}
+    for color, comp in  zip(colors, components):
+        print 'setting color %s for component %s' % (color, comp)
+        for node in comp:
+            colormap[node] = color
+
+    # saves the transition graph into a gml file, 
+    # leave off the colormap if nodes or edges do not need to be colored
+    trans.save( fname='timemodel.gml', colormap=colormap )
 
 # this runs the simulation
 if __name__ == '__main__':
