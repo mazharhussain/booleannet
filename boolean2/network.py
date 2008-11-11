@@ -6,21 +6,25 @@ try:
 except ImportError:
     util.error( "networkx is missing, install it from https://networkx.lanl.gov/")
 
-def write_gml( graph, fname ):
+def write_gml( graph, fname, colormap={} ):
     "Custom gml exporter"
     fp = open(fname, 'wt')
     text = [ 'graph [', 'directed 1' ]
 
-    nodepatt = 'node [ id %(node)s label "%(node)s" graphics [ w 40 h 30 x %(x)s y %(y)s type "ellipse" ]]'
+    nodepatt = 'node [ id %(node)s label "%(node)s" graphics [ fill	"%(color)s" w 40 h 30 x %(x)s y %(y)s type "ellipse" ]]'
     rnd = random.randint
     for node in graph.nodes():
         x, y = rnd(50,200), rnd(50, 200)
-        param = dict( node=node, x=x, y=y )
+        color = colormap.get(node, '#CCCCFF')
+        param = dict( node=node, x=x, y=y, color=color )
         text.append(  nodepatt % param)
     
-    edgepatt = 'edge [ source %s target %s  graphics [ targetArrow "delta" ]]'
-    for s, t, d in graph.edges():
-        text.append( edgepatt % (s, t))
+    edgepatt = 'edge [ source %(source)s target %(target)s  graphics [ fill	"%(color)s" targetArrow "delta" ]]'
+    for source, target, d in graph.edges():
+        pair  = (source, target)
+        color = colormap.get(pair, '#000000')
+        param = dict( source=source, target=target, color=color )
+        text.append( edgepatt % param)
     
     text.append( ']' )
     fp.write( util.join( text, sep="\n" ) )
@@ -36,6 +40,7 @@ class TransGraph(object):
         self.verbose = verbose
         self.seen = set()
         self.store = dict()
+        self.colors = dict()
 
     def add(self, states):
         "Adds states to the transition"
@@ -59,9 +64,9 @@ class TransGraph(object):
                 self.graph.add_edge(head, tail)
                 self.seen.add(pair)
         
-    def save(self, fname):
+    def save(self, fname, colormap={}):
         "Saves the graph as gml"
-        write_gml(self.graph, fname)
+        write_gml(graph=self.graph, fname=fname, colormap=colormap)
     
         self.fp.write( '*** node values ***\n' )
 
@@ -69,7 +74,8 @@ class TransGraph(object):
         first = self.store.values()[0]
         header = [ 'state' ] + first.keys()
         self.fp.write( util.join(header) )
-        for fprint, state in self.store.items():
+        
+        for fprint, state in sorted( self.store.items() ):
             line = [ fprint ]  + state.values()
             self.fp.write( util.join(line) )
 
@@ -96,7 +102,14 @@ def test():
 
     trans = TransGraph( logfile='states.txt' ) 
     trans.add( model.states )
-    trans.save( 'test.gml' )
+
+    RED   = '#FF00000'
+    GREEN = '#00FF00'
+    BLUE  = '#0000FF'
+    
+    colormap = {'1':RED, '2':GREEN, '3':BLUE}
+
+    trans.save( fname='test.gml', colormap=colormap )
 
 if __name__ == '__main__':
     test()
