@@ -1,4 +1,5 @@
-import boolean,pylab
+import pylab
+from boolean2 import Model
 
 #
 # This initial condition leads to a cycle of period 4.
@@ -15,9 +16,8 @@ B* = A or C
 C* = A and not D
 D* = B and C
 """
-from boolean import Model
 
-model = boolean.Model( text, mode='sync')
+model = Model( text=text, mode='sync')
 model.initialize()
 model.iterate( steps=15 )
 
