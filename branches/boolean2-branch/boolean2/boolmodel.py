@@ -30,6 +30,7 @@ class BoolModel(Parser):
             if missing:
                 for node in self.uninit_nodes:
                     value = missing( node )
+
                     self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
                     self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
             else:
@@ -40,6 +41,7 @@ class BoolModel(Parser):
             self.parser.RULE_SETVALUE( self.parser.old, node, value, None)
             self.parser.RULE_SETVALUE( self.parser.new, node, value, None)
         
+
         # will be populated upon the first call
         self.lazy_data = {}
 

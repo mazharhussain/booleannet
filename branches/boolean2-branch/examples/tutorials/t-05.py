@@ -15,8 +15,8 @@
 #
 #
 
-import boolean, pylab
-from boolean import util
+import boolean2, pylab
+from boolean2 import util
 
 text = """
 A = True
@@ -31,7 +31,7 @@ D* = B and C
 
 coll  = util.Collector()
 for i in range(50):
-    model = boolean.Model( text, mode='async')
+    model = boolean2.Model( text, mode='async')
     model.initialize()
     model.iterate( steps=15 ) 
 
@@ -39,7 +39,7 @@ for i in range(50):
     # in this case we take all nodes
     # one could just list a few nodes such as [ 'A', 'B', 'C' ]
     #
-    nodes = model.nodes()
+    nodes = model.nodes
 
     #
     # this collects states for each run

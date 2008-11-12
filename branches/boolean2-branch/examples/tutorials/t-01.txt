@@ -1,0 +1,9 @@
+# initial values
+
+A = B = C = True
+
+# updating rules
+
+A* = A and C
+B* = A and B
+C* = not A

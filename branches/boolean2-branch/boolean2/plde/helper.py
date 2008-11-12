@@ -14,7 +14,7 @@ except:
     pass
 """
 
-from pldedefs import *
+from defs import *
 
 def change(node, indexer):
     "Returns the change for a node"

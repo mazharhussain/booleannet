@@ -1,9 +1,11 @@
 """
 Bordetella Bronchiseptica  simulation
 
+Takes about 30 seconds to run
 """
 import boolean2
-from boolean2 import Model, pldeutil, util
+from boolean2 import Model, util 
+from boolean2.plde import helper
 
 
 # the overrides.py module contains all node overrides
@@ -18,10 +20,10 @@ STEPS = FULLT*50
 #
 
 # parameters for concentration, decay and treshold for various nodes
-CONC_PARAMS = pldeutil.read_parameters( 'Bb-concentration.csv' )
+CONC_PARAMS = helper.read_parameters( 'Bb-concentration.csv' )
 
 # parameters for compartment ratios and fluctuations
-COMP_PARAMS = pldeutil.read_parameters( 'Bb-compartmental.csv' )
+COMP_PARAMS = helper.read_parameters( 'Bb-compartmental.csv' )
 
 # use data from the sixth row (it is zero based counting!) in the file
 CONC = CONC_PARAMS[5]
@@ -43,8 +45,8 @@ model2 = Model( text=bc_text, mode='plde' )
 model1.OVERRIDE = local_override
 model2.OVERRIDE = local_override
 
-model1.initialize( missing = pldeutil.initializer( CONC )  )
-model2.initialize( missing = pldeutil.initializer( CONC )  )
+model1.initialize( missing = helper.initializer( CONC )  )
+model2.initialize( missing = helper.initializer( CONC )  )
 
 # see localdefs for all function definitions
 model1.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
@@ -52,4 +54,6 @@ model2.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
 
 # saves the simulation resutls into a file
 data = [ model1.data, model2.data, model1.t ]
+
+# it is a binary save ( pickle )
 util.bsave(data, 'Bb-run.bin' )
