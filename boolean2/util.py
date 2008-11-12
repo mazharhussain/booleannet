@@ -1,12 +1,13 @@
-import sys, random
+import sys, random, pickle
 
 #
 # handy shortcuts
 #
-true   = lambda x: True
+true     = lambda x: True
 randbool = lambda x: random.choice( (True, False) )
-false  = lambda x: False
-itself = lambda x: x
+false    = lambda x: False
+truth    = lambda x: x
+notcomment = lambda x: x and not x.startswith('#')
 strip  = lambda x: x.strip()
 upper  = lambda x: x.upper()
 
@@ -49,7 +50,7 @@ def split( text ):
     """
     Strips lines and returns nonempty lines
     """
-    return filter(itself, map(strip, text.splitlines()))
+    return filter(notcomment, map(strip, text.splitlines()))
 
 def default_shuffler( lines ):
     "Default shuffler"
@@ -95,8 +96,69 @@ def list_gcd( data ):
     else:
         return pair_gcd( data[0], list_gcd( data[1:] ))
 
+def as_set( nodes ):
+    "Wraps input into a set if needed. Allows single input or any iterable"
+    if isinstance(nodes, str):
+        return set( [ nodes ] )
+    else:
+        return set(nodes)    
+
+def bsave( obj, fname='data.bin' ):
+    """
+    Saves (pickles) objects
+    >>> obj = { 1:[2,3], 2:"Hello" }
+    >>> bsave( obj )
+    >>> obj == bload()
+    True
+    """
+    pickle.dump( obj, file(fname, 'wb'), protocol=2 ) # maximal compatibility
+
+def bload( fname='data.bin' ):
+    "Loads a pickle from a file"
+    return pickle.load( file(fname, 'rb') )
+
+class Collector(object):
+    """
+    Collects data over a run
+    """
+    def __init__(self):
+        "Default constructor"
+        self.store = {}
+
+    def collect(self, states, nodes):
+        "Collects the node values into a list"
+        nodes = as_set( nodes )
+        for node in nodes:
+            values = [ int( getattr(state, node)) for state in states ]
+            self.store.setdefault(node, []).append( values )
+
+    def get_averages(self, normalize=True):
+        """
+        Averages the collected data for the each node
+        Returns a dictionary keyes by nodes containing the
+
+        """
+        out = {}
+        for node in self.store:
+            all  = self.store[node]
+            size = float( len(all) )        
+            
+            # this sums lists!
+            def listadd( xlist, ylist ):
+                return [ x+y for x, y in zip(xlist, ylist) ]
+            
+            values = reduce(listadd, all)
+            
+            if normalize:
+                def divide(x):
+                    return x/size
+                values = map(divide, values)
+            out[node] = values
+        return out
+
 def test():
-    pass
+    import doctest
+    doctest.testmod()
 
 if __name__ == '__main__':
     test()

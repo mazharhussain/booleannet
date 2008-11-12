@@ -15,7 +15,7 @@ class Lexer:
     tokens = (
         'LABEL', 'ID','STATE', 'ASSIGN', 'EQUAL',
         'AND', 'OR', 'NOT', 
-        'NUMBER', 'LPAREN','RPAREN', 'COMMA'
+        'NUMBER', 'LPAREN','RPAREN', 'COMMA',
     )
 
     reserved = { 
@@ -141,7 +141,11 @@ def tok2line( tokens ):
     """
     Turns a list of tokens into a line that can be parsed again
     """
-    return ' '.join( str(t.value) for t in tokens )
+    elems = [ str(t.value) for t in tokens ]
+    if tokens[0].type == 'LABEL':
+        elems[0] = elems[0] + ':'
+
+    return ' '.join( elems )
 
 def test():
     """
@@ -154,6 +158,7 @@ def test():
     ... 2: B* = A and B
     ... C* = not C
     ... E = False
+    ... F = (1, 2, 3)
     ... '''
     >>>
     >>> lexer  = Lexer()
@@ -168,7 +173,7 @@ def test():
     [LexToken(ID,'C',1,0), LexToken(ASSIGN,'*',1,1), LexToken(EQUAL,'=',1,3), LexToken(NOT,'not',1,5), LexToken(ID,'C',1,9)]
     >>>
     >>> get_nodes( tokens )
-    set(['A', 'C', 'B', 'E'])
+    set(['A', 'C', 'B', 'E', 'F'])
     """
     
     # runs the local suite
@@ -180,28 +185,51 @@ def tokenize( text ):
     lexer = Lexer()
     return lexer.tokenize_text( text )
 
+def modify_states( text, turnon=[], turnoff=[] ):
+    """
+    Turns nodes on and off and comments out lines 
+    that contain assignment to any of the nodes 
+    
+    Will use the main lexer.
+    """
+    turnon  = util.as_set( turnon )
+    turnoff = util.as_set( turnoff )
+    tokens  = tokenize( text )
+
+    init = init_tokens( tokens )
+    init_lines = map(tok2line, init)
+
+    # override the initial values
+    init_lines.extend( [ '%s=True'  % node for node in turnon  ] )
+    init_lines.extend( [ '%s=False' % node for node in turnoff ] )
+
+    alter = turnon | turnoff
+    update = update_tokens ( tokens )
+    update_lines = []
+    for token in update:
+        line = tok2line( token)
+        if token[0].value in alter or token[1].value in alter:
+            line = '#' + line
+        update_lines.append( line )
+
+    all = init_lines + update_lines
+    return '\n'.join( all )
+
 if __name__ == '__main__':
     test()
     
     lexer = Lexer()
     text = """
-        A = B = True
+        A = B = C = False
+        D = True
         
         1: A* = B
-        
         2: B* = A and B
-        
         C* = not C
-
-        D = Random
+        D* = A
 
     """
-    tokens = lexer.tokenize_text( text )
     
-    for elem in update_tokens(tokens):
-        print tok2line(elem)
-        print elem
-        print 
+    print modify_states( text, turnon=['A', 'B'], turnoff=['C'] )
 
-    print dir( lexer.lexer )
-
+    
