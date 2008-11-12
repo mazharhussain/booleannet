@@ -5,7 +5,7 @@ Bordetella Bronchiseptica  simulation
 
 """
 from pylab import *
-from boolean import util
+from boolean2 import util
 
 def skip( data, step=10):
     "Takes every Nth point from a list or dictionary values"

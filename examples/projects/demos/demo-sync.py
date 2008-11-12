@@ -3,40 +3,36 @@
 #
 
 # put the boolean library on the path
-from boolean import Engine, util
+from boolean2 import Model, util
 
-def start_iteration(index, engine):
+def start_iteration(index, model):
     if index < 5:
         state = True
     else:
         state = False
 
-    engine.last['A'] = state
+    model.last['A'] = state
 
-#
-# read the file
-#
-text = util.read('demo-rules.txt')
 
 #
 # run the simulation
 #
-eng = Engine( mode='sync', text=text )
-eng.initialize()
-#eng.RULE_START_ITERATION = start_iteration
-eng.iterate( steps=5 )
+model = Model( mode='sync', text='demo-rules.txt')
+model.initialize()
+#model.RULE_START_ITERATION = start_iteration
+model.iterate( steps=5 )
 
 # all the states are now computed and stored internally
 
 # you can print the states
-for state in eng.states:
+for state in model.states:
     print state
 
 print '-' * 20
 
 # save states into a file
-eng.save_states( 'states.txt' )
+model.save_states( 'states.txt' )
 
 # two ways to access nodes for a state
-for state in eng.states:
+for state in model.states:
     print state['A'], state.A
