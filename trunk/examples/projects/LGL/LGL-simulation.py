@@ -4,7 +4,8 @@ LGL simulator
 It is also a demonstration on how the collector works
 
 """
-from boolean import Engine, util
+import boolean2
+from boolean2 import Model, util
 from random import choice
 
 # ocasionally randomized nodes
@@ -33,13 +34,12 @@ def run( text, nodes, repeat, steps ):
     coll = util.Collector()
     
     for i in xrange( repeat ):
-        engine  = Engine( mode='async', text=text )
+        engine  = Model( mode='async', text=text )
         engine.RULE_GETVALUE = new_getvalue
         # minimalist initial conditions, missing nodes set to false
-        engine.initialize( missing=util.allfalse )
+        engine.initialize( missing=util.false )
         engine.iterate( steps=steps)
         coll.collect( states=engine.states, nodes=nodes )
-        print 'run %d, %s' % ( i+1, engine.elapsed( 1 ) )
 
     print '- completed'
     avgs = coll.get_averages( normalize=True )
@@ -47,40 +47,41 @@ def run( text, nodes, repeat, steps ):
 
 if __name__ == '__main__':
 
-    text = util.read( 'LGL.txt')
+    # read in the text
+    text = file( 'LGL.txt').read()
 
     # the nodes of interest that are collected over the run
     # NODES  = 'Apoptosis STAT3 FasL Ras'.split()
     
     # this collects the state of all nodes 
-    NODES  = util.all_nodes( text )
+    NODES  = boolean2.all_nodes( text )
 
     #
     # raise this for better curves (will take about 2 seconds per repeat)
-    # plots were made for repeat = 1000
+    # plots were made for REPEAT = 1000, STEPS=150
     #
-    REPEAT = 1000
-    STEPS  = 150
+    REPEAT = 10
+    STEPS  = 50
 
     data = []
     
     print '- starting simulation with REPEAT=%s, STEPS=%s' % (REPEAT, STEPS)
 
     # a single overexpressed node
-    mtext = util.modify_states( text=text, turnon=['Stimuli'] )
+    mtext = boolean2.modify_states( text=text, turnon=['Stimuli'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
 
     # multiple overexrpessed nodes
-    mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1'] )
+    mtext = boolean2.modify_states( text=text, turnon=['Stimuli','Mcl1'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
 
-    mtext = util.modify_states( text=text, turnon=['Stimuli','sFas'] )
+    mtext = boolean2.modify_states( text=text, turnon=['Stimuli','sFas'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
 
-    mtext = util.modify_states( text=text, turnon=['Stimuli','Mcl1','sFas'] )
+    mtext = boolean2.modify_states( text=text, turnon=['Stimuli','Mcl1','sFas'] )
     avgs = run( text=mtext, repeat=REPEAT, nodes=NODES, steps=STEPS) 
     data.append( avgs )
     

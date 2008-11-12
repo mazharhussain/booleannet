@@ -5,7 +5,7 @@ Bordetella Bronchiseptica  simulation
 
 """
 from pylab import *
-from boolean import util
+from boolean2 import util
 
 def skip( data, step=10):
     "Takes every Nth point from a list or dictionary values"
@@ -19,7 +19,7 @@ def skip( data, step=10):
     return out
 
 def make_plot():
-    run1, run2, t = util.bload( 'Bb-final.bin' )
+    run1, run2, t = util.bload( 'Bb-run.bin' )
     
     # take every 10th point
     step = 20
