@@ -34,8 +34,11 @@ def main():
     for num in range( 10 ):
         simulation ( trans )
 
+    # generate the colormap based on components
+    colormap = network.component_colormap( trans.graph )
+
     # saves the transition graph into a gml file
-    trans.save( 'threenodes.gml' )
+    trans.save( 'threenodes.gml', colormap=colormap )
 
 main()
 

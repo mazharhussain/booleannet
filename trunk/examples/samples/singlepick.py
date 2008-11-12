@@ -19,7 +19,7 @@ def simulation( trans ):
     "One simulation step will update the transition graph"
 
     # create the model
-    model = boolean2.Model( text=rules, mode='time')
+    model = boolean2.Model( text=rules, mode='async')
 
     # generates all states, set limit to a value to keep only the first that many states
     # when limit is a number it will take the first that many initial states
@@ -28,21 +28,24 @@ def simulation( trans ):
     # the data is the inital data, the func is the initializer
     for data, initfunc in initializer:
         model.initialize(missing=initfunc)
-        model.iterate(5, shuffler=mypick)
+        model.iterate(15, shuffler=mypick)
         trans.add( model.states )
 
 def main():
     "This is the main code that runs the simulation many times"
 
     # this will hold the transition graph
-    trans = network.TransGraph( logfile='singlepick.log' )
+    trans = network.TransGraph( logfile='singlepick.log', verbose=True )
 
     # will run the simulation this many times
     for num in range( 30 ):
         simulation ( trans )
 
+    # generate the colormap based on components
+    colormap = network.component_colormap( trans.graph )
+
     # saves the transition graph into a gml file
-    trans.save( 'singlepick.gml' )
+    trans.save( 'singlepick.gml', colormap=colormap )
 
 main()
 
