@@ -96,6 +96,13 @@ def list_gcd( data ):
     else:
         return pair_gcd( data[0], list_gcd( data[1:] ))
 
+def as_set( nodes ):
+    "Wraps input into a set if needed. Allows single input or any iterable"
+    if isinstance(nodes, str):
+        return set( [ nodes ] )
+    else:
+        return set(nodes)    
+
 def modify_states( text, turnon=[], turnoff=[] ):
     """
     Turns nodes on and off and comments out lines 
@@ -103,10 +110,11 @@ def modify_states( text, turnon=[], turnoff=[] ):
     
     Will use the main lexer.
     """
-    text    = add_ranks( text )        
     turnon  = as_set( turnon )
     turnoff = as_set( turnoff )
-    tokens = tokenize( text )
+    tokens  = tokenizer.tokenize( text )
+
+    return tokens
     init_tokens = filter( lambda x: x[0].type == 'ID', tokens )
     body_tokens = filter( lambda x: x[0].type == 'RANK', tokens )
     init_lines  = map( tokenizer.tok2line, init_tokens )
@@ -137,7 +145,15 @@ def modify_states( text, turnon=[], turnoff=[] ):
     return '\n'.join( init_lines + body_lines )
 
 def test():
-    pass
+    text = """
+    A  =  B =  C = False
+    D  = True
+    
+    5: A* = C and (not B)
+    10: B* = A
+    15: C* = D
+    20: D* = B 
+    """
 
 if __name__ == '__main__':
     test()

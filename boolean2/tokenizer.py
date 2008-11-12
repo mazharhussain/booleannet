@@ -58,7 +58,7 @@ class Lexer:
     t_COMMA   = r','
 
     t_ignore  = ' \t'
-    #t_ignore_COMMENT = r'\#.*'
+    t_ignore_COMMENT = r'\#.*'
 
     def t_newline(self, t):
         "Newline handling"
@@ -141,7 +141,11 @@ def tok2line( tokens ):
     """
     Turns a list of tokens into a line that can be parsed again
     """
-    return ' '.join( str(t.value) for t in tokens )
+    elems = [ str(t.value) for t in tokens ]
+    if tokens[0].type == 'LABEL':
+        elems[0] = elems[0] + ':'
+
+    return ' '.join( elems )
 
 def test():
     """
@@ -181,28 +185,51 @@ def tokenize( text ):
     lexer = Lexer()
     return lexer.tokenize_text( text )
 
+def modify_states( text, turnon=[], turnoff=[] ):
+    """
+    Turns nodes on and off and comments out lines 
+    that contain assignment to any of the nodes 
+    
+    Will use the main lexer.
+    """
+    turnon  = util.as_set( turnon )
+    turnoff = util.as_set( turnoff )
+    tokens  = tokenize( text )
+
+    init = init_tokens( tokens )
+    init_lines = map(tok2line, init)
+
+    # override the initial values
+    init_lines.extend( [ '%s=True'  % node for node in turnon  ] )
+    init_lines.extend( [ '%s=False' % node for node in turnoff ] )
+
+    alter = turnon | turnoff
+    update = update_tokens ( tokens )
+    update_lines = []
+    for token in update:
+        line = tok2line( token)
+        if token[0].value in alter or token[1].value in alter:
+            line = '#' + line
+        update_lines.append( line )
+
+    all = init_lines + update_lines
+    return '\n'.join( all )
+
 if __name__ == '__main__':
     test()
     
     lexer = Lexer()
     text = """
-        A = B = True
+        A = B = C = False
+        D = True
         
         1: A* = B
-        
         2: B* = A and B
-        
         C* = not C
-
-        D = (1,2,3)
+        D* = A
 
     """
-    tokens = lexer.tokenize_text( text )
     
-    for elem in init_tokens(tokens):
-        print tok2line(elem)
-        print elem
-        print 
+    print modify_states( text, turnon=['A', 'B'], turnoff=['C'] )
 
-    print dir( lexer.lexer )
-
+    

@@ -1,16 +1,16 @@
 
-import util
 import sys, os
 from itertools import *
+
+from boolean2.boolmodel import BoolModel
+from boolean2 import util, odict, tokenizer
+import pldeutil
 
 try:
     import pylab
     from pylab import arange, rk4
 except ImportError:
     util.error( "matplotlib is missing, install it from: http://matplotlib.sourceforge.net/")
-
-from boolmodel import BoolModel
-import util, odict, tokenizer, pldeutil
 
 def default_override( node, indexer, tokens ):
     """
@@ -190,10 +190,6 @@ class PldeModel( BoolModel ):
         # x0 has been auto generated in the initialization
         self.alldata = rk4(autogen_mod.derivs, autogen_mod.x0, self.t) 
         
-        # it returns a single list for one node
-        if len(self.nodes) == 1:
-            self.alldata = [ [ x ] for x in self.alldata ]
-
         for index, node in enumerate( self.nodes ):
             self.lazy_data[node] = [ row[index] for row in self.alldata ]
     
@@ -214,11 +210,10 @@ if __name__ == '__main__':
     
     model = PldeModel( text=text )
     model.initialize()
-    model.iterate( fullt=1, steps=10 )
-    
-    print model.dynamic_code
+    model.iterate( fullt=5, steps=100 )
 
-    
     from pylab import *
-    plot( engine.alldata ,'o-' )
+    plot( model.data['A'] ,'o-' )
+    plot( model.data['B'] ,'o-' )
+    plot( model.data['C'] ,'o-' )
     show()
