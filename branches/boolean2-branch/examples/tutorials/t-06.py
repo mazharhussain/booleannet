@@ -13,9 +13,9 @@ B = False
 C = False
 D = True
 
-B* = A or C
-C* = A and not D
-D* = B and C
+1: B* = A or C
+1: C* = A and not D
+1: D* = B and C
 """
 
 model = boolean2.Model( text, mode='plde')

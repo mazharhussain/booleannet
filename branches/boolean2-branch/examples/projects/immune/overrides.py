@@ -5,7 +5,7 @@ Bordetella Bronchiseptica  simulation
 
 """
 import math
-from boolean import helper
+from boolean2.plde import helper
 
 # the localdefs module contains reusable function definitions
 from localdefs import *

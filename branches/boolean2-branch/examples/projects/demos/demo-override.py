@@ -3,9 +3,8 @@ Demonstrates overriding the getter and setter methods
 """
 
 import sys
-sys.path.append('../..')
 
-from boolean import Engine, util
+from boolean2 import Model, util
 import random
 
 def new_setvalue( state, name, value, p):
@@ -32,15 +31,14 @@ def new_getvalue( state, name, p):
     else:
         return value 
 
-text = util.read('demo-rules2.txt')
-eng = Engine( mode='sync', text=text )
+model = Model( mode='sync', text='demo-rules.txt' )
 
 # assign the new rules to the engine
-eng.RULE_SETVALUE = new_setvalue
-eng.RULE_GETVALUE = new_getvalue
+model.RULE_SETVALUE = new_setvalue
+model.RULE_GETVALUE = new_getvalue
 
-eng.initialize()
-eng.iterate( steps=5 )
+model.initialize()
+model.iterate( steps=5 )
 
-for state in eng.states:
+for state in model.states:
     print state

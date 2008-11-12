@@ -7,8 +7,7 @@ Bordetella Bronchiseptica  simulation
 import time, sys
 from random import random, randint, seed
 
-sys.path.append("../..")
-from boolean.funcdefs import *
+from boolean2.plde.defs import *
 
 seed(100)
 
