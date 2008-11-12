@@ -1,14 +1,6 @@
-import boolean
+from boolean2 import Model
 
-text = """
-A = B = C = True
-A* = A and C
-B* = A and B
-C* = not A
-"""
-from boolean import Model
-
-model = boolean.Model( text, mode='sync')
+model = Model( text="t-01.txt", mode='sync')
 model.initialize()
 model.iterate( steps=5 )
 

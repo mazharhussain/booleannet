@@ -1,4 +1,5 @@
-import boolean
+import boolean2
+from boolean2 import Model
 
 #
 # Random sampling of initial conditions
@@ -16,7 +17,6 @@ B* = A or C
 C* = A and not D
 D* = B and C
 """
-from boolean import Model
 
 seen = {}
 
@@ -27,7 +27,7 @@ seen = {}
 # as the 'sync' update rule is completely deterministic
 #
 for i in range(10):
-    model = boolean.Model( text, mode='sync')
+    model = Model( text=text, mode='sync')
     model.initialize()
     model.iterate( steps=20 )
 
