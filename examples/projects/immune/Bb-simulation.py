@@ -1,9 +1,11 @@
 """
 Bordetella Bronchiseptica  simulation
 
+Takes about 30 seconds to run
 """
-
-from boolean import Engine, helper, util
+import boolean2
+from boolean2 import Model, util 
+from boolean2.plde import helper
 
 
 # the overrides.py module contains all node overrides
@@ -32,24 +34,26 @@ def local_override( node, indexer, tokens ):
     return overrides.override( node, indexer, tokens, COMP )
 
 #
-# there will be two engines, one for WT and the other for a BC knockout
+# there will be two models, one for WT and the other for a BC knockout
 #
-wt_text = util.read('Bb.txt')
-bc_text = util.modify_states( text=wt_text, turnoff= [ "BC"  ] )
+wt_text = file('Bb.txt').read()
+bc_text = boolean2.modify_states( text=wt_text, turnoff= [ "BC"  ] )
 
-engine1 = Engine( text=wt_text, mode='plde' )
-engine2 = Engine( text=bc_text, mode='plde' )
+model1 = Model( text=wt_text, mode='plde' )
+model2 = Model( text=bc_text, mode='plde' )
 
-engine1.OVERRIDE = local_override
-engine2.OVERRIDE = local_override
+model1.OVERRIDE = local_override
+model2.OVERRIDE = local_override
 
-engine1.initialize( missing = helper.initializer( CONC )  )
-engine2.initialize( missing = helper.initializer( CONC )  )
+model1.initialize( missing = helper.initializer( CONC )  )
+model2.initialize( missing = helper.initializer( CONC )  )
 
 # see localdefs for all function definitions
-engine1.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
-engine2.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
+model1.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
+model2.iterate( fullt=FULLT, steps=STEPS, localdefs='localdefs' )
 
 # saves the simulation resutls into a file
-data = [ engine1.data, engine2.data, engine1.t ]
+data = [ model1.data, model2.data, model1.t ]
+
+# it is a binary save ( pickle )
 util.bsave(data, 'Bb-run.bin' )

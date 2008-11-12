@@ -3,8 +3,8 @@ Absicis Acid Signaling - simulation
 
 """
 import sys
-sys.path.append('../..')
-from boolean import Engine, util
+import boolean2
+from boolean2 import Model, util
 import numpy
 
 def find_stdev( text, node, knockouts, repeat, steps ):
@@ -14,15 +14,16 @@ def find_stdev( text, node, knockouts, repeat, steps ):
     mode  = 'plde'
     step = fullt*10
     print '- start run, %s' % mode
-    engine = Engine( mode=mode, text=text )
+    
+    model = Model( mode=mode, text=text )
     results = {}
     values=[]
     coll={}
     for gene in knockouts:
         for i in xrange( repeat ):
-            engine.initialize( missing=util.randomize , defaults = {gene:(0.0,1.0,step*10)})
-            engine.iterate( steps=step, fullt=fullt ) 
-            values = map( float,  engine.data[node] )
+            model.initialize( missing=util.randbool , defaults = {gene:(0.0,1.0,step*10)})
+            model.iterate( steps=step, fullt=fullt ) 
+            values = map( float,  model.data[node] )
             results.setdefault(gene,[]).append( values )
         
         resmat = numpy.array( results[gene] )  
@@ -36,18 +37,18 @@ def run_plde( text, repeat, fullt ):
     "Runs the piecewise model on the text"
 
     steps  = fullt * 10
-    engine = Engine( mode='plde', text=text )
+    model = Model( mode='plde', text=text )
     coll = []
     print '- start plde'
     for i in xrange( repeat ):
-        engine.initialize( missing=util.randomize )
-        engine.iterate( fullt=fullt, steps=steps )
-        coll.append( engine.data )
+        model.initialize( missing=util.randbool )
+        model.iterate( fullt=fullt, steps=steps )
+        coll.append( model.data )
     
     return coll
 
 def run_mutations( text, repeat, steps ):
-    "Runs the asynchronous engine with different mutations"
+    "Runs the asynchronous model with different mutations"
 
     # WT does not exist so it won't affect anything
     
@@ -55,24 +56,25 @@ def run_mutations( text, repeat, steps ):
     knockouts = 'WT S1P PA pHc ABI1 ROS'.split()
     for target in knockouts:
         print '- target %s' % target
-        mtext  = util.modify_states( text=text, turnoff=target )
-        engine = Engine( mode='async', text=mtext )
+        mtext  = boolean2.modify_states( text=text, turnoff=target )
+        model = Model( mode='async', text=mtext )
         coll   = util.Collector()
         for i in xrange( repeat ):
             # unintialized nodes set to random
-            engine.initialize( missing=util.randomize )
-            engine.iterate( steps=steps )
-            coll.collect( states=engine.states, nodes=engine.all_nodes )
+            model.initialize( missing=util.randbool )
+            model.iterate( steps=steps )
+            coll.collect( states=model.states, nodes=model.nodes )
         data[target] = coll.get_averages( normalize=True )
 
     return data
 
 if __name__ == '__main__':
-    # more repeats - better curve
+    # more repeats - better curve, this run takes about
+    # plot was made with REPEAT=300, STEPS=10 it took about 5 minutes to run
     REPEAT = 300
     STEPS  = 10
     FULLT  = 10
-    text = util.read( 'ABA.txt')
+    text = file( 'ABA.txt').read()
     data = find_stdev( text=text, node='Closure',knockouts='WT pHc PA'.split(), repeat=REPEAT, steps=STEPS)
     
     muts = run_mutations( text, repeat=REPEAT, steps=STEPS )

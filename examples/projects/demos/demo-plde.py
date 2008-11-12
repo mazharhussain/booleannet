@@ -1,4 +1,4 @@
-import boolean, pylab
+import boolean2, pylab
 
 text = """
 A = True
@@ -9,13 +9,13 @@ C = False
 3: C* = B
 """
 
-engine = boolean.Engine( text=text, mode='plde' )
-engine.initialize()
-engine.iterate( fullt=7, steps=100 )
+model = boolean2.Model( text=text, mode='plde' )
+model.initialize()
+model.iterate( fullt=7, steps=100 )
 
-p1 = pylab.plot( engine.data['A'] , 'ob-' )
-p2 = pylab.plot( engine.data['B'] , 'sr-' )
-p3 = pylab.plot( engine.data['C'] , '^g-' )
+p1 = pylab.plot( model.data['A'] , 'ob-' )
+p2 = pylab.plot( model.data['B'] , 'sr-' )
+p3 = pylab.plot( model.data['C'] , '^g-' )
 pylab.legend( [p1,p2,p3], "A B C".split(), loc="best")
 
 pylab.show()

@@ -3,7 +3,7 @@ Plots results for the paper
 
 """
 from pylab import *
-from boolean import util
+from boolean2 import util
 
 def smooth(data, w=0):
     "Smooths data by a moving window of width 'w'"
@@ -17,7 +17,7 @@ def smooth(data, w=0):
 def make_plot():
     
     # contains averaged node information based on 1000 runs
-    data = util.bload( 'LGL-final.bin' )
+    data = util.bload( 'LGL-run.bin' )
 
     # each of these is a dictionary keyed by nodes
     run1, run2, run3, run4 = data 
