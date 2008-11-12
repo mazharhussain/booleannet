@@ -1,4 +1,6 @@
-import boolean
+import boolean2
+from boolean2 import util
+
 
 #
 # Modifying states within a program
@@ -21,7 +23,6 @@ C* = A and not D
 D* = B and C
 """
 
-from boolean import util
 
 #
 # these nodes will be overexpressed (initialized to True)
@@ -37,17 +38,16 @@ off = ["B"]
 #
 # this modifies the original states to apply to overexpressed and knockouts
 #
-text = util.modify_states(text, turnon=on, turnoff=off)
+text = boolean2.modify_states(text, turnon=on, turnoff=off)
 
 #
 # see tutorial 3 for more details on what happens below
 #
-from boolean import Model
 
 seen = {}
 
 for i in range(10):
-    model = boolean.Model( text, mode='sync')
+    model = boolean2.Model( text, mode='sync')
     model.initialize()
     model.iterate( steps=20 )
 

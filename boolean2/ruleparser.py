@@ -63,7 +63,8 @@ def p_expression_state(p):
         value = ( p[1] == 'True' )
 
     # plde mode will transforms the boolean values to triplets
-    if p.parser.mode ==  PLDE:
+    
+    if p.parser.mode == PLDE:
         value = util.bool_to_tuple( value )
 
     p[0] = value

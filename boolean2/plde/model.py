@@ -4,7 +4,7 @@ from itertools import *
 
 from boolean2.boolmodel import BoolModel
 from boolean2 import util, odict, tokenizer
-import pldeutil
+import helper
 
 try:
     import pylab
@@ -26,8 +26,14 @@ def default_equation( tokens, indexer ):
     other equations without explicit overrides
     """
     node = tokens[1].value
-    text = pldeutil.change(node, indexer) + ' = ' + pldeutil.piecewise(tokens, indexer)
+    text = helper.change(node, indexer) + ' = ' + helper.piecewise(tokens, indexer)
     return text
+
+def boolmapper (value):
+    if type(value) == tuple:
+        return value
+    else:
+        return util.bool_to_tuple(value)
 
 class PldeModel( BoolModel ):
     """
@@ -37,12 +43,12 @@ class PldeModel( BoolModel ):
     def __init__(self, text, mode='plde'):
         
         # run the regular boolen engine for one step to detect syntax errors
-        eng = BoolModel(text=text, mode='sync')
-        eng.initialize( missing=util.randbool )
-        eng.iterate( steps=1 )
+        model = BoolModel(text=text, mode='sync')
+        model.initialize( missing=util.randbool )
+        model.iterate( steps=1 )
 
         # onto the main initialization
-        self.INIT_LINE  = pldeutil.init_line
+        self.INIT_LINE  = helper.init_line
         self.OVERRIDE   = default_override
         self.DEFAULT_EQUATION = default_equation
         self.EXTRA_INIT = ''
@@ -86,8 +92,9 @@ class PldeModel( BoolModel ):
         init.append( '# dynamically generated code' )
         init.append( '# abbreviations: c=concentration, d=decay, t=threshold, n=newvalue' )
         init.append( '# %s' % self.mapper.values() )
+
         for index, node, triplet in self.mapper.values():
-            conc, decay, tresh = triplet
+            conc, decay, tresh = boolmapper(triplet)
             #assert decay > 0, 'Decay for node %s must be larger than 0 -> %s' % (node, str(triplet))   
             store = dict( index=index, conc=conc, decay=decay, tresh=tresh, node=node)
             line = self.INIT_LINE( store )

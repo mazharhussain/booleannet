@@ -1,4 +1,4 @@
-import sys, random
+import sys, random, pickle
 
 #
 # handy shortcuts
@@ -103,57 +103,62 @@ def as_set( nodes ):
     else:
         return set(nodes)    
 
-def modify_states( text, turnon=[], turnoff=[] ):
+def bsave( obj, fname='data.bin' ):
     """
-    Turns nodes on and off and comments out lines 
-    that contain assignment to any of the nodes 
-    
-    Will use the main lexer.
+    Saves (pickles) objects
+    >>> obj = { 1:[2,3], 2:"Hello" }
+    >>> bsave( obj )
+    >>> obj == bload()
+    True
     """
-    turnon  = as_set( turnon )
-    turnoff = as_set( turnoff )
-    tokens  = tokenizer.tokenize( text )
+    pickle.dump( obj, file(fname, 'wb'), protocol=2 ) # maximal compatibility
 
-    return tokens
-    init_tokens = filter( lambda x: x[0].type == 'ID', tokens )
-    body_tokens = filter( lambda x: x[0].type == 'RANK', tokens )
-    init_lines  = map( tokenizer.tok2line, init_tokens )
-    
-    # append to the states to override other settings
-    init_lines.extend( [ '%s=False' % node for node in turnoff ] )
-    init_lines.extend( [ '%s=True' % node for node in turnon ] )
-    
-    common = list( turnon & turnoff )
-    if common:
-        error( "Nodes %s are turned both on and off" % ', '.join(common) )
+def bload( fname='data.bin' ):
+    "Loads a pickle from a file"
+    return pickle.load( file(fname, 'rb') )
 
-    nodes = turnon | turnoff
+class Collector(object):
+    """
+    Collects data over a run
+    """
+    def __init__(self):
+        "Default constructor"
+        self.store = {}
 
-    body_lines = []
-    for tokens in body_tokens:
-        
-        # a sanity check
-        values = [ t.value for t in tokens ]
-        body_line = ' '.join( map(str, values ))
-        assert len(tokens) > 4, 'Invalid line -> %s' % body_line
-        
-        # comment out certain nodes 
-        if tokens[1].value in nodes:
-            body_line = '#' + body_line
-        body_lines.append( body_line )
+    def collect(self, states, nodes):
+        "Collects the node values into a list"
+        nodes = as_set( nodes )
+        for node in nodes:
+            values = [ int( getattr(state, node)) for state in states ]
+            self.store.setdefault(node, []).append( values )
 
-    return '\n'.join( init_lines + body_lines )
+    def get_averages(self, normalize=True):
+        """
+        Averages the collected data for the each node
+        Returns a dictionary keyes by nodes containing the
+
+        """
+        out = {}
+        for node in self.store:
+            all  = self.store[node]
+            size = float( len(all) )        
+            
+            # this sums lists!
+            def listadd( xlist, ylist ):
+                return [ x+y for x, y in zip(xlist, ylist) ]
+            
+            values = reduce(listadd, all)
+            
+            if normalize:
+                def divide(x):
+                    return x/size
+                values = map(divide, values)
+            out[node] = values
+        return out
 
 def test():
-    text = """
-    A  =  B =  C = False
-    D  = True
-    
-    5: A* = C and (not B)
-    10: B* = A
-    15: C* = D
-    20: D* = B 
-    """
+    import doctest
+    doctest.testmod()
 
 if __name__ == '__main__':
     test()

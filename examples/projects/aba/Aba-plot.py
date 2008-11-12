@@ -5,7 +5,6 @@ Absicis Acid Signaling - simulation
 
 """
 import sys
-sys.path.append('../..')
 from pylab import *
 from boolean import util
 import numpy
@@ -60,8 +59,6 @@ def make_plot( fname ):
 if __name__ == '__main__':
     figure(num = None, figsize=(14, 7), dpi=80, facecolor='w', edgecolor='k')
 
-    fname='ABA-final.bin'
+    fname='ABA-run.bin'
     make_plot( fname )
-    
-    savefig('Figure1.png')
     show()
