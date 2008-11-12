@@ -1,6 +1,17 @@
 from boolean2 import Model
 
-model = Model( text="t-01.txt", mode='sync')
+text = """
+# initial values
+A = B = C = True
+
+# updating rules
+
+A* = A and C
+B* = A and B
+C* = not A
+"""
+
+model = Model( text=text, mode='sync')
 model.initialize()
 model.iterate( steps=5 )
 
