@@ -511,11 +511,13 @@ Software required to run ''~BooleanNet'' (see [[Installation]]):
 * [[NumPy|http://numpy.scipy.org/]]
 We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
-<div title="Advance Usage" modifier="Istvan Albert" created="200811121805" changecount="1">
+<div title="Advance Usage" modifier="Istvan Albert" modified="200811131524" created="200811121805" changecount="12">
 <pre>!!!Generating all initial states:
-
+Often it is necessary to generate all possible initial states for a system. Here is how to do it with ~BooleanNet: [[all-initial-states.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/all-initial-states.py]]
 !!!Drawing a transition graph.
-</pre>
+A transition graph is a directed graph that connects the states that the system visits during its evolution. ~BooleanNet offers helper functions to make this process easy. Note that his example also colors the strongly connected components with different colors: [[threenodes.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/threenodes.py]]
+[img[png/threenodes.png]]
+During the run a log file is generated that contains all transitions. Note: this example requires the presence of the [[Networkx|http://networkx.lanl.gov/]] module. The saved graph is in ''gml'' format and can directly visualized via [[yED|http://www.yworks.com/en/products_yed_about.html]]</pre>
 </div>
 <div title="DefaultTiddlers" modifier="Istvan Albert" modified="200803062343" created="200803062342" changecount="2">
 <pre>[[Introduction]]</pre>
