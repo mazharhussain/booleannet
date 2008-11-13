@@ -28,7 +28,7 @@ def main():
     "This is the main code that runs the simulation many times"
 
     # this will hold the transition graph
-    trans = network.TransGraph( logfile='threenodes.log' )
+    trans = network.TransGraph( logfile='threenodes.log', verbose=True )
 
     # will run the simulation this many times
     for num in range( 10 ):
