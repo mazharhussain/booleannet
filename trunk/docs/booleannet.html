@@ -511,7 +511,7 @@ Software required to run ''~BooleanNet'' (see [[Installation]]):
 * [[NumPy|http://numpy.scipy.org/]]
 We'd like to express our thanks and gratitude to the authors of these outstanding software packages.</pre>
 </div>
-<div title="Advance Usage" modifier="Istvan Albert" modified="200811131524" created="200811121805" changecount="12">
+<div title="Advanced Usage" modifier="Istvan Albert" created="200811141516" changecount="1">
 <pre>!!!Generating all initial states:
 Often it is necessary to generate all possible initial states for a system. Here is how to do it with ~BooleanNet: [[all-initial-states.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/all-initial-states.py]]
 !!!Drawing a transition graph.
@@ -539,6 +539,37 @@ You may type in the values or use the little widgets at the end of each entry bo
 
 Load a tutorial and press Ctrl-1 to verify that it works. The steps laid out above can be applied to set up any other environment, be that ''R'', ''Matlab'' etc. specific. We also note that there are many other editors and setups that would allow an identical behavior.</pre>
 </div>
+<div title="Extending" modifier="Istvan Albert" modified="200811141542" created="200811141522" changecount="9">
+<pre>To capture more sophisticated biological behaviors we often need to override the behavior of the model for certain nodes or rules. ''~BooleanNet'' has been built specifically to support this need, although this type of modifications will require a more in depth understanding of some of the functioning principles of the software.
+
+In a nutshell, every action, be that setting a node, applying a boolean rule, starting an iteration (etc) is performed via a function that may replaced with a custom built one. Below we will detail a few possible extension methods.
+!!!Overriding getter functions
+Imagine a situation where we wish to model a perturbation that causes a node to return unpredictable values on each access. We may model this as a node that may return  random state (true or false) upon every access of the node. To achieve this goal we need to override the ''~RULE_GETVALUE'' special function that has the signature:
+{{{
+get_value( state, name, parser)
+}}}
+the {{{state}}} parameter is the state that is accessed, the {{{name}}} parameter is the node name, the {{{parser}}} parameter is a reference to the entire parser state, this is only needed in very advanced use cases so may be disregarded in most situations. We will need to create a new function and attach it to our model like so:
+{{{
+model = Model( text=rules, mode='sync')
+model.parser.RULE_GETVALUE = get_value
+model.initialize()
+model.iterate( steps=5 )
+}}}
+Here is a sample program: [[extend-getvalue.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/extend-getvalue.py]]
+!!!Overriding setter values
+A related but different use case is that of overriding the node values as these are set. Conceptually this is very different from the previous case, in that the getter method will be called upon accessing the node every single time, whereas the setter method will only be called once when assigning the value to the node. There is a subtle but very important difference between the two use cases.
+We need to override the ''~RULE_SETVALUE'' special function that has the signature:
+{{{
+set_value( state, name, value, parser)
+}}}
+Here is a sample program: [[extend-setvalue.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/extend-setvalue.py]]
+!!!Overriding boolean rules
+To override say the ''AND'' boolean operator we need to replace the  ''~RULE_AND'' special function that has the signature:
+{{{
+and_function( a, b, parser)
+}}}
+In the sampe program we created a special ''AND'' function that returns the ''real'' value 75% of the time and randomly guesses 25% of time. Here is a sample program: [[extend-rules.py|http://code.google.com/p/booleannet/source/browse/trunk/examples/samples/extend-rules.py]]</pre>
+</div>
 <div title="Installation" modifier="Istvan Albert" modified="200803101951" created="200803062350" tags="Setup" changecount="19">
 <pre>!!!Requirements
 The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|http://matplotlib.sourceforge.net]] and [[NumPy|http://numpy.scipy.org/]] to be installed. 
@@ -550,10 +581,15 @@ The ~BooleanNet library requires [[Python|http://www.python.org]], [[Matplotlib|
 
 Once the installation is finished please read the [[Using the library]] pages</pre>
 </div>
-<div title="Introduction" modifier="YourName" modified="200809231535" created="200803062342" changecount="12">
-<pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them. The experimental advances in the large scale mapping of regulatory networks are fairly recent, but modeling efforts date back to the end of 1960s thanks to the pioneering work of ''Stuart Kauffman'' and ''Rene Thomas''. In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
+<div title="Introduction" modifier="Istvan Albert" modified="200811141546" created="200803062342" changecount="18">
+<pre>When trying to understand the role and functioning of a regulatory network, the first step is to assemble the components of the network and the interactions between them.  In a Boolean representation we assume that nodes are equivalent, and their interactions form a directed graph in which each node receives inputs from its neighbors (nodes that are connected to it). The state of nodes is described by binary (ON/OFF) variables, and the dynamic behavior of each variable, that is, whether it will be ON or OFF at next moment, is governed by a Boolean function. 
 
-In this software package, we implement two advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. The first method introduces asynchronous updates where update times may be randomly chosen thus making the model stochastic. The second method associates a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. The dynamics of these continuous variables is determined by a linear system of piecewise differential equations, leading to a hybrid model in the manner first suggested by ''Leon Glass'' and collaborators.
+In this software package, we implement multiple advanced methodologies which combine discrete logical rules with more realistic assumptions regarding the relative timescales of the processes. 
+* ''synchronous'' updates are performed in listed order, but the states change only at the end of the update round
+* ''asynchronous'' updates are performed in random order and the states immediately reflect the changes, this makes the model stochastic.
+* ''ranked asynchronous'' updates are performed in rank order, within the same rank the updates take place asynchronously
+* ''time synchronous'' update are performed in time. Each rule has a time delay associated with them, updates take place at multiples of these delays
+* ''piece wise differential equation'' updates associate a set of continuous variables (concentrations, decay rates and thresholds) to each discrete variable in the system. 
 [img[png/hybrid-example.png]]
 We may think of ''~BooleanNet'' as a ''mini'' programming language particularly well suited for modeling biological systems. It provides functionality that facilitates various important steps of the modeling, as well as helper functions that provide the means of interpreting the results.
 
@@ -583,12 +619,13 @@ This is a link to a [[StyleSheet]] tiddler.
 |column1|column2|column3|
 |row2| row2 |row2|</pre>
 </div>
-<div title="MainMenu" modifier="Istvan Albert" modified="200811121805" created="200803062342" changecount="15">
+<div title="MainMenu" modifier="Istvan Albert" modified="200811141515" created="200803062342" changecount="16">
 <pre>[[Introduction]]
 [[Installation]]
 [[Quick Reference]]
 [[Tutorials]]
-[[Advance Usage]]
+[[Advanced Usage]]
+[[Extending]]
 [[About]]</pre>
 </div>
 <div title="MochaSideBarOptions" modifier="Istvan Albert" modified="200803062348" created="200701130013" tags="MochaTheme" changecount="1">
@@ -1094,7 +1131,7 @@ h3 {font-size: 14px;}
 #header {display:inline-block;}
 /*}}}*/</pre>
 </div>
-<div title="Tutorials" modifier="Istvan Albert" modified="200811121804" created="200803062351" tags="Usage, Tutorials" changecount="39">
+<div title="Tutorials" modifier="Istvan Albert" modified="200811141547" created="200803062351" tags="Usage, Tutorials" changecount="40">
 <pre>We assume that you have [[installed|Installation]] the required software and read the [[Using the library]] and/or [[Editor Setup]] pages. All tutorials are located in the ''examples/tutorials'' folder and follow a cookbook like approach with emphasis on practical usage scenarios. You will need to download the source code archive to access the tutorials. All tutorials will generate the plots that are displayed next to their description.
 
 !!!Tutorial 1: Testing the installation.
@@ -1130,9 +1167,9 @@ Link to [[t-06.py source|http://code.google.com/p/booleannet/source/browse/trunk
 
 The simulation code for more realistic research projects gets more complex. We include in the source distribution both the simulations and plot generation code for three fairly complicated tasks that have each been independently published:
 
-* ''samples/aba'' includes the model published under the title //Predicting essential components of signal transduction networks: dynamic model of guard cell abscisic acid signaling// in ''~PLoS Biology 4 (10): e312, 2006 ''
-* ''samples/immune'' includes the model published under the title //Modeling Systems Level Regulation of Host Immune Responses// in ''~PLoS Computational Biology 6, e109, 2007''
-* ''samples/LGL'' includes the model published under the title //Network Model of Survival Signaling in LGL Leukemia// in ''PNAS, 2008 (to appear)''</pre>
+* ''examples/projects/aba'' includes the model published under the title //Predicting essential components of signal transduction networks: dynamic model of guard cell abscisic acid signaling// in ''~PLoS Biology 4 (10): e312, 2006 ''
+* ''examples/projects/immune'' includes the model published under the title //Modeling Systems Level Regulation of Host Immune Responses// in ''~PLoS Computational Biology 6, e109, 2007''
+* ''examples/projects/LGL'' includes the model published under the title //Network Model of Survival Signaling in LGL Leukemia// in ''PNAS, 2008 (to appear)''</pre>
 </div>
 <div title="Using the library" modifier="Istvan Albert" modified="200803071639" created="200803062351" tags="Setup" changecount="15">
 <pre>''~BooleanNet'' is a software library, and therefore is used within simple python programs. Similarly to the way on uses ''Matlab'' or ''R'', in order to use ''~BooleanNet'' one writes a separate script that invokes certain functions offered by the library.  Here is an example:
