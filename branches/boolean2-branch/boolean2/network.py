@@ -20,7 +20,7 @@ def component_colormap(graph):
     # automatically color by components
 
     # a list of colors in hexadecimal Red/Gree/Blue notation
-    colors = [ ORANGE, SPRING_GREEN, GOLD, TEAL, ORANGE, TEAL, CRIMSON, BLUE, PURPLE, NAVY, SIENNA ]
+    colors = [ ORANGE, SPRING_GREEN, GOLD, TEAL, CRIMSON, BLUE, PURPLE, NAVY, SIENNA ]
     
     # find the strongly connected components
     components = component.strongly_connected_components( graph )
