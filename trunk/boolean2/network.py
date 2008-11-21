@@ -108,7 +108,7 @@ class TransGraph(object):
         self.fp.write( util.join(header) )
         
         for fprint, state in sorted( self.store.items() ):
-            line = [ fprint ]  + state.values()
+            line = [ fprint ]  + map(int, state.values() )
             self.fp.write( util.join(line) )
 
 def test():
