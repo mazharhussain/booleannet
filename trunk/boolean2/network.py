@@ -52,7 +52,7 @@ def write_gml( graph, fname, colormap={} ):
         text.append(  nodepatt % param)
     
     edgepatt = 'edge [ source %(source)s target %(target)s  graphics [ fill	"%(color)s" targetArrow "delta" ]]'
-    for source, target, d in graph.edges():
+    for source, target in graph.edges():
         pair  = (source, target)
         color = colormap.get(pair, '#000000')
         param = dict( source=source, target=target, color=color )
@@ -67,7 +67,7 @@ class TransGraph(object):
     Represents a transition graph
     """
     def __init__(self, logfile, verbose=False):
-        self.graph = networkx.XDiGraph( selfloops=True, multiedges=True )         
+        self.graph = networkx.MultiDiGraph(  )         
         self.fp = open( logfile, 'wt')
         self.verbose = verbose
         self.seen = set()
