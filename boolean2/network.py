@@ -1,5 +1,6 @@
 import util
 import random
+from itertools import count
 
 try:
     import networkx
@@ -74,7 +75,7 @@ class TransGraph(object):
         self.store = dict()
         self.colors = dict()
 
-    def add(self, states):
+    def add(self, states, times):
         "Adds states to the transition"
     
         # generating the fingerprints and sto
@@ -89,9 +90,9 @@ class TransGraph(object):
 
         self.fp.write( '*** transitions from %s ***\n' % fprints[0] )
 
-        for head, tail in zip(fprints, fprints[1:]):
-            pair = (head, tail)
-            self.fp.write('%s->%s\n' %  pair)    
+        for head, tail, tstamp in zip(fprints, fprints[1:], times ):
+            pair = (tstamp, head, tail)
+            self.fp.write('T=%s: %s->%s\n' %  pair ) 
             if pair not in self.seen:
                 self.graph.add_edge(head, tail)
                 self.seen.add(pair)

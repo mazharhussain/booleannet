@@ -12,15 +12,14 @@ class TimeModel( BoolModel ):
         if not self.label_tokens:
             util.error( 'this mode of operation requires time labels for rules' )
         
-        self.gcd  = util.list_gcd( self.ranks )
-        self.step = 0
-
+        self.gcd   = util.list_gcd( self.ranks )
+        self.step  = 0
+        self.times = []
 
     def next(self):
         "Generates the updates based on the next simulation step"
         self.step += 1
-        timestep = self.step * self.gcd
-                        
+        timestep = self.step * self.gcd             
         lines = [ timestep ]
         for rank in self.ranks:
             if timestep % rank == 0:
@@ -31,10 +30,17 @@ class TimeModel( BoolModel ):
 
     def shuffler(self, *args, **kwds):
         "A shuffler that returns the current update rules"
-        value = self.next()  
-        # take the second element
-        #print value
-        return value[1:]
+        while 1:
+            
+            # skip ahead until something valid
+            value = self.next()
+            tstep = value[0]
+            rules = value[1:]
+            if rules:
+                self.times.append( tstep )
+                break
+
+        return rules
 
     def iterate( self, steps, shuffler=None, **kwds ):
         """
