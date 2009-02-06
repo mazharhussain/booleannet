@@ -14,7 +14,7 @@ class TimeModel( BoolModel ):
         
         self.gcd   = util.list_gcd( self.ranks )
         self.step  = 0
-        self.times = []
+        self.times = [ 0 ]
 
     def next(self):
         "Generates the updates based on the next simulation step"
