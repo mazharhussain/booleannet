@@ -75,10 +75,11 @@ class TransGraph(object):
         self.store = dict()
         self.colors = dict()
 
-    def add(self, states, times):
+    def add(self, states, times=None):
         "Adds states to the transition"
     
         # generating the fingerprints and sto
+        times = times or range(len(states))
         fprints = []
         for state in states:
             if self.verbose:
