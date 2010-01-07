@@ -55,7 +55,7 @@ def split( text ):
 def default_shuffler( lines ):
     "Default shuffler"
     temp = lines[:]
-    random.shuffle( lines )
+    random.shuffle( temp )
     return temp
 
 def random_choice( lines ):
