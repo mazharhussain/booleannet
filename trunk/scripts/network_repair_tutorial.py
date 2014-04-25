@@ -15,7 +15,7 @@ import network_repair_functions as nr
 
 # First, we load in network update rules. See sample_network.txt for details on
 # format
-f = open(r'sample_network.txt','rt')
+f = open(r'sample_network.txt','Urt')
 lines = f.readlines()
 f.close()
 
